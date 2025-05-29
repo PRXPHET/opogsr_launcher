@@ -1,0 +1,93 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:opogsr_launcher"
+		xmlns:vm="clr-namespace:opogsr_launcher.ViewModels"
+		xmlns:p="clr-namespace:opogsr_launcher.Properties"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		ExtendClientAreaChromeHints="NoChrome"
+		ExtendClientAreaToDecorationsHint="True"
+		ExtendClientAreaTitleBarHeightHint="-1"
+		MinWidth="800"
+		MinHeight="450"
+		SystemDecorations="BorderOnly"
+        x:Class="opogsr_launcher.MainView"
+		x:DataType="vm:MainViewModel"
+        Title="OP OGSR Launcher">
+
+	<Window.Styles>
+		<StyleInclude Source="/Styles/DefaultStyles.axaml"/>
+	</Window.Styles>
+	
+	<Grid ColumnDefinitions="1*, 3*" PointerPressed="OnPointerPressed">
+		<Grid.Background>
+			<ImageBrush Source="/Assets/Images/menu.jpg" Stretch="Fill"/>
+		</Grid.Background>
+		<Border Grid.Column="0" Padding="15">
+			<Border.Background>
+				<SolidColorBrush Color="Black" Opacity="0.5"/>
+			</Border.Background>
+			<Grid RowDefinitions="* * Auto">
+				<StackPanel Grid.Row="0" Spacing="15">
+					<Image VerticalAlignment="Top" Source="/Assets/Images/logo.png"/>
+					<Button Content="{Binding Resource[ButtonHome], FallbackValue=Home}" Classes="SidebarButton" Classes.Active="{Binding HomeActive}" Command="{Binding GoToHomeCommand}"/>
+					<Button Content="{Binding Resource[ButtonLoad], FallbackValue=Load}" Classes="SidebarButton" Classes.Active="{Binding LoadActive}" Command="{Binding GoToLoadCommand}" />
+					<Button Content="{Binding Resource[ButtonSettings], FallbackValue=Settings}" Classes="SidebarButton" Classes.Active="{Binding SettingsActive}" Command="{Binding GoToSettingsCommand}"/>
+					<Button Content="{Binding Resource[ButtonLog], FallbackValue=Log}" Classes="SidebarButton" Classes.Active="{Binding LogActive}" Command="{Binding GoToLogCommand}"/>
+				</StackPanel>
+				<ComboBox Grid.Row="1" VerticalAlignment="Bottom" 
+						  ItemsSource="{Binding Langs}" 
+						  SelectedIndex="0"
+						  DisplayMemberBinding="{Binding Title}"
+						  SelectedValue="{Binding selectedLang}"/>
+				<Border Grid.Row="2">
+					<Grid VerticalAlignment="Bottom" ColumnDefinitions="* * *">
+						<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.Discord}" Grid.Column="0" Classes="IconButton">
+							<Image Source="/Assets/Images/discord.png"/>
+						</Button>
+						<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.ApPro}" Grid.Column="1" Classes="IconButton">
+							<Image Source="/Assets/Images/appro.png"/>
+						</Button>
+						<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.AMK}" Grid.Column="2" Classes="IconButton">
+							<Image Source="/Assets/Images/amk.png"/>
+						</Button>
+					</Grid>
+				</Border>
+			</Grid>
+		</Border>
+		<Border Grid.Column="1">
+			<Grid HorizontalAlignment="Stretch" RowDefinitions="50 *">
+				<Border Grid.Row="0" VerticalAlignment="Top">
+					<Grid Margin="10" Height="30" VerticalAlignment="Top" ColumnDefinitions="* 100">
+						<Border CornerRadius="6" Margin="0 0 10 0" Padding="0 3" HorizontalAlignment="Left" Grid.Column="0">
+							<Border.Background>
+								<SolidColorBrush Opacity="0.5" Color="Black"/>
+							</Border.Background>
+							<Grid ColumnDefinitions="* *">
+								<Label FontFamily="Bender" Grid.Column="0" FontWeight="Black" Foreground="White">30.04.2025:</Label>
+								<Label FontFamily="Bender" Grid.Column="1" Foreground="White">Произошло что-то интересное...</Label>
+							</Grid>
+						</Border>
+						<Border Grid.Column="1">
+							<Grid ColumnDefinitions="* * *">
+								<Button Classes="ToolbarButton" Command="{Binding MinimizeCommand}" Grid.Column="0">
+									<Image Source="/Assets/Images/minimize.png"/>
+								</Button>
+								<Button Classes="ToolbarButton" Command="{Binding MaximizeCommand}" Grid.Column="1">
+									<Image Source="/Assets/Images/maximize.png"/>
+								</Button>
+								<Button Classes="ToolbarButton" Command="{Binding CloseCommand}" Grid.Column="2">
+									<Image Source="/Assets/Images/close.png"/>
+								</Button>
+							</Grid>
+						</Border>
+					</Grid>
+				</Border>
+				<Border Grid.Row="1">
+					<TransitioningContentControl Content="{Binding CurrentPage}"/>
+				</Border>
+			</Grid>
+		</Border>
+	</Grid>
+</Window>

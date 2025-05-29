@@ -1,0 +1,17 @@
+# Cache
+/.vs
+*/.vs
+*.csproj.user
+*.pubxml.user
+
+# Launcher logs
+*.log
+
+# Static libs
+*.lib
+
+# Builds
+*/bin*
+*/obj*
+/bin*
+/obj*

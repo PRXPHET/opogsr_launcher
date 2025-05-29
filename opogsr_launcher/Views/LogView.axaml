@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 xmlns:vm="clr-namespace:opogsr_launcher.ViewModels"
+			 x:DataType="vm:LogViewModel"
+             x:Class="opogsr_launcher.LogView">
+
+			<UserControl.Styles>
+				<StyleInclude Source="/Styles/DefaultStyles.axaml"/>
+			</UserControl.Styles>
+	
+	        <Border>
+				<Border.Background>
+					<SolidColorBrush Color="Black" Opacity="0.5"/>
+				</Border.Background>
+				<ItemsControl ItemsSource="{Binding Logs}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<StackPanel>
+								<Label Foreground="{Binding Brush}" Content="{Binding Text}"></Label>
+							</StackPanel>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+	        </Border>
+</UserControl>

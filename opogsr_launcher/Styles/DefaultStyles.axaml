@@ -1,0 +1,109 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Design.PreviewWith>
+    <Border Padding="20" Background="Black">
+		<Grid ColumnDefinitions="* * *">
+			<Button Grid.Column="0" Classes="IconButton">
+				<Image Source="/Assets/Images/discord.png"/>
+			</Button>
+			<Button Grid.Column="1" Classes="IconButton">
+				<Image Source="/Assets/Images/appro.png"/>
+			</Button>
+			<Button Grid.Column="2" Classes="IconButton">
+				<Image Source="/Assets/Images/amk.png"/>
+			</Button>
+		</Grid>
+    </Border>
+  </Design.PreviewWith>
+
+	<Style Selector="ComboBox.ToolbarBox > Popup">
+		<Setter Property="PlacementMode" Value="Top"/>
+	</Style>
+
+	<Style Selector="Label">
+		<Setter Property="FontFamily" Value="Bender"/>
+		<Setter Property="Foreground" Value="White"/>
+	</Style>
+
+	<Style Selector="Label.LoadBar">
+		<Setter Property="FontSize" Value="24"/>
+		<Setter Property="Effect">
+			<DropShadowDirectionEffect ShadowDepth="6" Direction="150" BlurRadius="6" />
+		</Setter>
+	</Style>
+
+	<Style Selector="Button.SidebarButton">
+		<Setter Property="HorizontalAlignment" Value="Stretch"/>
+		<Setter Property="VerticalAlignment" Value="Top"/>
+	</Style>
+
+	<Style Selector="Button.ToolbarButton">
+		<Setter Property="Width" Value="30"/>
+		<Setter Property="Height" Value="30"/>
+		<Setter Property="Padding" Value="0 2"/>
+	</Style>
+
+	<Style Selector="Button.ToolbarButton Image">
+		<Setter Property="Width" Value="30"/>
+		<Setter Property="HorizontalAlignment" Value="Center"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+	</Style>
+
+	<Style Selector="Button /template/ ContentPresenter">
+		<Setter Property="RenderTransform" Value="scale(1)"/>
+		<Setter Property="Transitions">
+			<Transitions>
+				<BrushTransition Property="Background" Duration="0:0:0.1"/>
+				<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+			</Transitions>
+		</Setter>
+	</Style>
+
+
+	<Style Selector="Button">
+		<Setter Property="FontFamily" Value="Bender"/>
+		<Setter Property="Foreground" Value="White"/>
+		<Setter Property="Background" Value="{DynamicResource ResourceKey=ButtonSidebarBackground}"/>
+	</Style>
+
+	<Style Selector="Button:pointerover /template/ ContentPresenter">
+		<Setter Property="FontFamily" Value="Bender"/>
+		<Setter Property="Foreground" Value="White"/>
+		<Setter Property="Background" Value="{DynamicResource ResourceKey=ButtonSidebarHoverBackground}"/>
+	</Style>
+
+	<Style Selector="Button:pressed /template/ ContentPresenter">
+		<Setter Property="Foreground" Value="White"/>
+		<Setter Property="Background" Value="{DynamicResource ResourceKey=ButtonSidebarBackground}"/>
+	</Style>
+
+	<Style Selector="Button.Active">
+		<Setter Property="Background" Value="#3f71d9"/>
+	</Style>
+
+	<Style Selector="Button.Active:pointerover /template/ ContentPresenter">
+		<Setter Property="Background" Value="#4a80f1"/>
+	</Style>
+
+	<Style Selector="Button">
+		<Setter Property="Foreground" Value="White"/>
+		<Setter Property="Background" Value="{DynamicResource ResourceKey=ButtonSidebarBackground}"/>
+	</Style>
+
+	<Style Selector="Button.IconButton">
+		<Setter Property="Background" Value="Transparent"/>
+	</Style>
+
+	<Style Selector="Button.IconButton Image">
+		<Setter Property="RenderTransform" Value="scale(0.8)"/>
+	</Style>
+
+	<Style Selector="Button.IconButton:pointerover /template/ ContentPresenter">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="RenderTransform" Value="scale(1.1)"/>
+	</Style>
+
+	<Style Selector="Button.IconButton:pressed /template/ ContentPresenter">
+		<Setter Property="Background" Value="Transparent"/>
+	</Style>
+</Styles>

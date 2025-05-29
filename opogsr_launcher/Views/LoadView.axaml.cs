@@ -1,0 +1,103 @@
+using Avalonia.Controls;
+using Avalonia.Media.Imaging;
+using opogsr_launcher.ViewModels;
+using SkiaSharp;
+using System;
+using System.IO;
+using System.Runtime.InteropServices;
+using Pfim;
+using System.Collections.Generic;
+using Avalonia.Platform;
+using System.Reflection;
+using System.Threading.Tasks;
+
+namespace opogsr_launcher.Views;
+
+public partial class LoadView : UserControl
+{
+    private static Dictionary<string, Bitmap> CachedBitmap { get; set; } = new();
+
+    private static Bitmap NotFoundBitmap = new (AssetLoader.Open(new Uri($"avares://{Assembly.GetExecutingAssembly().GetName().Name}/Assets/Images/not_found.png", UriKind.Absolute)));
+
+    private static Bitmap ConvertDDS(string file)
+    {
+        SKColorType colorType;
+        using var image = Pfimage.FromFile(file);
+        var newData = image.Data;
+        var newDataLen = image.DataLen;
+        var stride = image.Stride;
+        switch (image.Format)
+        {
+            case ImageFormat.Rgb8:
+                colorType = SKColorType.Gray8;
+                break;
+            case ImageFormat.R5g6b5:
+                // color channels still need to be swapped
+                colorType = SKColorType.Rgb565;
+                break;
+            case ImageFormat.Rgba16:
+                // color channels still need to be swapped
+                colorType = SKColorType.Argb4444;
+                break;
+            case ImageFormat.Rgb24:
+                // Skia has no 24bit pixels, so we upscale to 32bit
+                var pixels = image.DataLen / 3;
+                newDataLen = pixels * 4;
+                newData = new byte[newDataLen];
+                for (int i = 0; i < pixels; i++)
+                {
+                    newData[i * 4] = image.Data[i * 3];
+                    newData[i * 4 + 1] = image.Data[i * 3 + 1];
+                    newData[i * 4 + 2] = image.Data[i * 3 + 2];
+                    newData[i * 4 + 3] = 255;
+                }
+
+                stride = image.Width * 4;
+                colorType = SKColorType.Bgra8888;
+                break;
+            case ImageFormat.Rgba32:
+                colorType = SKColorType.Bgra8888;
+                break;
+            default:
+                throw new ArgumentException($"Skia unable to interpret pfim format: {image.Format}");
+        }
+
+        SKImageInfo imageInfo = new(image.Width, image.Height, colorType);
+        GCHandle handle = GCHandle.Alloc(newData, GCHandleType.Pinned);
+        nint ptr = Marshal.UnsafeAddrOfPinnedArrayElement(newData, 0);
+        using SKData data = SKData.Create(ptr, newDataLen, (address, context) => handle.Free());
+        using SKData png = SKImage.FromPixels(imageInfo, data, stride).Encode(SKEncodedImageFormat.Png, 100);
+
+        return new Bitmap(new MemoryStream(png.ToArray()));
+    }
+
+    private async void SaveSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ListBox listBox && listBox.SelectedItem is SaveFile Save)
+        {
+            string path = Path.Combine(StaticGlobals.Locations.Saves, Save.FileName.Replace(StaticGlobals.Extensions.Save, ".dds"));
+            if (CachedBitmap.TryGetValue(path, out Bitmap b))
+                SaveImage.Source = b;
+            else if (File.Exists(path))
+            {
+                try
+                {
+                    Bitmap bitmap = await Task.Run(() => ConvertDDS(path));
+                    CachedBitmap[path] = bitmap;
+                    SaveImage.Source = bitmap;
+                }
+                catch
+                {
+                    SaveImage.Source = NotFoundBitmap;
+                }
+            }
+            else
+                SaveImage.Source = NotFoundBitmap;
+        }
+    }
+
+    public LoadView()
+    {
+        InitializeComponent();
+    }
+}

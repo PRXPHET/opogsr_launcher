@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="450"
+			 xmlns:vm="clr-namespace:opogsr_launcher.ViewModels"
+			 xmlns:p="clr-namespace:opogsr_launcher.Properties"
+			 x:DataType="vm:HomeViewModel"
+             x:Class="opogsr_launcher.Views.HomeView">
+
+			<UserControl.Styles>
+				<StyleInclude Source="/Styles/DefaultStyles.axaml"/>
+			</UserControl.Styles>
+
+			<Grid>
+  				<Border HorizontalAlignment="Center" VerticalAlignment="Center">
+					<Grid>
+						<Border Grid.Row="0" IsVisible="{Binding ValidationStr.Text, Converter={x:Static StringConverters.IsNullOrEmpty}}"  BoxShadow="3 3 8 0 Black">
+							<Button Content="{Binding ButtonMainStr.Text}" Background="Orange" FontSize="24" Command="{Binding ButtonMainCommand}"></Button>
+						</Border>
+						<Border IsVisible="{Binding ValidationStr.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Grid.Row="1">
+							<Label Classes="LoadBar" Content="{Binding ValidationStr.Text}" Foreground="White" Background="Transparent" FontSize="24"/>
+						</Border>
+					</Grid>
+				</Border>
+				<Border Padding="10" VerticalAlignment="Bottom">
+					<Grid RowDefinitions="* *" IsVisible="{Binding IsDownloading}">
+						<Border Grid.Row="0">
+							<Grid ColumnDefinitions="* *">
+								<Label Content="{Binding DownloadSpeedStr} " Classes="LoadBar" HorizontalAlignment="Left" Grid.Column="0"/>
+								<Label Content="{Binding SizeStr}" Classes="LoadBar" HorizontalAlignment="Right" Grid.Column="1"/>
+							</Grid>
+						</Border>
+						<ProgressBar ShowProgressText="true" Grid.Row="1" Height="20" Foreground="Orange" Value="{Binding Progress}" Minimum="0" Maximum="100">
+							<ProgressBar.Background>
+								<SolidColorBrush Opacity="0.75" Color="Black"/>
+							</ProgressBar.Background>
+						</ProgressBar>
+					</Grid>
+				</Border>
+			</Grid>
+</UserControl>

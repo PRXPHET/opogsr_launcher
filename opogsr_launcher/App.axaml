@@ -1,0 +1,21 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="opogsr_launcher.App"
+			 xmlns:local="clr-namespace:opogsr_launcher"
+             RequestedThemeVariant="Default">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+
+	<Application.DataTemplates>
+		<local:DataTemplateLocator/>
+	</Application.DataTemplates>
+
+	<Application.Resources>
+		<SolidColorBrush x:Key="PrimaryBackground">#ff8f00</SolidColorBrush>
+		<SolidColorBrush x:Key="ButtonSidebarBackground">#da8417</SolidColorBrush>
+		<SolidColorBrush x:Key="ButtonSidebarHoverBackground">#ff9c1e</SolidColorBrush>
+	</Application.Resources>
+</Application>
