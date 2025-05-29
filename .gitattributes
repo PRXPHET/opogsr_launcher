@@ -1,0 +1,8 @@
+*.lib filter=lfs diff=lfs merge=lfs -text
+*.dll filter=lfs diff=lfs merge=lfs -text
+
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.png filter=lfs diff=lfs merge=lfs -text
+*.svg filter=lfs diff=lfs merge=lfs -text
+
+../opogsr_launcher_private/opogsr_launcher/Assets filter=lfs diff=lfs merge=lfs -text
