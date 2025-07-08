@@ -3,6 +3,7 @@ using opogsr_launcher.Other.RuntimeResource;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace opogsr_launcher.ViewModels
             ButtonMainCommand = ReactiveCommand.Create(ButtonMain);
         }
 
-        private async void UpdateProgressBar()
+        private async void UpdateProgressBar(Progress<(string Name, ulong Total)> progress)
         {
             // https://stackoverflow.com/a/4975942
             static String BytesToString(ulong bytes)
@@ -55,18 +56,23 @@ namespace opogsr_launcher.ViewModels
                 return num.ToString() + suf[place];
             }
 
-            while (_githubManager.state.totalSize == 0 && _githubManager.state.bytesRead.IsEmpty)
-                await Task.Delay(1000);
+            ConcurrentDictionary<string, ulong> FileProgress = new();
 
             ulong prev_size = 0;
             ulong cur_size = 0;
-            ulong total_size = _githubManager.state.totalSize;
 
-            while(IsDownloading)
+            progress.ProgressChanged += (_, data) =>
+            {
+                FileProgress[data.Name] = data.Total;
+            };
+
+            ulong total_size = await _githubManager.Size();
+
+            while (IsDownloading)
             {
                 await Task.Delay(1000);
 
-                cur_size = _githubManager.state.bytesRead.Values.Aggregate((a, b) => a + b);
+                cur_size = FileProgress.Values.Aggregate((a, b) => a + b);
 
                 DownloadSpeedStr = $"{BytesToString(cur_size - prev_size)}/s";
 
@@ -107,9 +113,11 @@ namespace opogsr_launcher.ViewModels
 
             ValidationStr.Key = "Downloading";
 
-            UpdateProgressBar();
+            var progress = new Progress<(string Name, ulong Total)>();
 
-            StaticGlobals.Stats.CanPlay = await _githubManager.DownloadInvalid();
+            UpdateProgressBar(progress);
+
+            StaticGlobals.Stats.CanPlay = await _githubManager.DownloadInvalid(progress);
 
             if (StaticGlobals.Stats.CanPlay)
             {

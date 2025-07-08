@@ -1,18 +1,19 @@
-﻿using opogsr_launcher.JsonContext;
+﻿using Avalonia.Utilities;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using opogsr_launcher.Hasher;
+using opogsr_launcher.JsonContext;
+using opogsr_launcher.Other;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using opogsr_launcher.Hasher;
-using System.Collections.Concurrent;
 using System.Threading;
-using Avalonia.Utilities;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace opogsr_launcher.Managers
 {
@@ -66,8 +67,6 @@ namespace opogsr_launcher.Managers
 
         private List<IndexData> data = new();
         private ConcurrentBag<IndexData> not_validated_data = new();
-
-        public DownloadState state = new();
 
         private Task ReadRepoTask;
 
@@ -139,23 +138,13 @@ namespace opogsr_launcher.Managers
             return no_json_data.Count == not_validated_data.Count ? FileStates.NoFiles : not_validated_data.Count != 0 ? FileStates.NeedUpdate : FileStates.Every;
         }
 
-        public async Task<bool> DownloadInvalid()
+        public async Task<bool> DownloadInvalid(IProgress<(string name, ulong Total)>? progress)
         {
-            foreach (IndexData d in not_validated_data)
-            {
-                GithubAsset a = release.assets.Find(x => x.name == d.name);
-
-                if (a is null)
-                    Logger.Exception(new Exception($"Github asset is null. Name: {d.name}"));
-
-                state.totalSize += a.size;
-            }
-
             var cts = new CancellationTokenSource();
 
             var task = Parallel.ForEachAsync(not_validated_data, new ParallelOptions() { MaxDegreeOfParallelism = 4, CancellationToken = cts.Token }, async (d, ct) =>
             {
-                bool success = await DownloadFile(d);
+                bool success = await DownloadFile(d, progress);
                 if (!success)
                     cts.Cancel();
             });
@@ -171,7 +160,24 @@ namespace opogsr_launcher.Managers
             return false;
         }
 
-        public async Task<bool> DownloadFile(IndexData d)
+        public async Task<ulong> Size()
+        {
+            await ReadRepoTask.WaitAsync(CancellationToken.None);
+
+            ulong size = 0;
+            foreach (IndexData d in not_validated_data)
+            {
+                GithubAsset a = release.assets.Find(x => x.name == d.name);
+
+                if (a is null)
+                    Logger.Exception(new Exception($"Github asset is null. Name: {d.name}"));
+
+                size += a.size;
+            }
+            return size;
+        }
+
+        public async Task<bool> DownloadFile(IndexData d, IProgress<(string name, ulong Total)>? progress)
         {
             GithubAsset asset = release.assets.Find(x => x.name == d.name);
 
@@ -209,14 +215,14 @@ namespace opogsr_launcher.Managers
 
                     while ((bytes_read = await ms.ReadAsync(buffer, 0, buffer.Length)) > 0)
                     {
-                        await fs.WriteAsync(buffer, 0, bytes_read);
+                        await fs.WriteAsync(buffer.AsMemory(0, bytes_read));
 
                         total_bytes_read += bytes_read;
 
-                        state.bytesRead[d.name] = Convert.ToUInt64(total_bytes_read);
+                        progress?.Report((asset.name, Convert.ToUInt64(total_bytes_read)));
                     }
 
-                    state.bytesRead[d.name] = Convert.ToUInt64(total_bytes_read);
+                    progress?.Report((asset.name, Convert.ToUInt64(total_bytes_read)));
 
                     if (d.hash != await FileHasher.XxHashFromFile(fs))
                     {
