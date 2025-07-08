@@ -1,4 +1,6 @@
-﻿using opogsr_launcher.Managers;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using opogsr_launcher.Managers;
 using opogsr_launcher.Other.RuntimeResource;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -33,10 +35,16 @@ namespace opogsr_launcher.ViewModels
 
         [Reactive] public ReactiveCommand<Unit, Unit> ButtonMainCommand { get; set; }
 
-        public HomeViewModel(DiscordRPCManager discordRPCManager, GithubManager githubManager, RuntimeResource resource)
+        public HomeViewModel(IServiceProvider serviceProvider, DiscordRPCManager discordRPCManager, RuntimeResource resource)
         {
+            IConfiguration config = serviceProvider.GetRequiredService<IConfiguration>();
+
+            string token = config["GithubToken"];
+            string repo = config["GithubRepo"];
+
+            _githubManager = new(token, repo);
+
             _discordRPCManager = discordRPCManager;
-            _githubManager = githubManager;
             Resource = resource;
 
             ValidationStr = new(resource, "");

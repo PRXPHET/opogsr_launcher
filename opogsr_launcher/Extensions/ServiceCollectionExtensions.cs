@@ -10,7 +10,6 @@ namespace opogsr_launcher.Extensions
         public static IServiceCollection AddManagers(this IServiceCollection collection)
         {
             collection.AddSingleton<DiscordRPCManager>();
-            collection.AddSingleton<GithubManager>();
 
             return collection;
         }

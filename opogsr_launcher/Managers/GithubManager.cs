@@ -253,12 +253,10 @@ namespace opogsr_launcher.Managers
             return false;
         }
 
-        public GithubManager(IServiceProvider serviceProvider)
+        public GithubManager(string Token, string Repo)
         {
-            IConfiguration config = serviceProvider.GetRequiredService<IConfiguration>();
-
-            token = config["GithubToken"];
-            repo = config["GithubRepo"];
+            token = Token;
+            repo = Repo;
 
             api_client.BaseAddress = new Uri($"https://api.github.com/repos/{repo}/");
             api_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
