@@ -52,56 +52,9 @@ namespace opogsr_launcher.Managers
         public string directory { get; set; }
     }
 
-    public class DownloadState
+    public class GithubDownloadManager : GithubManager
     {
-        public ConcurrentDictionary<string, ulong> bytesRead = new();
-        public ulong totalSize = 0;
-    }
-
-    public class GithubManager
-    {
-        private HttpClient api_client = new();
-        private HttpClient download_client = new();
-
-        private GithubRelease release = new();
-
-        private List<IndexData> data = new();
         private ConcurrentBag<IndexData> not_validated_data = new();
-
-        private Task ReadRepoTask;
-
-        private readonly string token;
-        private readonly string repo;
-
-        private async Task ReadConfig()
-        {
-            GithubAsset asset = release.assets.Find(x => x.name == "index.json");
-
-            if (asset is null)
-            {
-                Logger.Exception(new Exception("Can't find index.json file in release."));
-                return;
-            }
-
-            var httpResult = await download_client.GetAsync(asset.url);
-            httpResult.EnsureSuccessStatusCode();
-            string contents = await httpResult.Content.ReadAsStringAsync();
-            data = JsonSerializer.Deserialize(contents, SourceGenerationContext.Default.ListIndexData);
-        }
-
-        private async Task ReadRelease()
-        {
-            var httpResult = await api_client.GetAsync("releases/latest");
-            httpResult.EnsureSuccessStatusCode();
-            string contents = await httpResult.Content.ReadAsStringAsync();
-            release = JsonSerializer.Deserialize(contents, SourceGenerationContext.Default.GithubRelease);
-        }
-
-        private async Task ReadRepo()
-        {
-            await ReadRelease();
-            await ReadConfig();
-        }
 
         public async Task<FileStates> Validate()
         {
@@ -158,23 +111,6 @@ namespace opogsr_launcher.Managers
             }
 
             return false;
-        }
-
-        public async Task<ulong> Size()
-        {
-            await ReadRepoTask.WaitAsync(CancellationToken.None);
-
-            ulong size = 0;
-            foreach (IndexData d in not_validated_data)
-            {
-                GithubAsset a = release.assets.Find(x => x.name == d.name);
-
-                if (a is null)
-                    Logger.Exception(new Exception($"Github asset is null. Name: {d.name}"));
-
-                size += a.size;
-            }
-            return size;
         }
 
         public async Task<bool> DownloadFile(IndexData d, IProgress<(string name, ulong Total)>? progress)
@@ -251,6 +187,70 @@ namespace opogsr_launcher.Managers
             }
 
             return false;
+        }
+
+        public async Task<ulong> Size()
+        {
+            await ReadRepoTask.WaitAsync(CancellationToken.None);
+
+            ulong size = 0;
+            foreach (IndexData d in not_validated_data)
+            {
+                GithubAsset a = release.assets.Find(x => x.name == d.name);
+
+                if (a is null)
+                    Logger.Exception(new Exception($"Github asset is null. Name: {d.name}"));
+
+                size += a.size;
+            }
+            return size;
+        }
+
+        public GithubDownloadManager(string Token, string Repo) : base(Token, Repo) {}
+    }
+
+    public class GithubManager
+    {
+        protected HttpClient api_client = new();
+        protected HttpClient download_client = new();
+
+        protected GithubRelease release = new();
+
+        protected List<IndexData> data = new();
+
+        protected Task ReadRepoTask;
+
+        private readonly string token;
+        private readonly string repo;
+
+        private async Task ReadConfig()
+        {
+            GithubAsset asset = release.assets.Find(x => x.name == "index.json");
+
+            if (asset is null)
+            {
+                Logger.Exception(new Exception("Can't find index.json file in release."));
+                return;
+            }
+
+            var httpResult = await download_client.GetAsync(asset.url);
+            httpResult.EnsureSuccessStatusCode();
+            string contents = await httpResult.Content.ReadAsStringAsync();
+            data = JsonSerializer.Deserialize(contents, SourceGenerationContext.Default.ListIndexData);
+        }
+
+        private async Task ReadRelease()
+        {
+            var httpResult = await api_client.GetAsync("releases/latest");
+            httpResult.EnsureSuccessStatusCode();
+            string contents = await httpResult.Content.ReadAsStringAsync();
+            release = JsonSerializer.Deserialize(contents, SourceGenerationContext.Default.GithubRelease);
+        }
+
+        private async Task ReadRepo()
+        {
+            await ReadRelease();
+            await ReadConfig();
         }
 
         public GithubManager(string Token, string Repo)

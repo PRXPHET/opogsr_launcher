@@ -17,7 +17,7 @@ namespace opogsr_launcher.ViewModels
     public class HomeViewModel : ViewModelBase
     {
         private static DiscordRPCManager _discordRPCManager;
-        private static GithubManager _githubManager;
+        private static GithubDownloadManager _githubDownloadManager;
 
         public RuntimeResource Resource { get; private set; }
 
@@ -42,7 +42,7 @@ namespace opogsr_launcher.ViewModels
             string token = config["GithubToken"];
             string repo = config["GithubRepo"];
 
-            _githubManager = new(token, repo);
+            _githubDownloadManager = new(token, repo);
 
             _discordRPCManager = discordRPCManager;
             Resource = resource;
@@ -74,7 +74,7 @@ namespace opogsr_launcher.ViewModels
                 FileProgress[data.Name] = data.Total;
             };
 
-            ulong total_size = await _githubManager.Size();
+            ulong total_size = await _githubDownloadManager.Size();
 
             while (IsDownloading)
             {
@@ -100,7 +100,7 @@ namespace opogsr_launcher.ViewModels
         {
             ValidationStr.Key = "ValidatingFiles";
 
-            FileStates state = await _githubManager.Validate();
+            FileStates state = await _githubDownloadManager.Validate();
 
             if (state == FileStates.NoFiles)
                 ButtonMainStr.Key = "StartDownload";
@@ -125,7 +125,7 @@ namespace opogsr_launcher.ViewModels
 
             UpdateProgressBar(progress);
 
-            StaticGlobals.Stats.CanPlay = await _githubManager.DownloadInvalid(progress);
+            StaticGlobals.Stats.CanPlay = await _githubDownloadManager.DownloadInvalid(progress);
 
             if (StaticGlobals.Stats.CanPlay)
             {
