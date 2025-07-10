@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.ReactiveUI;
 using ReactiveUI;
 using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 
 namespace opogsr_launcher
 {
@@ -11,7 +12,26 @@ namespace opogsr_launcher
         [STAThread]
         public static void Main(string[] args)
         {
-            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+            try
+            {
+                BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+            }
+            catch (Exception ex)
+            {
+                if (!Debugger.IsAttached)
+                {
+                    Logger.Error("UNHANDLED EXCEPTION CAUGHT");
+                    Logger.Error(ex.Message);
+
+                    if (ex.StackTrace != null)
+                    {
+                        Logger.Error("Stack Trace:");
+                        Logger.Error(ex.StackTrace);
+                    }
+                }
+                else
+                    Debugger.Break();
+            }
         }
 
         public static AppBuilder BuildAvaloniaApp()
