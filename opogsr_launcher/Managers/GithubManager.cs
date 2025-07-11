@@ -1,9 +1,6 @@
-﻿using Avalonia.Utilities;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using opogsr_launcher.Hasher;
+﻿using opogsr_launcher.Hasher;
 using opogsr_launcher.JsonContext;
-using opogsr_launcher.Other;
+using opogsr_launcher.Other.StreamExtensions;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -38,6 +35,8 @@ namespace opogsr_launcher.Managers
     {
         [JsonPropertyName("assets")]
         public List<GithubAsset> assets { get; set; }
+        [JsonPropertyName("upload_url")]
+        public string upload_url { get; set; }
     }
 
     public class IndexData
@@ -49,7 +48,7 @@ namespace opogsr_launcher.Managers
         [JsonPropertyName("base_file")]
         public bool base_file { get; set; }
         [JsonPropertyName("directory")]
-        public string directory { get; set; }
+        public string? directory { get; set; }
     }
 
     public class GithubDownloadManager : GithubManager
@@ -191,7 +190,7 @@ namespace opogsr_launcher.Managers
 
         public async Task<ulong> Size()
         {
-            await ReadRepoTask.WaitAsync(CancellationToken.None);
+            await RepoTask();
 
             ulong size = 0;
             foreach (IndexData d in not_validated_data)
@@ -209,19 +208,96 @@ namespace opogsr_launcher.Managers
         public GithubDownloadManager(string Token, string Repo) : base(Token, Repo) {}
     }
 
+    public class GithubUploadManager : GithubManager
+    {
+        const long large_chunk_size = 2 * 1000 * 1000 * 1000;
+
+        private async Task UploadFile(string url, Stream stream, IProgress<(ulong Sent, ulong Total)>? progress)
+        {
+            var content = new HttpProgressStreamContent(stream, progress);
+            content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/octet-stream");
+
+            var response = await api_client.PostAsync(url, content);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task UploadFile(IndexData d, IProgress<(ulong Sent, ulong Total)>? progress = null)
+        {
+            await RepoTask();
+
+            string directory = Path.Combine(StaticGlobals.Locations.Start, d.directory ?? "");
+
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            string path = Path.Combine(directory, d.name);
+
+            string name = Path.GetFileName(path);
+            using var fileStream = File.OpenRead(path);
+
+            if (fileStream.Length > large_chunk_size)
+            {
+                ChunkReadStream chunkStream = new ChunkReadStream(fileStream, large_chunk_size);
+
+                uint chunk = 1;
+
+                do
+                {
+                    string part_name = name + ".part_" + chunk.ToString("D3");
+
+                    await UploadFile(release.upload_url + "?name=" + part_name, chunkStream, progress);
+                    chunk++;
+                }
+                while (chunkStream.ReadNext());
+            }
+            else
+            {
+                await UploadFile(release.upload_url + "?name=" + name, fileStream, progress);
+            }
+        }
+
+        public async Task UpdateConfig(string path)
+        {
+            await DeleteFile("index.json");
+
+            var content = new StringContent(File.ReadAllText(path));
+            content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+
+            var response = await api_client.PostAsync(release.upload_url + "?name=index.json", content);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task DeleteFile(string name)
+        {
+            GithubAsset? asset = release.assets.Find(x => x.name == name);
+            if (asset != null)
+            {
+                var response = await api_client.DeleteAsync(asset.url);
+                response.EnsureSuccessStatusCode();
+
+            }
+        }
+
+        public GithubUploadManager(string Token, string Repo) : base(Token, Repo) 
+        {
+            api_client.Timeout = TimeSpan.FromHours(1);
+        }
+    }
+
     public class GithubManager
     {
+        private readonly string token;
+        private readonly string repo;
+
         protected HttpClient api_client = new();
         protected HttpClient download_client = new();
 
         protected GithubRelease release = new();
-
-        protected List<IndexData> data = new();
+        public List<IndexData> data { get; private set; } = new();
 
         protected Task ReadRepoTask;
-
-        private readonly string token;
-        private readonly string repo;
 
         private async Task ReadConfig()
         {
@@ -245,6 +321,7 @@ namespace opogsr_launcher.Managers
             httpResult.EnsureSuccessStatusCode();
             string contents = await httpResult.Content.ReadAsStringAsync();
             release = JsonSerializer.Deserialize(contents, SourceGenerationContext.Default.GithubRelease);
+            release.upload_url = release.upload_url.Replace("{?name,label}", "");
         }
 
         private async Task ReadRepo()
@@ -252,6 +329,8 @@ namespace opogsr_launcher.Managers
             await ReadRelease();
             await ReadConfig();
         }
+
+        public async Task RepoTask() => await ReadRepoTask.WaitAsync(CancellationToken.None);
 
         public GithubManager(string Token, string Repo)
         {
