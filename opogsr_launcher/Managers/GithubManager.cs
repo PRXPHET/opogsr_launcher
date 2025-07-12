@@ -1,10 +1,13 @@
-﻿using opogsr_launcher.Hasher;
+﻿using opogsr_launcher.Extensions;
+using opogsr_launcher.Hasher;
 using opogsr_launcher.JsonContext;
+using opogsr_launcher.Other.StreamExtensions;
 using opogsr_launcher.Properties;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -55,9 +58,19 @@ namespace opogsr_launcher.Managers
     {
         private ConcurrentBag<IndexData> not_validated_data = new();
 
+        public bool ValidateBase(IndexData d, Stream stream)
+        {
+            List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(d.name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
+
+            ulong size = 0;
+            assets.ForEach(a => size += a.size);
+
+            return size == Convert.ToUInt64(stream.Length);
+        }
+
         public async Task<FileStates> Validate()
         {
-            await ReadRepoTask.WaitAsync(CancellationToken.None);
+            await RepoTask();
 
             List<IndexData> no_json_data = [.. data.FindAll(x => !x.name.EndsWith(".json"))];
 
@@ -82,27 +95,81 @@ namespace opogsr_launcher.Managers
                 else
                     File.SetAttributes(path, FileAttributes.Normal);
 
-                Logger.Info(Resources.CalculatingHashForFile, d.name);
-                if (d.hash != await FileHasher.XxHashFromFile(path))
+                using var stream = File.OpenRead(path);
+
+                if (d.base_file)
                 {
-                    not_validated_data.Add(d);
+                    if (!ValidateBase(d, stream))
+                        not_validated_data.Add(d);
+
+                    return;
                 }
+
+                Logger.Info(Resources.CalculatingHashForFile, d.name);
+                if (d.hash != await FileHasher.XxHashFromFile(stream))
+                    not_validated_data.Add(d);
+
             });
             return no_json_data.Count == not_validated_data.Count ? FileStates.NoFiles : not_validated_data.Count != 0 ? FileStates.NeedUpdate : FileStates.Every;
         }
 
         public async Task<bool> DownloadInvalid(IProgress<(string name, ulong Total)>? progress)
         {
+            static async Task EnsureHash(IndexData d, string path)
+            {
+                Logger.Info(Resources.CalculatingHashForFile, d.name);
+                if (d.hash != await FileHasher.XxHashFromFile(path))
+                {
+                    File.SetAttributes(path, FileAttributes.Normal);
+                    File.Delete(path);
+                    Logger.Exception(new Exception("Hash of downloaded file doesn't match with cached hash."));
+                }
+            }
+
             var cts = new CancellationTokenSource();
 
-            var task = Parallel.ForEachAsync(not_validated_data, new ParallelOptions() { MaxDegreeOfParallelism = 4, CancellationToken = cts.Token }, async (d, ct) =>
+            var semaphore = new SemaphoreSlim(4);
+
+            var tasks = not_validated_data.WithMaxConcurrency(semaphore, async (d) =>
             {
-                bool success = await DownloadFile(d, progress);
-                if (!success)
+                List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(d.name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
+
+                bool success = false;
+
+                string directory = Path.Combine(StaticGlobals.Locations.Start, d.directory ?? "");
+
+                if (!Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                if (assets.Count != 0)
+                {
+                    string output = Path.Combine(directory, d.name);
+                    success = await DownloadFile(assets, directory, output, progress, cts.Token, semaphore);
+
+                    if (success)
+                        await EnsureHash(d, output);
+                }
+                else
+                {
+                    GithubAsset asset = release.assets.Find(x => x.name == d.name);
+
+                    string path = Path.Combine(directory, d.name);
+
+                    success = await DownloadFile(asset, path, progress, cts.Token);
+
+                    if (success)
+                        await EnsureHash(d, path);
+                }
+
+                if (!success && !cts.IsCancellationRequested)
                     cts.Cancel();
+
+                return success;
             });
 
-            await task;
+            await Task.WhenAll(tasks);
 
             if (!cts.IsCancellationRequested)
             {
@@ -113,18 +180,53 @@ namespace opogsr_launcher.Managers
             return false;
         }
 
-        public async Task<bool> DownloadFile(IndexData d, IProgress<(string name, ulong Total)>? progress)
+        public async Task<bool> DownloadFile(List<GithubAsset> assets, string directory, string output, IProgress<(string name, ulong Total)>? progress, CancellationToken ct, SemaphoreSlim semaphore)
         {
-            GithubAsset asset = release.assets.Find(x => x.name == d.name);
+            List<string> paths = new();
 
-            string directory = Path.Combine(StaticGlobals.Locations.Start, d.directory ?? "");
-
-            if (!Directory.Exists(directory))
+            var tasks = assets.WithMaxConcurrency(semaphore, async (a) =>
             {
-                Directory.CreateDirectory(directory);
+                bool success = false;
+
+                string path = Path.Combine(directory, a.name);
+                success = await DownloadFile(a, path, progress, ct);
+
+                if (success)
+                    paths.Add(path);
+
+                return success;
+            }).ToList();
+
+            var results = await Task.WhenAll(tasks);
+
+            if (results.Any(b => !b))
+                return false;
+
+            paths.Sort();
+
+            try
+            {
+                ChunkMergeStream.Merge(paths, output);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+                return false;
             }
 
-            string path = Path.Combine(directory, d.name);
+            return true;
+        }
+
+        public async Task<bool> DownloadFile(GithubAsset asset, string path, IProgress<(string name, ulong Total)>? progress, CancellationToken ct)
+        {
+            static void EnsureFile(string path)
+            {
+                if (File.Exists(path))
+                {
+                    File.SetAttributes(path, FileAttributes.Normal);
+                    File.Delete(path);
+                }
+            }
 
             int retry = 0;
 
@@ -132,11 +234,7 @@ namespace opogsr_launcher.Managers
             {
                 try
                 {
-                    if (File.Exists(path))
-                    {
-                        File.SetAttributes(path, FileAttributes.Normal);
-                        File.Delete(path);
-                    }
+                    EnsureFile(path);
 
                     var response = await download_client.GetAsync(asset.url, HttpCompletionOption.ResponseHeadersRead);
                     response.EnsureSuccessStatusCode();
@@ -151,6 +249,12 @@ namespace opogsr_launcher.Managers
 
                     while ((bytes_read = await ms.ReadAsync(buffer, 0, buffer.Length)) > 0)
                     {
+                        if (ct.IsCancellationRequested)
+                        {
+                            EnsureFile(path);
+                            return false;
+                        }
+
                         await fs.WriteAsync(buffer.AsMemory(0, bytes_read));
 
                         total_bytes_read += bytes_read;
@@ -160,11 +264,7 @@ namespace opogsr_launcher.Managers
 
                     progress?.Report((asset.name, Convert.ToUInt64(total_bytes_read)));
 
-                    Logger.Info(Resources.CalculatingHashForFile, d.name);
-                    if (d.hash != await FileHasher.XxHashFromFile(fs))
-                    {
-                        Logger.Exception(new Exception("Hash of downloaded file doesn't match with cached hash."));
-                    }
+                    Logger.Info(Resources.CalculatingHashForFile, asset.name);
 
                     return true;
                 }
@@ -172,17 +272,13 @@ namespace opogsr_launcher.Managers
                 {
                     retry++;
 
-                    Logger.Error($"Error file during download. Exception: {ex.Message}, Name: {d.name}, Attempt {retry}.");
+                    Logger.Error($"Error file during download. Exception: {ex.Message}, Name: {asset.name}, Attempt {retry}.");
                 }
                 finally
                 {
                     if (retry >= 5)
                     {
-                        if (File.Exists(path))
-                        {
-                            File.SetAttributes(path, FileAttributes.Normal);
-                            File.Delete(path);
-                        }
+                        EnsureFile(path);
                     }
                 }
             }
@@ -197,12 +293,19 @@ namespace opogsr_launcher.Managers
             ulong size = 0;
             foreach (IndexData d in not_validated_data)
             {
-                GithubAsset a = release.assets.Find(x => x.name == d.name);
+                List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(d.name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
 
-                if (a is null)
-                    Logger.Exception(new Exception($"Github asset is null. Name: {d.name}"));
+                if (assets.Count != 0)
+                    assets.ForEach(a => size += a.size);
+                else
+                {
+                    GithubAsset a = release.assets.Find(x => x.name == d.name);
 
-                size += a.size;
+                    if (a is null)
+                        Logger.Exception(new Exception($"Github asset is null. Name: {d.name}"));
+
+                    size += a.size;
+                }
             }
             return size;
         }

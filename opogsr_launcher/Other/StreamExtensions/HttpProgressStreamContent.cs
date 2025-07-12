@@ -19,7 +19,6 @@ namespace opogsr_launcher.Other.StreamExtensions
         {
             _stream = stream ?? throw new ArgumentNullException(nameof(stream));
             _progress = progress;
-            _stream.Position = 0;
         }
 
         protected override async Task SerializeToStreamAsync(Stream stream, TransportContext? context)

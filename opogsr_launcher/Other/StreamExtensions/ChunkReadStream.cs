@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace opogsr_launcher.Other.StreamExtensions
@@ -34,6 +36,13 @@ namespace opogsr_launcher.Other.StreamExtensions
         public override int Read(byte[] buffer, int offset, int count)
         {
             int bytesRead = _inner.Read(buffer, offset, Math.Min(count, (int)(_chunk_size - _position)));
+            _position += bytesRead;
+            return bytesRead;
+        }
+
+        public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken ct = default)
+        {
+            int bytesRead = await _inner.ReadAsync(buffer, offset, Math.Min(count, (int)(_chunk_size - _position)), ct);
             _position += bytesRead;
             return bytesRead;
         }
