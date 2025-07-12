@@ -1,6 +1,6 @@
 ﻿using opogsr_launcher.Hasher;
 using opogsr_launcher.JsonContext;
-using opogsr_launcher.Other.StreamExtensions;
+using opogsr_launcher.Properties;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -82,6 +82,7 @@ namespace opogsr_launcher.Managers
                 else
                     File.SetAttributes(path, FileAttributes.Normal);
 
+                Logger.Info(Resources.CalculatingHashForFile, d.name);
                 if (d.hash != await FileHasher.XxHashFromFile(path))
                 {
                     not_validated_data.Add(d);
@@ -159,6 +160,7 @@ namespace opogsr_launcher.Managers
 
                     progress?.Report((asset.name, Convert.ToUInt64(total_bytes_read)));
 
+                    Logger.Info(Resources.CalculatingHashForFile, d.name);
                     if (d.hash != await FileHasher.XxHashFromFile(fs))
                     {
                         Logger.Exception(new Exception("Hash of downloaded file doesn't match with cached hash."));
@@ -206,84 +208,6 @@ namespace opogsr_launcher.Managers
         }
 
         public GithubDownloadManager(string Token, string Repo) : base(Token, Repo) {}
-    }
-
-    public class GithubUploadManager : GithubManager
-    {
-        const long large_chunk_size = 2 * 1000 * 1000 * 1000;
-
-        private async Task UploadFile(string url, Stream stream, IProgress<(ulong Sent, ulong Total)>? progress)
-        {
-            var content = new HttpProgressStreamContent(stream, progress);
-            content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/octet-stream");
-
-            var response = await api_client.PostAsync(url, content);
-            response.EnsureSuccessStatusCode();
-        }
-
-        public async Task UploadFile(IndexData d, IProgress<(ulong Sent, ulong Total)>? progress = null)
-        {
-            await RepoTask();
-
-            string directory = Path.Combine(StaticGlobals.Locations.Start, d.directory ?? "");
-
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
-
-            string path = Path.Combine(directory, d.name);
-
-            string name = Path.GetFileName(path);
-            using var fileStream = File.OpenRead(path);
-
-            if (fileStream.Length > large_chunk_size)
-            {
-                ChunkReadStream chunkStream = new ChunkReadStream(fileStream, large_chunk_size);
-
-                uint chunk = 1;
-
-                do
-                {
-                    string part_name = name + ".part_" + chunk.ToString("D3");
-
-                    await UploadFile(release.upload_url + "?name=" + part_name, chunkStream, progress);
-                    chunk++;
-                }
-                while (chunkStream.ReadNext());
-            }
-            else
-            {
-                await UploadFile(release.upload_url + "?name=" + name, fileStream, progress);
-            }
-        }
-
-        public async Task UpdateConfig(string path)
-        {
-            await DeleteFile("index.json");
-
-            var content = new StringContent(File.ReadAllText(path));
-            content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-
-            var response = await api_client.PostAsync(release.upload_url + "?name=index.json", content);
-            response.EnsureSuccessStatusCode();
-        }
-
-        public async Task DeleteFile(string name)
-        {
-            GithubAsset? asset = release.assets.Find(x => x.name == name);
-            if (asset != null)
-            {
-                var response = await api_client.DeleteAsync(asset.url);
-                response.EnsureSuccessStatusCode();
-
-            }
-        }
-
-        public GithubUploadManager(string Token, string Repo) : base(Token, Repo) 
-        {
-            api_client.Timeout = TimeSpan.FromHours(1);
-        }
     }
 
     public class GithubManager

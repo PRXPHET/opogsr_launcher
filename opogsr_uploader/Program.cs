@@ -3,10 +3,8 @@ using Microsoft.Extensions.Configuration;
 using opogsr_launcher.Hasher;
 using opogsr_launcher.JsonContext;
 using opogsr_launcher.Managers;
-using System.Collections.Concurrent;
+using opogsr_uploader;
 using System.Diagnostics;
-using System.IO;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 
 Console.Title = "OP OGSR Uploader";
