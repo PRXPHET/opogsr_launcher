@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace opogsr_launcher
 {
@@ -64,6 +62,13 @@ namespace opogsr_launcher
             }
         }
 
+        private static Dictionary<string, ConsoleColor> ConsoleColors = new()
+        {
+            ["! "] = ConsoleColor.Red,
+            ["~ "] = ConsoleColor.White,
+            ["# "] = ConsoleColor.Green
+        };
+
         private static void WriteToFile(string message, params object[] args)
         {
             if (!string.IsNullOrEmpty(s_fileName))
@@ -76,6 +81,30 @@ namespace opogsr_launcher
                 {
                     // спецом, чтобы не вылетать, если не может записать в файл
                 }
+            }
+            else
+            {
+                if (Environment.UserInteractive)
+                {
+                    var color = Console.ForegroundColor;
+
+                    foreach (var c in ConsoleColors)
+                    {
+                        if (message.StartsWith(c.Key))
+                        {
+                            color = c.Value;
+                            break;
+                        }
+                    }
+
+                    Console.ForegroundColor = color;
+
+                    Console.WriteLine(DateTime.Now.ToShortTimeString() + " " + string.Format(message, args));
+
+                    Console.ResetColor();
+                }
+                else
+                    Debug.WriteLine(DateTime.Now.ToShortTimeString() + " " + string.Format(message, args));
             }
         }
 
