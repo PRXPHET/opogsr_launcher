@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using opogsr_launcher.Managers;
+using opogsr_launcher.Other.Converters;
 using opogsr_launcher.Other.RuntimeResource;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -55,15 +56,6 @@ namespace opogsr_launcher.ViewModels
 
         private async void UpdateProgressBar(Progress<(string Name, ulong Total)> progress)
         {
-            // https://stackoverflow.com/a/4975942
-            static String BytesToString(ulong bytes)
-            {
-                string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
-                int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
-                double num = Math.Round(bytes / Math.Pow(1024, place), 1);
-                return num.ToString() + suf[place];
-            }
-
             ConcurrentDictionary<string, ulong> FileProgress = new();
 
             ulong prev_size = 0;
@@ -82,11 +74,11 @@ namespace opogsr_launcher.ViewModels
 
                 cur_size = FileProgress.Values.Aggregate((a, b) => a + b);
 
-                DownloadSpeedStr = $"{BytesToString(cur_size - prev_size)}/s";
+                DownloadSpeedStr = $"{BytesToString.Convert(cur_size - prev_size)}/s";
 
                 prev_size = cur_size;
 
-                SizeStr = $"{BytesToString(cur_size)} / {BytesToString(total_size)}";
+                SizeStr = $"{BytesToString.Convert(cur_size)} / {BytesToString.Convert(total_size)}";
 
                 Progress = Math.Floor(cur_size * (1.0 / total_size) * 100);
 

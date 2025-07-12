@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using opogsr_launcher.Hasher;
 using opogsr_launcher.JsonContext;
 using opogsr_launcher.Managers;
+using opogsr_launcher.Other.Converters;
 using opogsr_uploader;
 using System.Diagnostics;
 using System.Text.Json;
@@ -94,20 +95,38 @@ async Task<bool> ProcessDifference(List<IndexData> current, List<IndexData> remo
 
     await Parallel.ForEachAsync(toUpload, parallel_options, async (d, ct) =>
     {
-        Stopwatch sw2 = Stopwatch.StartNew();
         ulong prev_sent = 0;
+        ulong cur_sent = 0;
+        ulong size = 0;
+
+        bool keep_track = false;
+
+        async void LogSpeed()
+        {
+            while (keep_track)
+            {
+                await Task.Delay(1000, ct);
+
+                if (size > 0 && cur_sent > 0)
+                    Console.WriteLine($"[{d.name}]: {BytesToString.Convert(cur_sent)} of {BytesToString.Convert(size)}. Speed = {BytesToString.Convert(cur_sent - prev_sent)}/s.");
+
+                prev_sent = cur_sent;
+            }
+        }
+
         var progress = new Progress<(ulong Sent, ulong Total)>();
         progress.ProgressChanged += (_, data) =>
         {
-            ulong amount = data.Sent - prev_sent;
-            prev_sent = data.Sent;
-            double speed = amount / sw2.Elapsed.TotalSeconds / 1024;
-            sw2.Restart();
-            Console.WriteLine($"[{d.name}]: {data.Sent / 1024}Kb of {data.Total / 1024}Kb. AvgSpeed={speed:F2}Kb/sec");
+            cur_sent = data.Sent;
+            size = data.Total;
         };
+
+        keep_track = true;
+        LogSpeed();
         await manager.UploadFile(d, progress);
+        keep_track = false;
+
         Console.WriteLine("New file successfully uploaded: " + d.name);
-        sw2.Stop();
     });
 
     Console.WriteLine("Release has been updated...");
