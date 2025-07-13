@@ -9,6 +9,7 @@
 	<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	<LangVersion>13.0</LangVersion>
 	<UserSecretsId>d3dd6635-23f2-4ad9-875c-1469f89f5f05</UserSecretsId>
+	<AssemblyName>OPOGSR_Launcher</AssemblyName>
   </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -35,11 +36,11 @@
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <NoWarn>IL3050;IL2026;MSB3270;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CA1416</NoWarn>
+	  <NoWarn>IL3050;IL2026;MSB3270;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CA1416;LNK4099</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-	  <NoWarn>IL3050;IL2026;MSB3270;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CA1416</NoWarn>
+	  <NoWarn>IL3050;IL2026;MSB3270;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CA1416;LNK4099</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
