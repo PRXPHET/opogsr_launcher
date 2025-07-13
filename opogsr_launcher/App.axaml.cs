@@ -48,7 +48,7 @@ namespace opogsr_launcher
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            Logger.SetOutputFile(Path.Combine(Directory.GetCurrentDirectory(), Logger.LogFileName));
+            Logger.SetOutputFile(Path.Combine(StaticGlobals.Locations.Logs, Logger.LogFileName));
 
             MainViewModel mainViewModel = _serviceProvider.GetRequiredService<MainViewModel>();
 

@@ -24,6 +24,8 @@ namespace opogsr_launcher
 
             public static string Appdata { get; } = Start + "\\appdata";
 
+            public static string Logs { get; } = Appdata + "\\logs";
+
             public static string Saves { get; } = Appdata + "\\savedgames";
         }
 

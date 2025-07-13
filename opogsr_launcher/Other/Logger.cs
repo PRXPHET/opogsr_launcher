@@ -7,7 +7,7 @@ namespace opogsr_launcher
 {
     internal class Logger
     {
-        public static string LogFileName { get { return Path.GetFileNameWithoutExtension(StaticGlobals.Names.Executable) + ".log"; } }
+        public static string LogFileName { get { return "!" + Path.GetFileNameWithoutExtension(StaticGlobals.Names.Executable) + ".log"; } }
 
         private static string s_fileName;
 
