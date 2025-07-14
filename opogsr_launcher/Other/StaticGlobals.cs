@@ -9,11 +9,17 @@ namespace opogsr_launcher
             public static bool CanPlay { get; set; } = false;
         }
 
+        public static class Variables
+        {
+            public const long LargeChunkSize = 2 * 1000 * 1000 * 1000;
+            //public const long LargeChunkSize = 2 * 1000 * 1000;
+        }
+
         public static class Links
         {
-            public static string Discord = "https://discord.gg/XsWasFeTrC";
-            public static string ApPro = "https://ap-pro.ru/forums/topic/2371-op-ogsr";
-            public static string AMK = "https://www.amk-team.ru/forum/forum/178-op-ogsr/";
+            public const string Discord = "https://discord.gg/XsWasFeTrC";
+            public const string ApPro = "https://ap-pro.ru/forums/topic/2371-op-ogsr";
+            public const string AMK = "https://www.amk-team.ru/forum/forum/178-op-ogsr/";
         }
 
         public static class Locations

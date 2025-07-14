@@ -1,5 +1,4 @@
-﻿using opogsr_launcher.Properties;
-using System;
+﻿using System;
 using System.IO;
 using System.IO.Hashing;
 using System.Threading.Tasks;

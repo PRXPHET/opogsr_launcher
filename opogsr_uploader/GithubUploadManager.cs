@@ -1,4 +1,5 @@
-﻿using opogsr_launcher.Managers;
+﻿using opogsr_launcher;
+using opogsr_launcher.Managers;
 using opogsr_launcher.Other.StreamExtensions;
 using System.Net.Http.Headers;
 
@@ -6,8 +7,6 @@ namespace opogsr_uploader
 {
     public class GithubUploadManager : GithubManager
     {
-        const long large_chunk_size = 2 * 1000 * 1000 * 1000;
-
         private async Task UploadFile(string url, Stream stream, IProgress<(ulong Sent, ulong Total)>? progress)
         {
             var content = new HttpProgressStreamContent(stream, progress);
@@ -33,9 +32,9 @@ namespace opogsr_uploader
             string name = Path.GetFileName(path);
             using var fileStream = File.OpenRead(path);
 
-            if (fileStream.Length > large_chunk_size)
+            if (fileStream.Length > StaticGlobals.Variables.LargeChunkSize)
             {
-                ChunkReadStream chunkStream = new ChunkReadStream(fileStream, large_chunk_size);
+                ChunkReadStream chunkStream = new(fileStream, StaticGlobals.Variables.LargeChunkSize);
 
                 uint chunk = 1;
 

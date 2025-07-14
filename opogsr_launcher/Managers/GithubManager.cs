@@ -118,7 +118,8 @@ namespace opogsr_launcher.Managers
             static async Task EnsureHash(IndexData d, string path)
             {
                 Logger.Info(Resources.CalculatingHashForFile, d.name);
-                if (d.hash != await FileHasher.XxHashFromFile(path))
+                string hash = await FileHasher.XxHashFromFile(path);
+                if (d.hash != hash)
                 {
                     File.SetAttributes(path, FileAttributes.Normal);
                     File.Delete(path);
@@ -146,7 +147,7 @@ namespace opogsr_launcher.Managers
                 if (assets.Count != 0)
                 {
                     string output = Path.Combine(directory, d.name);
-                    success = await DownloadFile(assets, directory, output, progress, cts.Token, semaphore);
+                    success = await DownloadFile(d, assets, directory, output, progress, cts.Token, semaphore);
 
                     if (success)
                         await EnsureHash(d, output);
@@ -180,54 +181,95 @@ namespace opogsr_launcher.Managers
             return false;
         }
 
-        public async Task<bool> DownloadFile(List<GithubAsset> assets, string directory, string output, IProgress<(string name, ulong Total)>? progress, CancellationToken ct, SemaphoreSlim semaphore)
+        private static void EnsureFile(string path)
         {
-            List<string> paths = new();
-
-            var tasks = assets.WithMaxConcurrency(semaphore, async (a) =>
+            if (File.Exists(path))
             {
-                bool success = false;
+                File.SetAttributes(path, FileAttributes.Normal);
+                File.Delete(path);
+            }
+        }
 
-                string path = Path.Combine(directory, a.name);
-                success = await DownloadFile(a, path, progress, ct);
+        public async Task<bool> DownloadFile(IndexData d, List<GithubAsset> assets, string directory, string output, IProgress<(string name, ulong Total)>? progress, CancellationToken ct, SemaphoreSlim semaphore)
+        {
+            long size = 0;
+            assets.ForEach(a => size += Convert.ToInt64(a.size));
 
-                if (success)
-                    paths.Add(path);
+            string path = Path.Combine(directory, d.name);
 
-                return success;
+            EnsureFile(path);
+
+            ChunkMappedFileWriter writer = new(Path.Combine(directory, d.name), size, ct);
+
+            var tasks = assets.WithMaxConcurrency(semaphore, async (asset) => 
+            {
+                try
+                {
+                    var response = await download_client.GetAsync(asset.url, HttpCompletionOption.ResponseHeadersRead);
+                    response.EnsureSuccessStatusCode();
+
+                    await using var ms = await response.Content.ReadAsStreamAsync();
+
+                    var buffer = new byte[32768];
+
+                    int total_bytes_read = 0;
+                    int bytes_read;
+
+                    long position = assets.IndexOf(asset) * StaticGlobals.Variables.LargeChunkSize;
+
+                    writer.Start();
+
+                    while ((bytes_read = await ms.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                    {
+                        if (ct.IsCancellationRequested)
+                        {
+                            await writer.DestroyAsync();
+                            return false;
+                        }
+
+                        var read_memory = new byte[bytes_read];
+                        Buffer.BlockCopy(buffer, 0, read_memory, 0, bytes_read);
+
+                        writer.Data.Add(new MappedMemory() 
+                        { 
+                            memory = read_memory,
+                            position = position,
+                        });
+
+                        position += bytes_read;
+                        total_bytes_read += bytes_read;
+
+                        progress?.Report((asset.name, Convert.ToUInt64(total_bytes_read)));
+                    }
+
+                    progress?.Report((asset.name, Convert.ToUInt64(total_bytes_read)));
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    await writer.DestroyAsync();
+                    Logger.Error($"Error file during download. Name: {asset.name}");
+                    Logger.Exception(ex);
+                }
+
+                return false;
+
             }).ToList();
 
             var results = await Task.WhenAll(tasks);
 
-            if (results.Any(b => !b))
-                return false;
+            await writer.DisposeAsync();
 
-            paths.Sort();
-
-            try
-            {
-                ChunkMergeStream.Merge(paths, output);
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-                return false;
-            }
+            foreach (bool result in results)
+                if (!result)
+                    return false;
 
             return true;
         }
 
         public async Task<bool> DownloadFile(GithubAsset asset, string path, IProgress<(string name, ulong Total)>? progress, CancellationToken ct)
         {
-            static void EnsureFile(string path)
-            {
-                if (File.Exists(path))
-                {
-                    File.SetAttributes(path, FileAttributes.Normal);
-                    File.Delete(path);
-                }
-            }
-
             int retry = 0;
 
             while (retry < 5)
@@ -263,8 +305,6 @@ namespace opogsr_launcher.Managers
                     }
 
                     progress?.Report((asset.name, Convert.ToUInt64(total_bytes_read)));
-
-                    Logger.Info(Resources.CalculatingHashForFile, asset.name);
 
                     return true;
                 }

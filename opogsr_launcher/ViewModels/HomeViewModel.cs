@@ -72,6 +72,9 @@ namespace opogsr_launcher.ViewModels
             {
                 await Task.Delay(1000);
 
+                if (FileProgress.Count == 0)
+                    continue;
+
                 cur_size = FileProgress.Values.Aggregate((a, b) => a + b);
 
                 DownloadSpeedStr = $"{BytesToString.Convert(cur_size - prev_size)}/s";
