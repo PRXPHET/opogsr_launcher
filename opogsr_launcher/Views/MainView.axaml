@@ -57,10 +57,10 @@
 			</Grid>
 		</Border>
 		<Border Grid.Column="1">
-			<Grid HorizontalAlignment="Stretch" RowDefinitions="50 *">
-				<Border Grid.Row="0" VerticalAlignment="Top">
+			<Grid HorizontalAlignment="Stretch" RowDefinitions="0 *">
+				<Border ZIndex="1" Grid.Row="0" VerticalAlignment="Top">
 					<Grid Margin="10" Height="30" VerticalAlignment="Top" ColumnDefinitions="* 100">
-						<Border CornerRadius="6" Margin="0 0 10 0" Padding="0 3" HorizontalAlignment="Left" Grid.Column="0">
+						<Border IsVisible="{Binding HomeActive}" CornerRadius="6" Margin="0 0 10 0" Padding="0 3" HorizontalAlignment="Left" Grid.Column="0">
 							<Border.Background>
 								<SolidColorBrush Opacity="0.5" Color="Black"/>
 							</Border.Background>
@@ -84,7 +84,7 @@
 						</Border>
 					</Grid>
 				</Border>
-				<Border Grid.Row="1">
+				<Border ZIndex="0" Grid.Row="1">
 					<TransitioningContentControl Content="{Binding CurrentPage}"/>
 				</Border>
 			</Grid>
