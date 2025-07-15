@@ -4,6 +4,7 @@ using Avalonia.ReactiveUI;
 using ReactiveUI;
 using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
+using System.Threading;
 
 namespace opogsr_launcher
 {
@@ -28,9 +29,11 @@ namespace opogsr_launcher
                         Logger.Error("Stack Trace:");
                         Logger.Error(ex.StackTrace);
                     }
+
+                    throw;
                 }
                 else
-                    Debugger.Break();
+                    throw;
             }
         }
 
