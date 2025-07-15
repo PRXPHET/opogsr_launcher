@@ -54,8 +54,8 @@ namespace opogsr_launcher.ViewModels
 
         [Reactive] public ObservableCollection<Lang> Langs { get; private set; } =
         [
-            new() { Key = "rus", Title = "Русский" },
             new() { Key = "eng", Title = "English" },
+            new() { Key = "rus", Title = "Русский" },
             new() { Key = "ukr", Title = "Українська" }
         ];
 
@@ -93,7 +93,7 @@ namespace opogsr_launcher.ViewModels
                 LogActive = page == _LogPage;
             });
 
-            selectedLang = Langs.First(l => l.Key == Resource.Language) ?? Langs[0];
+            selectedLang = Langs.FirstOrDefault(l => l.Key == Resource.Language, Langs[0]);
 
             OpenLinkCommand = ReactiveCommand.Create<string>(OpenLink);
             LangSelectionCommand = ReactiveCommand.Create<string>(Resource.SetLanguage);

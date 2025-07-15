@@ -72,7 +72,7 @@ namespace opogsr_launcher.ViewModels
             {
                 await Task.Delay(1000);
 
-                if (FileProgress.Count == 0)
+                if (FileProgress.IsEmpty)
                     continue;
 
                 cur_size = FileProgress.Values.Aggregate((a, b) => a + b);

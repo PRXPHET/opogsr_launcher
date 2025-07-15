@@ -1,7 +1,7 @@
 ﻿using opogsr_launcher.Extensions;
+using opogsr_launcher.Extensions.StreamExtensions;
 using opogsr_launcher.Hasher;
 using opogsr_launcher.JsonContext;
-using opogsr_launcher.Other.StreamExtensions;
 using opogsr_launcher.Properties;
 using System;
 using System.Collections.Concurrent;

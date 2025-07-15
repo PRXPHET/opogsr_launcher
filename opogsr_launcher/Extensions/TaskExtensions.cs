@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace opogsr_launcher.Extensions
 {
-    public static class ClassExtensions
+    public static class TaskExtensions
     {
         public static IEnumerable<Task<R>> WithMaxConcurrency<T, R>(this IEnumerable<T> tasks, SemaphoreSlim maxOperations, Func<T, Task<R>> functor)
         {

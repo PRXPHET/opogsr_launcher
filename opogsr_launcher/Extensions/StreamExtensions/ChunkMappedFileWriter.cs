@@ -6,7 +6,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace opogsr_launcher.Other.StreamExtensions
+namespace opogsr_launcher.Extensions.StreamExtensions
 {
     public class MappedMemory
     {
