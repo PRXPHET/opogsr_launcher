@@ -10,6 +10,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Reactive;
 using System.Threading.Tasks;
 
@@ -124,6 +125,7 @@ namespace opogsr_launcher.ViewModels
 
             if (StaticGlobals.Stats.CanPlay)
             {
+                SystemSounds.Beep.Play();
                 ButtonMainStr.Key = "Play";
             }
 

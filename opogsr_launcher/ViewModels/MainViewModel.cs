@@ -4,6 +4,7 @@ using System;
 using System.Reactive;
 using opogsr_launcher.Properties;
 using MsBox.Avalonia;
+using System.Media;
 using System.Diagnostics;
 using System.Reactive.Linq;
 using System.Collections.ObjectModel;
