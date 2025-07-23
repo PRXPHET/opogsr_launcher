@@ -10,6 +10,7 @@
 	<LangVersion>13.0</LangVersion>
 	<UserSecretsId>d3dd6635-23f2-4ad9-875c-1469f89f5f05</UserSecretsId>
 	<AssemblyName>OPOGSR_Launcher</AssemblyName>
+	<ApplicationIcon>Assets\Images\icon.ico</ApplicationIcon>
   </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -80,6 +81,10 @@
     <None Remove=".gitignore" />
     <None Remove="dotnet.log" />
     <None Remove="README.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\Images\icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
