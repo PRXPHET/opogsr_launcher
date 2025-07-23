@@ -20,6 +20,8 @@ namespace opogsr_uploader
         {
             await RepoTask();
 
+            await DeleteFile(d.name);
+
             string directory = Path.Combine(Directory.GetCurrentDirectory(), d.directory ?? "");
 
             if (!Directory.Exists(directory))
