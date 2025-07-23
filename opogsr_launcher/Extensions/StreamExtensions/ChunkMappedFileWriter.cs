@@ -53,12 +53,11 @@ namespace opogsr_launcher.Extensions.StreamExtensions
                 if (_ct.IsCancellationRequested && Data.Count == 0)
                     break;
 
-                if (Data.Count == 0)
-                    continue;
-
-                var item = Data.Take(_ct);
-                _fileStream.Position = item.position;
-                await _fileStream.WriteAsync(item.memory, _ct);
+                while (Data.TryTake(out var item))
+                {
+                    _fileStream.Position = item.position;
+                    await _fileStream.WriteAsync(item.memory, _ct);
+                }
             }
         }
 
