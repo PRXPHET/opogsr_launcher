@@ -1,15 +1,11 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using HarfBuzzSharp;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using opogsr_launcher.Extensions;
 using opogsr_launcher.Other.RuntimeResource;
 using opogsr_launcher.ViewModels;
 using System;
-using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -22,12 +18,6 @@ namespace opogsr_launcher
         private static ServiceCollection ConfigureServiceProvider()
         {
             ServiceCollection collection = new();
-
-            collection.AddTransient<IConfiguration>(x =>
-            {
-                var configuration = new ConfigurationBuilder().AddUserSecrets<App>().Build();
-                return configuration;
-            });
 
             collection.AddManagers();
 

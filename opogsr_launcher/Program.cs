@@ -1,10 +1,7 @@
 ﻿using System;
 using Avalonia;
 using Avalonia.ReactiveUI;
-using ReactiveUI;
-using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
-using System.Threading;
 
 namespace opogsr_launcher
 {

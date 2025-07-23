@@ -1,9 +1,9 @@
 ﻿
-using Microsoft.Extensions.Configuration;
 using opogsr_launcher.Hasher;
 using opogsr_launcher.JsonContext;
 using opogsr_launcher.Managers;
 using opogsr_launcher.Other.Converters;
+using opogsr_launcher.Other.Secrets;
 using opogsr_uploader;
 using System.Diagnostics;
 using System.Text.Json;
@@ -26,10 +26,8 @@ JsonSerializerOptions options = new()
     TypeInfoResolver = SourceGenerationContext.Default
 };
 
-var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-
-string token = config["GithubUploadToken"];
-string repo = config["GithubRepo"];
+const string token = Secrets.GithubUploadToken;
+const string repo = Secrets.GithubRepo;
 
 GithubUploadManager manager = new(token, repo);
 
