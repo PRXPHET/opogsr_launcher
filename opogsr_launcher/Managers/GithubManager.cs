@@ -384,7 +384,7 @@ namespace opogsr_launcher.Managers
 
         private async Task ReadRelease()
         {
-            var httpResult = await api_client.GetAsync("releases/latest");
+            var httpResult = await api_client.GetAsync("releases/tags/base");
             httpResult.EnsureSuccessStatusCode();
             string contents = await httpResult.Content.ReadAsStringAsync();
             release = JsonSerializer.Deserialize(contents, SourceGenerationContext.Default.GithubRelease);
