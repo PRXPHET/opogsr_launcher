@@ -19,6 +19,7 @@
 		<PublishTrimmed>true</PublishTrimmed>
 		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 		<TrimMode>link</TrimMode>
+		<PublishWmiLightStaticallyLinked>true</PublishWmiLightStaticallyLinked>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(Configuration)' == 'Release'">
