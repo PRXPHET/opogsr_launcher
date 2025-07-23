@@ -90,7 +90,7 @@ namespace opogsr_uploader
 
         public GithubUploadManager(string Token, string Repo) : base(Token, Repo)
         {
-            api_client.Timeout = TimeSpan.FromHours(1);
+            api_client.Timeout = TimeSpan.FromHours(6);
         }
     }
 }
