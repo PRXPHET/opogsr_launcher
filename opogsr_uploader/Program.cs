@@ -41,9 +41,17 @@ Console.WriteLine("Checking for hashes...");
 
 data.AsParallel().WithDegreeOfParallelism(8).ForAll(d =>
 {
-    Console.WriteLine("Calc hash for file " + d.name);
     string fullFileName = Path.Combine(dir, d.directory ?? "", d.name);
     using var stream = File.OpenRead(fullFileName);
+
+    if (d.base_file && Convert.ToUInt64(stream.Length) == manager.Size(d.name, true).GetAwaiter().GetResult())
+    {
+        Console.WriteLine("Base file detected and size of it wasn't changed: " + d.name);
+        return;
+    }
+
+    Console.WriteLine("Calc hash for file " + d.name);
+
     string hash = FileHasher.XxHashFromFile(stream).GetAwaiter().GetResult();
     if (d.hash != hash)
     {

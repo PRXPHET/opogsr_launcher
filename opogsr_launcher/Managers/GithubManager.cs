@@ -328,25 +328,11 @@ namespace opogsr_launcher.Managers
 
         public async Task<ulong> Size()
         {
-            await RepoTask();
-
             ulong size = 0;
+
             foreach (IndexData d in not_validated_data)
-            {
-                List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(d.name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
+                size += await Size(d.name);
 
-                if (assets.Count != 0)
-                    assets.ForEach(a => size += a.size);
-                else
-                {
-                    GithubAsset a = release.assets.Find(x => x.name == d.name);
-
-                    if (a is null)
-                        Logger.Exception(new Exception($"Github asset is null. Name: {d.name}"));
-
-                    size += a.size;
-                }
-            }
             return size;
         }
 
@@ -398,6 +384,33 @@ namespace opogsr_launcher.Managers
         }
 
         public async Task RepoTask() => await ReadRepoTask.WaitAsync(CancellationToken.None);
+
+        public async Task<ulong> Size(string name, bool no_assert = false)
+        {
+            await RepoTask();
+
+            ulong size = 0;
+            List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
+
+            if (assets.Count != 0)
+                assets.ForEach(a => size += a.size);
+            else
+            {
+                GithubAsset? a = release.assets.Find(x => x.name == name);
+
+                if (a is null)
+                {
+                    if (no_assert)
+                        return 0;
+                    else
+                        Logger.Exception(new Exception($"Github asset is null. Name: {name}"));
+                }
+
+                size += a.size;
+            }
+
+            return size;
+        }
 
         public GithubManager(string Token, string Repo)
         {
