@@ -77,6 +77,7 @@ namespace opogsr_uploader
                     var response = await api_client.DeleteAsync(a.url);
                     response.EnsureSuccessStatusCode();
                     Console.WriteLine("Deleted file part: " + a.name);
+                    release.assets.Remove(a);
                 });
             }
             else
@@ -86,6 +87,7 @@ namespace opogsr_uploader
                 {
                     var response = await api_client.DeleteAsync(asset.url);
                     response.EnsureSuccessStatusCode();
+                    release.assets.Remove(asset);
                 }
             }
         }
