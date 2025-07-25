@@ -15,9 +15,8 @@ string index = Path.Combine(dir, "index.json");
 
 if (!File.Exists(index))
 {
-    Console.WriteLine("Index file not found. Press Enter to close app.");
-    Console.ReadKey();
-    return;
+    Console.WriteLine("Index file not found.");
+    Close();
 }
 
 JsonSerializerOptions options = new()
@@ -65,9 +64,8 @@ bool changed = await ProcessDifference(data, manager.data);
 if (!changed)
 {
     sw.Stop();
-    Console.WriteLine("No changed files detected. Press Enter to close app.");
-    Console.ReadKey();
-    return;
+    Console.WriteLine("No changed files detected.");
+    Close();
 }
 
 Console.WriteLine("Updating index...");
@@ -77,6 +75,8 @@ await manager.UpdateConfig(index);
 sw.Stop();
 
 Console.WriteLine("Successfully completed in: " + sw.Elapsed.ToString());
+
+Close();
 
 async Task<bool> ProcessDifference(List<IndexData> current, List<IndexData> remote)
 {
@@ -138,6 +138,16 @@ async Task<bool> ProcessDifference(List<IndexData> current, List<IndexData> remo
     Console.WriteLine("Release has been updated...");
 
     return true;
+}
+
+static void Close()
+{
+    if (!Debugger.IsAttached)
+    {
+        Console.WriteLine("Press Enter to close.");
+        Console.ReadKey();
+    }
+    Environment.Exit(0);
 }
 
 public class IndexDataComparer : IEqualityComparer<IndexData>
