@@ -82,7 +82,7 @@ namespace opogsr_launcher.ViewModels
 
             Resource = resource;
 
-            Logger.Info(Resources.AppStart);
+            Logger.Info("Start...");
 
             _HomePage.ValidateFiles();
 

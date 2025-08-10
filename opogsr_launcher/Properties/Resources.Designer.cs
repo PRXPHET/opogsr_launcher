@@ -61,24 +61,6 @@ namespace opogsr_launcher.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Start....
-        /// </summary>
-        public static string AppStart {
-            get {
-                return ResourceManager.GetString("AppStart", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на Can&apos;t find base_files in JSON..
-        /// </summary>
-        public static string BaseFilesNotFound {
-            get {
-                return ResourceManager.GetString("BaseFilesNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Ищет локализованную строку, похожую на Home.
         /// </summary>
         public static string ButtonHome {
@@ -111,15 +93,6 @@ namespace opogsr_launcher.Properties {
         public static string ButtonSettings {
             get {
                 return ResourceManager.GetString("ButtonSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на Calculating hash for file [{0}].
-        /// </summary>
-        public static string CalculatingHashForFile {
-            get {
-                return ResourceManager.GetString("CalculatingHashForFile", resourceCulture);
             }
         }
         
@@ -183,15 +156,6 @@ namespace opogsr_launcher.Properties {
         public static string StateIdling {
             get {
                 return ResourceManager.GetString("StateIdling", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на Can&apos;t find update_files in JSON..
-        /// </summary>
-        public static string UpdateFilesNotFound {
-            get {
-                return ResourceManager.GetString("UpdateFilesNotFound", resourceCulture);
             }
         }
         

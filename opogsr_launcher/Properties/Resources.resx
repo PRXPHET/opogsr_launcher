@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BaseFilesNotFound" xml:space="preserve">
-    <value>Can't find base_files in JSON.</value>
-  </data>
   <data name="ButtonHome" xml:space="preserve">
     <value>Home</value>
   </data>
@@ -131,9 +128,6 @@
   </data>
   <data name="ButtonSettings" xml:space="preserve">
     <value>Settings</value>
-  </data>
-  <data name="CalculatingHashForFile" xml:space="preserve">
-    <value>Calculating hash for file [{0}]</value>
   </data>
   <data name="Downloading" xml:space="preserve">
     <value>Downloading...</value>
@@ -156,13 +150,7 @@
   <data name="StateIdling" xml:space="preserve">
     <value>Idling...</value>
   </data>
-  <data name="UpdateFilesNotFound" xml:space="preserve">
-    <value>Can't find update_files in JSON.</value>
-  </data>
   <data name="ValidatingFiles" xml:space="preserve">
     <value>Validating files...</value>
-  </data>
-  <data name="AppStart" xml:space="preserve">
-    <value>Start...</value>
   </data>
 </root>

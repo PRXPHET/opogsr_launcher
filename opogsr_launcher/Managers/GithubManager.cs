@@ -58,7 +58,7 @@ namespace opogsr_launcher.Managers
     {
         private ConcurrentBag<IndexData> not_validated_data = new();
 
-        public bool ValidateBase(IndexData d, Stream stream)
+        private bool ValidateBase(IndexData d, Stream stream)
         {
             List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(d.name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
 
@@ -105,7 +105,7 @@ namespace opogsr_launcher.Managers
                     return;
                 }
 
-                Logger.Info(Resources.CalculatingHashForFile, d.name);
+                Logger.Info("Calculating hash for file [{0}]", d.name);
                 if (d.hash != await FileHasher.XxHashFromFile(stream))
                     not_validated_data.Add(d);
 
@@ -117,7 +117,7 @@ namespace opogsr_launcher.Managers
         {
             static async Task EnsureHash(IndexData d, string path)
             {
-                Logger.Info(Resources.CalculatingHashForFile, d.name);
+                Logger.Info("Calculating hash for file [{0}]", d.name);
                 string hash = await FileHasher.XxHashFromFile(path);
                 if (d.hash != hash)
                 {
@@ -219,6 +219,8 @@ namespace opogsr_launcher.Managers
 
                     writer.Start();
 
+                    Logger.Info("File part download started: {0}", asset.name);
+
                     while ((bytes_read = await ms.ReadAsync(buffer, 0, buffer.Length)) > 0)
                     {
                         if (ct.IsCancellationRequested)
@@ -249,7 +251,7 @@ namespace opogsr_launcher.Managers
                 catch (Exception ex)
                 {
                     await writer.DestroyAsync();
-                    Logger.Error($"Error file during download. Name: {asset.name}");
+                    Logger.Error($"Error file during download. Exception: {ex.Message}, Name: {asset.name}.");
                     Logger.Exception(ex);
                 }
 
@@ -288,6 +290,8 @@ namespace opogsr_launcher.Managers
 
                     int total_bytes_read = 0;
                     int bytes_read;
+
+                    Logger.Info("File download started: {0}", asset.name);
 
                     while ((bytes_read = await ms.ReadAsync(buffer, 0, buffer.Length)) > 0)
                     {
