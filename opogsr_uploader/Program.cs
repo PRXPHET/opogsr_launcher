@@ -34,6 +34,10 @@ await manager.RepoTask();
 
 List<IndexData> data = JsonSerializer.Deserialize(File.ReadAllText(index), SourceGenerationContext.Default.ListIndexData);
 
+Console.WriteLine("Do you want to forcefully check hashes for base files? Press Y for 'yes' and any other key for 'no'.");
+ConsoleKeyInfo input = Console.ReadKey(true);
+bool force_hash = input.Key == ConsoleKey.Y;
+
 Stopwatch sw = Stopwatch.StartNew();
 
 Console.WriteLine("Checking for hashes...");
@@ -43,7 +47,7 @@ data.AsParallel().WithDegreeOfParallelism(8).ForAll(d =>
     string fullFileName = Path.Combine(dir, d.directory ?? "", d.name);
     using var stream = File.OpenRead(fullFileName);
 
-    if (d.base_file && Convert.ToUInt64(stream.Length) == manager.Size(d.name, true).GetAwaiter().GetResult())
+    if (!force_hash && d.base_file && Convert.ToUInt64(stream.Length) == manager.Size(d.name, true).GetAwaiter().GetResult())
     {
         Console.WriteLine("Base file detected and size of it wasn't changed: " + d.name);
         return;
