@@ -2,7 +2,6 @@
 using opogsr_launcher.Extensions.StreamExtensions;
 using opogsr_launcher.Hasher;
 using opogsr_launcher.JsonContext;
-using opogsr_launcher.Properties;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -132,10 +131,11 @@ namespace opogsr_launcher.Managers
 
             var semaphore = new SemaphoreSlim(4);
 
-            var tasks = not_validated_data.WithMaxConcurrency(semaphore, async (d) =>
-            {
-                List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(d.name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
+            List<IndexData> data = [.. not_validated_data];
+            not_validated_data.Clear();
 
+            var tasks = data.WithMaxConcurrency(semaphore, async (d) =>
+            {
                 bool success = false;
 
                 string directory = Path.Combine(StaticGlobals.Locations.Start, d.directory ?? "");
@@ -145,41 +145,36 @@ namespace opogsr_launcher.Managers
                     Directory.CreateDirectory(directory);
                 }
 
+                string path = Path.Combine(directory, d.name);
+
+                List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(d.name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
+
                 if (assets.Count != 0)
                 {
-                    string output = Path.Combine(directory, d.name);
-                    success = await DownloadFile(d, assets, directory, output, progress, cts.Token, semaphore);
-
-                    if (success)
-                        await EnsureHash(d, output);
+                    success = await DownloadFile(d, assets, directory, path, progress, cts.Token, semaphore);
                 }
                 else
                 {
                     GithubAsset asset = release.assets.Find(x => x.name == d.name);
 
-                    string path = Path.Combine(directory, d.name);
-
                     success = await DownloadFile(asset, path, progress, cts.Token);
-
-                    if (success)
-                        await EnsureHash(d, path);
                 }
 
-                if (!success && !cts.IsCancellationRequested)
-                    cts.Cancel();
+                if (success)
+                    await EnsureHash(d, path);
+                else
+                    not_validated_data.Add(d);
 
                 return success;
             });
 
-            await Task.WhenAll(tasks);
+            var results = await Task.WhenAll(tasks);
 
-            if (!cts.IsCancellationRequested)
-            {
-                not_validated_data.Clear();
-                return true;
-            }
+            foreach (bool result in results)
+                if (!result)
+                    return false;
 
-            return false;
+            return true;
         }
 
         private static void EnsureFile(string path)
