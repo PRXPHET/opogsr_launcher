@@ -57,6 +57,7 @@ namespace opogsr_launcher.Managers
     public class GithubDownloadManager : GithubManager
     {
         private ConcurrentBag<IndexData> not_validated_data = new();
+        protected HttpClient download_client = new();
 
         private bool ValidateBase(IndexData d, Stream stream)
         {
@@ -340,16 +341,19 @@ namespace opogsr_launcher.Managers
             return size;
         }
 
-        public GithubDownloadManager(string Token, string Repo) : base(Token, Repo) {}
+        public GithubDownloadManager(string Token, string Repo) : base(Token, Repo) 
+        {
+            download_client.DefaultRequestHeaders.Add("Accept", "application/octet-stream");
+            download_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+            download_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("product", "1"));
+            download_client.DefaultRequestHeaders.ExpectContinue = false;
+            download_client.Timeout = TimeSpan.FromHours(1);
+        }
     }
 
     public class GithubManager
     {
-        private readonly string token;
-        private readonly string repo;
-
         protected HttpClient api_client = new();
-        protected HttpClient download_client = new();
 
         protected GithubRelease release = new();
         public List<IndexData> data { get; private set; } = new();
@@ -366,25 +370,23 @@ namespace opogsr_launcher.Managers
                 return;
             }
 
-            var httpResult = await download_client.GetAsync(asset.url);
+            HttpRequestMessage msg = new();
+            msg.Headers.Add("Accept", "application/octet-stream");
+            msg.RequestUri = new Uri(asset.url);
+
+            var httpResult = await api_client.SendAsync(msg);
             httpResult.EnsureSuccessStatusCode();
             string contents = await httpResult.Content.ReadAsStringAsync();
             data = JsonSerializer.Deserialize(contents, SourceGenerationContext.Default.ListIndexData);
         }
 
-        private async Task ReadRelease()
+        private async Task ReadRelease(string repo)
         {
-            var httpResult = await api_client.GetAsync("releases/tags/base");
+            var httpResult = await api_client.GetAsync($"https://api.github.com/repos/{repo}/releases/tags/base");
             httpResult.EnsureSuccessStatusCode();
             string contents = await httpResult.Content.ReadAsStringAsync();
             release = JsonSerializer.Deserialize(contents, SourceGenerationContext.Default.GithubRelease);
             release.upload_url = release.upload_url.Replace("{?name,label}", "");
-        }
-
-        private async Task ReadRepo()
-        {
-            await ReadRelease();
-            await ReadConfig();
         }
 
         public async Task RepoTask() => await ReadRepoTask.WaitAsync(CancellationToken.None);
@@ -418,21 +420,15 @@ namespace opogsr_launcher.Managers
 
         public GithubManager(string Token, string Repo)
         {
-            token = Token;
-            repo = Repo;
-
-            api_client.BaseAddress = new Uri($"https://api.github.com/repos/{repo}/");
-            api_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            api_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
             api_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("product", "1"));
             api_client.Timeout = TimeSpan.FromSeconds(15);
 
-            download_client.DefaultRequestHeaders.Add("Accept", "application/octet-stream");
-            download_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            download_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("product", "1"));
-            download_client.DefaultRequestHeaders.ExpectContinue = false;
-            download_client.Timeout = TimeSpan.FromHours(1);
-
-            ReadRepoTask = Task.Run(ReadRepo);
+            ReadRepoTask = Task.Run(async () =>
+            {
+                await ReadRelease(Repo);
+                await ReadConfig();
+            });
         }
     }
 }
