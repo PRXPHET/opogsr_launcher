@@ -63,7 +63,13 @@ namespace opogsr_launcher.Managers
             List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(d.name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
 
             ulong size = 0;
-            assets.ForEach(a => size += a.size);
+            if (assets.Count > 0)
+                assets.ForEach(a => size += a.size);
+            else
+            {
+                GithubAsset a = release.assets.Find(x => x.name == d.name);
+                size = a.size;
+            }
 
             return size == Convert.ToUInt64(stream.Length);
         }
