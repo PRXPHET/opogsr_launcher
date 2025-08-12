@@ -45,30 +45,28 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="11.3.2" />
-		<PackageReference Include="Avalonia.Desktop" Version="11.3.2" />
-		<PackageReference Include="Avalonia.ReactiveUI" Version="11.3.2" />
-		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.2" />
-		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.2" />
+		<PackageReference Include="Avalonia" Version="11.3.3" />
+		<PackageReference Include="Avalonia.Desktop" Version="11.3.3" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="11.3.3" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.3" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.3" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Include="Avalonia.Diagnostics" Version="11.3.2">
-      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
-      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.3.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>none</IncludeAssets>
     </PackageReference>
     <PackageReference Include="HarfBuzzSharp" Version="8.3.1.1" />
     <PackageReference Include="HarfBuzzSharp.NativeAssets.Win32" Version="8.3.1.1" />
     <PackageReference Include="MessageBox.Avalonia" Version="3.2.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
     <PackageReference Include="Pfim" Version="0.11.3" />
     <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
     <PackageReference Include="SkiaSharp" Version="2.88.9" />
-    <PackageReference Include="System.IO.Hashing" Version="9.0.7" />
-    <PackageReference Include="System.Management" Version="9.0.7" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.7" />
-    <PackageReference Include="System.Text.Json" Version="9.0.7" />
-    <PackageReference Include="System.Windows.Extensions" Version="9.0.7" />
-    <PackageReference Include="WmiLight" Version="6.14.0" />
+    <PackageReference Include="System.IO.Hashing" Version="9.0.8" />
+    <PackageReference Include="System.Management" Version="9.0.8" />
+    <PackageReference Include="System.Text.Json" Version="9.0.8" />
+    <PackageReference Include="System.Windows.Extensions" Version="9.0.8" />
   </ItemGroup>
 
   <ItemGroup>
