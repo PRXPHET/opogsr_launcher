@@ -115,6 +115,15 @@ namespace opogsr_launcher.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Start.
+        /// </summary>
+        public static string LoadSave {
+            get {
+                return ResourceManager.GetString("LoadSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Play.
         /// </summary>
         public static string Play {

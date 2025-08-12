@@ -38,7 +38,7 @@
 							</Border>
 							<Border Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
 								<StackPanel>
-									<Button FontSize="24" Content="Запустить">
+									<Button FontSize="24" Command="{Binding LoadSaveCommand}" Content="{Binding LoadSaveStr.Text}">
 										<Button.IsVisible>
 											<MultiBinding Converter="{x:Static BoolConverters.And}">
 												<Binding Source="{x:Static local:StaticGlobals+Stats.CanPlay}"/>

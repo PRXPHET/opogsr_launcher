@@ -1,4 +1,5 @@
-﻿using opogsr_launcher.Managers;
+﻿using opogsr_launcher.Helpers;
+using opogsr_launcher.Managers;
 using opogsr_launcher.Other.Converters;
 using opogsr_launcher.Other.RuntimeResource;
 using ReactiveUI;
@@ -127,27 +128,9 @@ namespace opogsr_launcher.ViewModels
             ValidationStr.Key = "";
         }
 
-        private void StartGame()
+        private static void StartGame()
         {
-            string path = Path.Combine(StaticGlobals.Locations.Bin, StaticGlobals.Names.GameExecutable);
-
-            if (!File.Exists(path))
-            {
-                Logger.Exception(new Exception("Game executable not found. Something strange."));
-            }
-
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = path,
-                    UseShellExecute = true,
-                    CreateNoWindow = true
-                }
-            };
-
-            process.Start();
-
+            LauncherHelper.LaunchGame();
             ApplicationHelper.MainWindow.Close();
         }
 

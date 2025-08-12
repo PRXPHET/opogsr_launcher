@@ -1,7 +1,13 @@
-﻿using ReactiveUI.Fody.Helpers;
+﻿using opogsr_launcher.Helpers;
+using opogsr_launcher.Other.RuntimeResource;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Text;
 
 namespace opogsr_launcher.ViewModels
@@ -19,6 +25,10 @@ namespace opogsr_launcher.ViewModels
 
         [Reactive] public SaveFile SelectedSave { get; set; }
 
+        [Reactive] public ReactiveCommand<Unit, Unit> LoadSaveCommand { get; set; }
+
+        [Reactive] public RuntimeResourceString LoadSaveStr { get; set; }
+
         private Encoding GetEncoding()
         {
             try
@@ -31,7 +41,7 @@ namespace opogsr_launcher.ViewModels
             }
         }
 
-        private void Load()
+        private void LoadSavesList()
         {
             if (Directory.Exists(StaticGlobals.Locations.Saves))
             {
@@ -58,9 +68,19 @@ namespace opogsr_launcher.ViewModels
             }
         }
 
-        public LoadViewModel()
+        private void LoadSave()
         {
-            Load();
+            LauncherHelper.LaunchGame(args: ["-start server(" + SelectedSave.FileName.Replace(StaticGlobals.Extensions.Save, "") + "/single/alife/load) client(localhost)"]);
+            ApplicationHelper.MainWindow.Close();
+        }
+
+        public LoadViewModel(RuntimeResource resource)
+        {
+            LoadSaveStr = new(resource, "LoadSave");
+
+            LoadSaveCommand = ReactiveCommand.Create(LoadSave);
+
+            LoadSavesList();
         }
     }
 }

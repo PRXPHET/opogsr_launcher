@@ -153,4 +153,7 @@
   <data name="ValidatingFiles" xml:space="preserve">
     <value>Проверка файлов...</value>
   </data>
+  <data name="LoadSave" xml:space="preserve">
+    <value>Запустить</value>
+  </data>
 </root>
