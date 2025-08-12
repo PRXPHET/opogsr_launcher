@@ -15,14 +15,16 @@
 				<Border.Background>
 					<SolidColorBrush Color="Black" Opacity="0.5"/>
 				</Border.Background>
-				<ItemsControl ItemsSource="{Binding Logs}">
-					<ItemsControl.ItemTemplate>
-						<DataTemplate>
-							<StackPanel>
-								<Label Foreground="{Binding Brush}" Content="{Binding Text}"></Label>
-							</StackPanel>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<ItemsControl ItemsSource="{Binding Logs}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<StackPanel>
+									<Label Foreground="{Binding Brush}" Content="{Binding Text}"></Label>
+								</StackPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</ScrollViewer>
 	        </Border>
 </UserControl>
