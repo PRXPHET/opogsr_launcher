@@ -7,6 +7,9 @@
 # Launcher logs
 *.log
 
+# Launch settings
+*launchSettings.json
+
 # Static libs
 *.lib
 
