@@ -25,8 +25,8 @@
 						<ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="0.5* 0.5*">
-									<TextBlock Grid.Column="0" FontFamily="Bender" Text="{Binding Text}" />
-									<TextBlock HorizontalAlignment="Right" Grid.Column="1" FontFamily="Bender" Text="{Binding WriteTime}" />
+									<TextBlock Foreground="White" Grid.Column="0" FontFamily="Bender" Text="{Binding Text}" />
+									<TextBlock Foreground="White" HorizontalAlignment="Right" Grid.Column="1" FontFamily="Bender" Text="{Binding WriteTime}" />
 								</Grid>
 							</DataTemplate>
 						</ListBox.ItemTemplate>
