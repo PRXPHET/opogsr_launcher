@@ -31,6 +31,8 @@ namespace opogsr_launcher.Managers
         public ulong size { get; set; }
         [JsonPropertyName("url")]
         public string url { get; set; }
+        [JsonPropertyName("created_at")]
+        public DateTime createdAtTime { get; set; }
     }
 
     public class GithubRelease
@@ -210,9 +212,7 @@ namespace opogsr_launcher.Managers
 
             string path = Path.Combine(directory, d.name);
 
-            EnsureFile(path);
-
-            ChunkMappedFileWriter writer = new(Path.Combine(directory, d.name), size, ct);
+            ChunkMappedFileWriter writer = new(path, size, ct);
 
             writer.Start();
 
@@ -329,10 +329,19 @@ namespace opogsr_launcher.Managers
 
                     if (position > 0)
                     {
-                        bool supports = await AddRangeRequestAsync(request, asset.url, position);
-                        if (!supports)
+                        if (File.GetCreationTimeUtc(path) == asset.createdAtTime && File.GetLastWriteTimeUtc(path) == asset.createdAtTime) 
                         {
-                            Logger.Error("Range request not supported. Starting again: {0}", asset.name);
+                            bool supports = await AddRangeRequestAsync(request, asset.url, position);
+                            if (!supports)
+                            {
+                                Logger.Error("Range request not supported. Starting again: {0}", asset.name);
+                                File.Delete(path);
+                            }
+                        }
+                        else
+                        {
+                            Logger.Info("File was updated. Deleting it for redownload: {0}", asset.name);
+                            position = 0;
                             File.Delete(path);
                         }
                     }
@@ -342,6 +351,9 @@ namespace opogsr_launcher.Managers
 
                     await using var ms = await response.Content.ReadAsStreamAsync();
                     await using var fs = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.None);
+
+                    File.SetCreationTimeUtc(fs.SafeFileHandle, asset.createdAtTime);
+                    File.SetLastWriteTimeUtc(fs.SafeFileHandle, asset.createdAtTime);
 
                     var buffer = new byte[32768];
 
