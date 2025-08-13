@@ -192,6 +192,17 @@ namespace opogsr_launcher.Managers
             }
         }
 
+        private async Task<bool> AddRangeRequestAsync(HttpRequestMessage msg, string url, long position)
+        {
+            using var response = await download_client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
+
+            bool supports = response.Headers.AcceptRanges.Contains("bytes");
+            if (supports)
+                msg.Headers.Range = new RangeHeaderValue(position, null);
+
+            return supports;
+        }
+
         public async Task<bool> DownloadFile(IndexData d, List<GithubAsset> assets, string directory, string output, IProgress<(string name, ulong Total)>? progress, CancellationToken ct, SemaphoreSlim semaphore)
         {
             long size = 0;
@@ -203,58 +214,90 @@ namespace opogsr_launcher.Managers
 
             ChunkMappedFileWriter writer = new(Path.Combine(directory, d.name), size, ct);
 
+            writer.Start();
+
             var tasks = assets.WithMaxConcurrency(semaphore, async (asset) => 
             {
-                try
+                long start_position = assets.IndexOf(asset) * StaticGlobals.Variables.LargeChunkSize;
+                long position = start_position;
+
+                int retry = 0;
+
+                while (retry < 5)
                 {
-                    var response = await download_client.GetAsync(asset.url, HttpCompletionOption.ResponseHeadersRead);
-                    response.EnsureSuccessStatusCode();
-
-                    await using var ms = await response.Content.ReadAsStreamAsync();
-
-                    var buffer = new byte[32768];
-
-                    int total_bytes_read = 0;
-                    int bytes_read;
-
-                    long position = assets.IndexOf(asset) * StaticGlobals.Variables.LargeChunkSize;
-
-                    writer.Start();
-
-                    Logger.Info("File part download started: {0}", asset.name);
-
-                    while ((bytes_read = await ms.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                    try
                     {
-                        if (ct.IsCancellationRequested)
+                        using var request = new HttpRequestMessage(HttpMethod.Get, asset.url);
+
+                        if (retry >= 1)
                         {
-                            await writer.DestroyAsync();
-                            return false;
+                            bool supports = await AddRangeRequestAsync(request, asset.url, position - start_position);
+                            if (!supports)
+                            {
+                                Logger.Error("Range request not supported. Filling chunk with zeros: {0}", asset.name);
+                                await writer.ZeroFill(start_position, position);
+                                position = start_position;
+                            }
+                        }
+                        else if (!writer.FileCreated)
+                        {
+                            Logger.Error("Filling chunk with zeros: {0}", asset.name);
+                            await writer.ZeroFill(start_position, position);
+                            position = start_position;
                         }
 
-                        var read_memory = new byte[bytes_read];
-                        Buffer.BlockCopy(buffer, 0, read_memory, 0, bytes_read);
+                            var response = await download_client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                        response.EnsureSuccessStatusCode();
 
-                        writer.Data.Add(new MappedMemory() 
-                        { 
-                            memory = read_memory,
-                            position = position,
-                        });
+                        await using var ms = await response.Content.ReadAsStreamAsync();
 
-                        position += bytes_read;
-                        total_bytes_read += bytes_read;
+                        var buffer = new byte[32768];
+
+                        int total_bytes_read = retry >= 1 ? Convert.ToInt32(position - start_position) : 0;
+                        int bytes_read;
+
+                        Logger.Info("File part download started: {0}", asset.name);
+
+                        while ((bytes_read = await ms.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                        {
+                            if (ct.IsCancellationRequested || writer.IsDestroyed)
+                            {
+                                await writer.DestroyAsync();
+                                return false;
+                            }
+
+                            var read_memory = new byte[bytes_read];
+                            Buffer.BlockCopy(buffer, 0, read_memory, 0, bytes_read);
+
+                            writer.Data.Add(new MappedMemory()
+                            {
+                                memory = read_memory,
+                                position = position,
+                            });
+
+                            position += bytes_read;
+                            total_bytes_read += bytes_read;
+
+                            progress?.Report((asset.name, Convert.ToUInt64(total_bytes_read)));
+                        }
 
                         progress?.Report((asset.name, Convert.ToUInt64(total_bytes_read)));
+
+                        return true;
                     }
+                    catch (Exception ex)
+                    {
+                        retry++;
 
-                    progress?.Report((asset.name, Convert.ToUInt64(total_bytes_read)));
-
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    await writer.DestroyAsync();
-                    Logger.Error($"Error file during download. Exception: {ex.Message}, Name: {asset.name}.");
-                    Logger.Exception(ex);
+                        Logger.Error($"Error file during download. Exception: {ex.Message}, Name: {asset.name}, Attempt {retry}.");
+                    }
+                    finally
+                    {
+                        if (retry >= 5)
+                        {
+                            EnsureFile(path);
+                        }
+                    }
                 }
 
                 return false;
@@ -280,17 +323,29 @@ namespace opogsr_launcher.Managers
             {
                 try
                 {
-                    EnsureFile(path);
+                    using var request = new HttpRequestMessage(HttpMethod.Get, asset.url);
 
-                    var response = await download_client.GetAsync(asset.url, HttpCompletionOption.ResponseHeadersRead);
+                    long position = File.Exists(path) ? new FileInfo(path).Length : 0;
+
+                    if (position > 0)
+                    {
+                        bool supports = await AddRangeRequestAsync(request, asset.url, position);
+                        if (!supports)
+                        {
+                            Logger.Error("Range request not supported. Starting again: {0}", asset.name);
+                            File.Delete(path);
+                        }
+                    }
+
+                    var response = await download_client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
                     response.EnsureSuccessStatusCode();
 
                     await using var ms = await response.Content.ReadAsStreamAsync();
-                    await using var fs = File.Create(path);
+                    await using var fs = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.None);
 
                     var buffer = new byte[32768];
 
-                    int total_bytes_read = 0;
+                    int total_bytes_read = Convert.ToInt32(position);
                     int bytes_read;
 
                     Logger.Info("File download started: {0}", asset.name);

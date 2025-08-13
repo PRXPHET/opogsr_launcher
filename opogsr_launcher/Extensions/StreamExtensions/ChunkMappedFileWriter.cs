@@ -1,4 +1,5 @@
-﻿using HarfBuzzSharp;
+﻿using DynamicData;
+using HarfBuzzSharp;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -24,6 +25,9 @@ namespace opogsr_launcher.Extensions.StreamExtensions
 
         private bool IsWorking = false;
 
+        public bool IsDestroyed { get; private set; } = false;
+        public bool FileCreated { get; private set; } = false;
+
         public BlockingCollection<MappedMemory> Data = new();
 
         CancellationToken _ct;
@@ -31,8 +35,14 @@ namespace opogsr_launcher.Extensions.StreamExtensions
         public ChunkMappedFileWriter(string path, long size, CancellationToken ct = default)
         {
             _path = path;
-            _fileStream = File.Create(path);
-            _fileStream.SetLength(size);
+            _fileStream = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.None);
+
+            if (_fileStream.Length == 0)
+            {
+                _fileStream.SetLength(size);
+                FileCreated = true;
+            }
+
             _fileStream.Position = 0;
             _ct = ct;
         }
@@ -55,9 +65,36 @@ namespace opogsr_launcher.Extensions.StreamExtensions
 
                 while (Data.TryTake(out var item))
                 {
+                    await Task.Delay(100);
                     _fileStream.Position = item.position;
                     await _fileStream.WriteAsync(item.memory, _ct);
                 }
+            }
+        }
+
+        public async Task ZeroFill(long start, long end)
+        {
+            if (!IsWorking)
+            {
+                throw new InvalidOperationException("Attempt to fill with zeros when writer is not working.");
+            }
+
+            if (start < 0 || end < start || end > _fileStream.Length)
+            {
+                throw new ArgumentOutOfRangeException("Invalid start or end position.");
+            }
+
+            var memory = new MappedMemory()
+            {
+                memory = new byte[end - start],
+                position = start,
+            };
+
+            Data.Add(memory);
+
+            while (Data.IndexOf(memory) != -1)
+            {
+                await Task.Delay(100);
             }
         }
 
@@ -72,9 +109,14 @@ namespace opogsr_launcher.Extensions.StreamExtensions
 
         public async Task DestroyAsync()
         {
-            await DisposeAsync();
+            if (IsDestroyed)
+            {
+                await DisposeAsync();
 
-            File.Delete(_path);
+                File.Delete(_path);
+
+                IsDestroyed = true;
+            }
         }
     }
 }
