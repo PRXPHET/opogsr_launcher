@@ -142,7 +142,7 @@ namespace opogsr_launcher.Managers
             List<IndexData> data = [.. not_validated_data];
             not_validated_data.Clear();
 
-            var tasks = data.WithMaxConcurrency(semaphore, async (d) =>
+            var tasks = data.Select(async (d) =>
             {
                 bool success = false;
 
@@ -165,7 +165,7 @@ namespace opogsr_launcher.Managers
                 {
                     GithubAsset asset = release.assets.Find(x => x.name == d.name);
 
-                    success = await DownloadFile(asset, path, progress, cts.Token);
+                    success = await DownloadFile(asset, path, progress, semaphore, cts.Token);
                 }
 
                 if (success)
@@ -315,7 +315,7 @@ namespace opogsr_launcher.Managers
             return true;
         }
 
-        public async Task<bool> DownloadFile(GithubAsset asset, string path, IProgress<(string name, ulong Total)>? progress, CancellationToken ct)
+        public async Task<bool> DownloadFile(GithubAsset asset, string path, IProgress<(string name, ulong Total)>? progress, SemaphoreSlim semaphore, CancellationToken ct)
         {
             int retry = 0;
 
@@ -323,6 +323,8 @@ namespace opogsr_launcher.Managers
             {
                 try
                 {
+                    await semaphore.WaitAsync(ct);
+
                     using var request = new HttpRequestMessage(HttpMethod.Get, asset.url);
 
                     long position = File.Exists(path) ? new FileInfo(path).Length : 0;
@@ -393,6 +395,7 @@ namespace opogsr_launcher.Managers
                     {
                         EnsureFile(path);
                     }
+                    semaphore.Release();
                 }
             }
 
