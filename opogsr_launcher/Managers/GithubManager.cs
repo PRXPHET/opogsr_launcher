@@ -3,6 +3,7 @@ using opogsr_launcher.Extensions.StreamExtensions;
 using opogsr_launcher.Hasher;
 using opogsr_launcher.JsonContext;
 using System;
+using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -235,18 +236,18 @@ namespace opogsr_launcher.Managers
                             if (!supports)
                             {
                                 Logger.Error("Range request not supported. Filling chunk with zeros: {0}", asset.name);
-                                await writer.ZeroFill(start_position, position);
+                                await writer.ZeroFill(start_position);
                                 position = start_position;
                             }
                         }
                         else if (!writer.FileCreated)
                         {
                             Logger.Error("Filling chunk with zeros: {0}", asset.name);
-                            await writer.ZeroFill(start_position, position);
+                            await writer.ZeroFill(start_position);
                             position = start_position;
                         }
 
-                            var response = await download_client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                        using var response = await download_client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
                         response.EnsureSuccessStatusCode();
 
                         await using var ms = await response.Content.ReadAsStreamAsync();
@@ -266,7 +267,7 @@ namespace opogsr_launcher.Managers
                                 return false;
                             }
 
-                            var read_memory = new byte[bytes_read];
+                            var read_memory = ArrayPool<byte>.Shared.Rent(bytes_read);
                             Buffer.BlockCopy(buffer, 0, read_memory, 0, bytes_read);
 
                             writer.Data.Add(new MappedMemory()
@@ -348,7 +349,7 @@ namespace opogsr_launcher.Managers
                         }
                     }
 
-                    var response = await download_client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                    using var response = await download_client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
                     response.EnsureSuccessStatusCode();
 
                     await using var ms = await response.Content.ReadAsStreamAsync();

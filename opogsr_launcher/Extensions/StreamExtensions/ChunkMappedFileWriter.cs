@@ -1,6 +1,7 @@
-﻿using DynamicData;
+using DynamicData;
 using HarfBuzzSharp;
 using System;
+using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace opogsr_launcher.Extensions.StreamExtensions
 {
-    public class MappedMemory
+    public struct MappedMemory
     {
         public byte[] memory { get; set; }
         public long position;
@@ -20,6 +21,7 @@ namespace opogsr_launcher.Extensions.StreamExtensions
         private readonly FileStream _fileStream;
 
         private readonly string _path;
+        private readonly long _size;
 
         private Task WriteTask;
 
@@ -35,11 +37,12 @@ namespace opogsr_launcher.Extensions.StreamExtensions
         public ChunkMappedFileWriter(string path, long size, CancellationToken ct = default)
         {
             _path = path;
-            _fileStream = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.None);
+            _size = size;
+            _fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
 
             if (_fileStream.Length == 0)
             {
-                _fileStream.SetLength(size);
+                _fileStream.SetLength(_size);
                 FileCreated = true;
             }
 
@@ -68,25 +71,23 @@ namespace opogsr_launcher.Extensions.StreamExtensions
                     await Task.Delay(100);
                     _fileStream.Position = item.position;
                     await _fileStream.WriteAsync(item.memory, _ct);
+                    ArrayPool<byte>.Shared.Return(item.memory, true);
                 }
             }
         }
 
-        public async Task ZeroFill(long start, long end)
+        public async Task ZeroFill(long start)
         {
             if (!IsWorking)
             {
                 throw new InvalidOperationException("Attempt to fill with zeros when writer is not working.");
             }
 
-            if (start < 0 || end < start || end > _fileStream.Length)
-            {
-                throw new ArgumentOutOfRangeException("Invalid start or end position.");
-            }
+            ArgumentOutOfRangeException.ThrowIfNegative(start);
 
             var memory = new MappedMemory()
             {
-                memory = new byte[end - start],
+                memory = new byte[Math.Min(StaticGlobals.Variables.LargeChunkSize, _size - start)],
                 position = start,
             };
 
