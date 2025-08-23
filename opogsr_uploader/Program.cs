@@ -2,6 +2,7 @@
 using opogsr_launcher.Hasher;
 using opogsr_launcher.JsonContext;
 using opogsr_launcher.Managers;
+using opogsr_launcher.Other;
 using opogsr_launcher.Other.Converters;
 using opogsr_launcher.Other.Secrets;
 using opogsr_uploader;
@@ -9,6 +10,8 @@ using System.Diagnostics;
 using System.Text.Json;
 
 Console.Title = "OP OGSR Uploader";
+
+GlobalExceptionHandler.Initialize();
 
 string dir = Environment.CurrentDirectory;
 string index = Path.Combine(dir, "index.json");
