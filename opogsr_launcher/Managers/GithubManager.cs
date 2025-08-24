@@ -49,9 +49,9 @@ namespace opogsr_launcher.Managers
         [JsonPropertyName("name")]
         public string name { get; set; }
         [JsonPropertyName("hash")]
-        public string hash { get; set; }
-        [JsonPropertyName("base_file")]
-        public bool base_file { get; set; }
+        public string? hash { get; set; }
+        [JsonPropertyName("hash_list")]
+        public List<string>? hash_list { get; set; }
         [JsonPropertyName("directory")]
         public string? directory { get; set; }
     }
@@ -61,7 +61,17 @@ namespace opogsr_launcher.Managers
         private ConcurrentBag<IndexData> not_validated_data = new();
         protected HttpClient download_client = new();
 
-        private bool ValidateBase(IndexData d, Stream stream)
+        private bool ValidateChunked(IndexData d, FileStream stream)
+        {
+            List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(d.name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
+            List<string> hash_list = FileHasher.XxHashFromChunkedFile(stream, Convert.ToUInt32(assets.Count)).GetAwaiter().GetResult();
+            if (!Enumerable.SequenceEqual(hash_list, d.hash_list))
+                return false;
+
+            return true;
+        }
+
+        private bool ValidateSize(IndexData d, Stream stream)
         {
             List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(d.name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
 
@@ -106,9 +116,17 @@ namespace opogsr_launcher.Managers
 
                 using var stream = File.OpenRead(path);
 
-                if (d.base_file)
+                if (!ValidateSize(d, stream))
                 {
-                    if (!ValidateBase(d, stream))
+                    not_validated_data.Add(d);
+                    return;
+                }
+
+                if (stream.Length > StaticGlobals.Variables.LargeChunkSize)
+                {
+                    Logger.Info("Calculating hashes for chunked file [{0}]", d.name);
+
+                    if (!ValidateChunked(d, stream))
                         not_validated_data.Add(d);
 
                     return;
@@ -126,13 +144,35 @@ namespace opogsr_launcher.Managers
         {
             static async Task EnsureHash(IndexData d, string path)
             {
-                Logger.Info("Calculating hash for file [{0}]", d.name);
-                string hash = await FileHasher.XxHashFromFile(path);
-                if (d.hash != hash)
+                FileStream stream = File.OpenRead(path);
+                bool result = true;
+                if (stream.Length > StaticGlobals.Variables.LargeChunkSize)
+                {
+                    long length = stream.Length;
+                    uint chunk_count = 1;
+                    while (length > StaticGlobals.Variables.LargeChunkSize)
+                    {
+                        chunk_count++;
+                        length -= StaticGlobals.Variables.LargeChunkSize;
+                    }
+                    Logger.Info("Calculating hashes for chunked file [{0}]", d.name);
+                    List<string> hash_list = await FileHasher.XxHashFromChunkedFile(stream, chunk_count);
+                    result = Enumerable.SequenceEqual(hash_list, d.hash_list);
+                }
+                else
+                {
+                    Logger.Info("Calculating hash for file [{0}]", d.name);
+                    string hash = await FileHasher.XxHashFromFile(path);
+                    result = d.hash == hash;
+                }
+
+                stream.Close();
+
+                if (!result)
                 {
                     File.SetAttributes(path, FileAttributes.Normal);
                     File.Delete(path);
-                    Logger.Exception(new Exception("Hash of downloaded file doesn't match with cached hash."));
+                    Logger.Exception(new Exception($"Hash of downloaded file doesn't match with cached hash: {d.name}"));
                 }
             }
 

@@ -1,4 +1,5 @@
 ﻿
+using opogsr_launcher;
 using opogsr_launcher.Hasher;
 using opogsr_launcher.JsonContext;
 using opogsr_launcher.Managers;
@@ -37,10 +38,6 @@ await manager.RepoTask();
 
 List<IndexData> data = JsonSerializer.Deserialize(File.ReadAllText(index), SourceGenerationContext.Default.ListIndexData);
 
-Console.WriteLine("Do you want to forcefully check hashes for base files? Press Y for 'yes' and any other key for 'no'.");
-ConsoleKeyInfo input = Console.ReadKey(true);
-bool force_hash = input.Key == ConsoleKey.Y;
-
 Stopwatch sw = Stopwatch.StartNew();
 
 Console.WriteLine("Checking for hashes...");
@@ -50,19 +47,34 @@ data.AsParallel().WithDegreeOfParallelism(8).ForAll(d =>
     string fullFileName = Path.Combine(dir, d.directory ?? "", d.name);
     using var stream = File.OpenRead(fullFileName);
 
-    if (!force_hash && d.base_file && Convert.ToUInt64(stream.Length) == manager.Size(d.name, true).GetAwaiter().GetResult())
+    if (stream.Length > StaticGlobals.Variables.LargeChunkSize)
     {
-        Console.WriteLine("Base file detected and size of it wasn't changed: " + d.name);
-        return;
+        Console.WriteLine("Calc hashes for chunked file " + d.name);
+        long length = stream.Length;
+        uint chunk_count = 1;
+        while (length > StaticGlobals.Variables.LargeChunkSize)
+        {
+            chunk_count++;
+            length -= StaticGlobals.Variables.LargeChunkSize;
+        }
+        List<string> hash_list = FileHasher.XxHashFromChunkedFile(stream, chunk_count).GetAwaiter().GetResult();
+        if (d.hash_list is null || !Enumerable.SequenceEqual(hash_list, d.hash_list))
+        {
+            d.hash_list = hash_list;
+            d.hash = null;
+            Console.WriteLine("Hashes changed for chunked file " + d.name);
+        }
     }
-
-    Console.WriteLine("Calc hash for file " + d.name);
-
-    string hash = FileHasher.XxHashFromFile(stream).GetAwaiter().GetResult();
-    if (d.hash != hash)
+    else
     {
-        d.hash = hash;
-        Console.WriteLine("Hash changed for file " + d.name);
+        Console.WriteLine("Calc hash for file " + d.name);
+        string hash = FileHasher.XxHashFromFile(stream).GetAwaiter().GetResult();
+        if (d.hash != hash)
+        {
+            d.hash = hash;
+            d.hash_list = null;
+            Console.WriteLine("Hash changed for file " + d.name);
+        }
     }
 });
 
@@ -163,11 +175,17 @@ public class IndexDataComparer : IEqualityComparer<IndexData>
     {
         if (x == null || y == null) return false;
 
+        if ((x.hash_list is null && y.hash_list is not null) || (y.hash_list is null && x.hash_list is not null))
+            return false;
+
+        if (x.hash_list is not null && y.hash_list is not null)
+            return x.name == y.name && Enumerable.SequenceEqual(x.hash_list, y.hash_list);
+
         return x.name == y.name && x.hash == y.hash;
     }
 
     public int GetHashCode(IndexData obj)
     {
-        return obj.name.GetHashCode() + obj.hash.GetHashCode();
+        return obj.name.GetHashCode();
     }
 }
