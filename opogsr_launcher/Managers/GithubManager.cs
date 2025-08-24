@@ -253,6 +253,8 @@ namespace opogsr_launcher.Managers
 
             string path = Path.Combine(directory, d.name);
 
+            EnsureFile(path);
+
             using ChunkMappedFileWriter writer = new(path, size, ct);
 
             writer.Start();
@@ -281,12 +283,6 @@ namespace opogsr_launcher.Managers
                             }
                             else
                                 Logger.Info("Trying to download with range request: {0}", asset.name);
-                        }
-                        else if (!writer.FileCreated)
-                        {
-                            Logger.Error("Filling chunk with zeros: {0}", asset.name);
-                            await writer.ZeroFill(start_position);
-                            position = start_position;
                         }
 
                         using var response = await download_client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
