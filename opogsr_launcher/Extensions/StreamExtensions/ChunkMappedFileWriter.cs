@@ -18,6 +18,7 @@ namespace opogsr_launcher.Extensions.StreamExtensions
         {
             public byte[] memory { get; set; }
             public long position { get; set; }
+            public int count { get; set; }
         }
 
         private readonly FileStream _fileStream;
@@ -62,7 +63,7 @@ namespace opogsr_launcher.Extensions.StreamExtensions
             IsWorking = true;
         }
 
-        public void Produce(byte[] mem, long pos)
+        public void Produce(byte[] mem, long pos, int cnt)
         {
             Trace.Assert(IsWorking);
 
@@ -72,7 +73,8 @@ namespace opogsr_launcher.Extensions.StreamExtensions
             Data.Add(new ()
             {
                 memory = mem,
-                position = pos
+                position = pos,
+                count = cnt
             });
         }
 
@@ -83,7 +85,7 @@ namespace opogsr_launcher.Extensions.StreamExtensions
                 try
                 {
                     _fileStream.Position = item.position;
-                    await _fileStream.WriteAsync(item.memory, _ct);
+                    await _fileStream.WriteAsync(item.memory, 0, item.count);
                 }
                 catch
                 {
@@ -107,10 +109,13 @@ namespace opogsr_launcher.Extensions.StreamExtensions
 
             ArgumentOutOfRangeException.ThrowIfNegative(start);
 
+            int cnt = Convert.ToInt32(Math.Min(StaticGlobals.Variables.LargeChunkSize, _size - start));
+
             var memory = new MappedMemory()
             {
-                memory = new byte[Math.Min(StaticGlobals.Variables.LargeChunkSize, _size - start)],
+                memory = new byte[cnt],
                 position = start,
+                count = cnt
             };
 
             Data.Add(memory);

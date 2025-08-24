@@ -312,7 +312,7 @@ namespace opogsr_launcher.Managers
                             var read_memory = ArrayPool<byte>.Shared.Rent(bytes_read);
                             Buffer.BlockCopy(buffer, 0, read_memory, 0, bytes_read);
 
-                            writer.Produce(read_memory, position);
+                            writer.Produce(read_memory, position, bytes_read);
 
                             position += bytes_read;
                             total_bytes_read += bytes_read;
