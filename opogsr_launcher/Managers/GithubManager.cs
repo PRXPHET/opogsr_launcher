@@ -224,7 +224,7 @@ namespace opogsr_launcher.Managers
 
                 int retry = 0;
 
-                while (retry < 5)
+                while (retry < StaticGlobals.Variables.AmountOfTries)
                 {
                     try
                     {
@@ -239,6 +239,8 @@ namespace opogsr_launcher.Managers
                                 await writer.ZeroFill(start_position);
                                 position = start_position;
                             }
+                            else
+                                Logger.Info("Trying to download with range request: {0}", asset.name);
                         }
                         else if (!writer.FileCreated)
                         {
@@ -284,6 +286,8 @@ namespace opogsr_launcher.Managers
 
                         progress?.Report((asset.name, Convert.ToUInt64(total_bytes_read)));
 
+                        Logger.Ok("File part downloaded successfully: {0}", asset.name);
+
                         return true;
                     }
                     catch (Exception ex)
@@ -294,7 +298,7 @@ namespace opogsr_launcher.Managers
                     }
                     finally
                     {
-                        if (retry >= 5)
+                        if (retry >= StaticGlobals.Variables.AmountOfTries)
                         {
                             EnsureFile(path);
                         }
@@ -320,7 +324,7 @@ namespace opogsr_launcher.Managers
         {
             int retry = 0;
 
-            while (retry < 5)
+            while (retry < StaticGlobals.Variables.AmountOfTries)
             {
                 try
                 {
@@ -392,7 +396,7 @@ namespace opogsr_launcher.Managers
                 }
                 finally
                 {
-                    if (retry >= 5)
+                    if (retry >= StaticGlobals.Variables.AmountOfTries)
                     {
                         EnsureFile(path);
                     }

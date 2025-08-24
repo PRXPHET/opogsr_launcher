@@ -13,6 +13,7 @@ namespace opogsr_launcher
         {
             public const long LargeChunkSize = 2 * 1000 * 1000 * 1000;
             //public const long LargeChunkSize = 2 * 1000 * 1000;
+            public const uint AmountOfTries = 20;
         }
 
         public static class Links
