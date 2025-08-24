@@ -1,23 +1,25 @@
+using Avalonia.Vulkan;
 using DynamicData;
 using HarfBuzzSharp;
 using System;
 using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace opogsr_launcher.Extensions.StreamExtensions
 {
-    public struct MappedMemory
-    {
-        public byte[] memory { get; set; }
-        public long position;
-    }
-
     public class ChunkMappedFileWriter
     {
+        private struct MappedMemory
+        {
+            public byte[] memory { get; set; }
+            public long position { get; set; }
+        }
+
         private readonly FileStream _fileStream;
 
         private readonly string _path;
@@ -30,9 +32,9 @@ namespace opogsr_launcher.Extensions.StreamExtensions
         public bool IsDestroyed { get; private set; } = false;
         public bool FileCreated { get; private set; } = false;
 
-        public BlockingCollection<MappedMemory> Data = new();
+        private readonly BlockingCollection<MappedMemory> Data = [];
 
-        CancellationToken _ct;
+        private readonly CancellationToken _ct;
 
         public ChunkMappedFileWriter(string path, long size, CancellationToken ct = default)
         {
@@ -52,28 +54,47 @@ namespace opogsr_launcher.Extensions.StreamExtensions
 
         public void Start()
         {
-            if (!IsWorking)
-            {
-                WriteTask = Task.Run(UpdateWrite);
-                IsWorking = true;
-            }
+            if (IsWorking)
+                return;
+
+            WriteTask = Task.Run(ConsumeAsync, _ct);
+            IsWorking = true;
         }
 
-        private async Task UpdateWrite()
+        public void Produce(byte[] mem, long pos)
         {
-            while (IsWorking)
-            {
-                if (_ct.IsCancellationRequested && Data.Count == 0)
-                    break;
+            Trace.Assert(IsWorking);
 
-                while (Data.TryTake(out var item))
+            ArgumentNullException.ThrowIfNull(mem);
+            ArgumentOutOfRangeException.ThrowIfNegative(pos);
+
+            Data.Add(new ()
+            {
+                memory = mem,
+                position = pos
+            });
+        }
+
+        private async Task ConsumeAsync()
+        {
+            foreach (var item in Data.GetConsumingEnumerable(_ct))
+            {
+                try
                 {
-                    await Task.Delay(100);
                     _fileStream.Position = item.position;
                     await _fileStream.WriteAsync(item.memory, _ct);
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
                     ArrayPool<byte>.Shared.Return(item.memory, true);
                 }
             }
+
+            IsWorking = false;
         }
 
         public async Task ZeroFill(long start)
@@ -103,6 +124,8 @@ namespace opogsr_launcher.Extensions.StreamExtensions
         {
             IsWorking = false;
 
+            Data.CompleteAdding();
+
             await WriteTask?.WaitAsync(CancellationToken.None);
 
             _fileStream.Close();
@@ -111,13 +134,13 @@ namespace opogsr_launcher.Extensions.StreamExtensions
         public async Task DestroyAsync()
         {
             if (IsDestroyed)
-            {
-                await DisposeAsync();
+                return;
 
-                File.Delete(_path);
+            await DisposeAsync();
 
-                IsDestroyed = true;
-            }
+            File.Delete(_path);
+
+            IsDestroyed = true;
         }
     }
 }
