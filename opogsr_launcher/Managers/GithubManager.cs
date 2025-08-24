@@ -213,7 +213,7 @@ namespace opogsr_launcher.Managers
 
             string path = Path.Combine(directory, d.name);
 
-            ChunkMappedFileWriter writer = new(path, size, ct);
+            using ChunkMappedFileWriter writer = new(path, size, ct);
 
             writer.Start();
 
@@ -265,7 +265,7 @@ namespace opogsr_launcher.Managers
                         {
                             if (ct.IsCancellationRequested || writer.IsDestroyed)
                             {
-                                await writer.DestroyAsync();
+                                writer.Destroy();
                                 return false;
                             }
 
@@ -306,8 +306,6 @@ namespace opogsr_launcher.Managers
             }).ToList();
 
             var results = await Task.WhenAll(tasks);
-
-            await writer.DisposeAsync();
 
             foreach (bool result in results)
                 if (!result)

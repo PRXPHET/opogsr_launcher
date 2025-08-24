@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace opogsr_launcher.Extensions.StreamExtensions
 {
-    public class ChunkMappedFileWriter
+    public class ChunkMappedFileWriter : IAsyncDisposable, IDisposable
     {
         private struct MappedMemory
         {
@@ -29,6 +29,7 @@ namespace opogsr_launcher.Extensions.StreamExtensions
 
         private bool IsWorking = false;
 
+        public bool IsDisposed { get; private set; } = false;
         public bool IsDestroyed { get; private set; } = false;
         public bool FileCreated { get; private set; } = false;
 
@@ -120,8 +121,11 @@ namespace opogsr_launcher.Extensions.StreamExtensions
             }
         }
 
-        public async Task DisposeAsync()
+        async ValueTask IAsyncDisposable.DisposeAsync()
         {
+            if (IsDisposed)
+                return;
+
             IsWorking = false;
 
             Data.CompleteAdding();
@@ -129,14 +133,32 @@ namespace opogsr_launcher.Extensions.StreamExtensions
             await WriteTask?.WaitAsync(CancellationToken.None);
 
             _fileStream.Close();
+
+            IsDisposed = true;
         }
 
-        public async Task DestroyAsync()
+        public void Dispose()
+        {
+            if (IsDisposed)
+                return;
+
+            IsWorking = false;
+
+            Data.CompleteAdding();
+
+            WriteTask?.Wait();
+
+            _fileStream.Close();
+
+            IsDisposed = true;
+        }
+
+        public void Destroy()
         {
             if (IsDestroyed)
                 return;
 
-            await DisposeAsync();
+            Dispose();
 
             File.Delete(_path);
 
