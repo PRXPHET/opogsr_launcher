@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace opogsr_launcher.Other.Secrets
+﻿namespace opogsr_launcher.Other.Secrets
 {
     public static class Secrets
     {

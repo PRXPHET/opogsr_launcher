@@ -1,8 +1,7 @@
 ﻿using ReactiveUI;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Reactive;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace opogsr_launcher.Other
