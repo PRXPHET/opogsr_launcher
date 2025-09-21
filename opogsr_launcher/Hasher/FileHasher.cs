@@ -8,23 +8,22 @@ namespace opogsr_launcher.Hasher
 {
     public class FileHasher
     {
-        public static async Task<string> XxHashFromFile(string filename)
+        public static async Task<string> XxHashFromFile(FileStream stream)
         {
-            FileStream stream = File.OpenRead(filename);
-
+            long size = Math.Min(stream.Length, 64 * 1024);
+            byte[] buffer = new byte[size];
+            long position = stream.Length - buffer.Length;
+            stream.Seek(position, SeekOrigin.Begin);
+            await stream.ReadExactlyAsync(buffer.AsMemory(0, buffer.Length));
             XxHash3 hash = new();
-            await hash.AppendAsync(stream);
-            stream.Close();
+            hash.Append(buffer.AsSpan(0, buffer.Length));
             return BitConverter.ToString(hash.GetHashAndReset()).Replace("-", "").ToLowerInvariant();
         }
 
-        public static async Task<string> XxHashFromFile(FileStream stream)
+        public static async Task<string> XxHashFromFile(string filename)
         {
-            stream.Position = 0;
-
-            XxHash3 hash = new();
-            await hash.AppendAsync(stream);
-            return BitConverter.ToString(hash.GetHashAndReset()).Replace("-", "").ToLowerInvariant();
+            using FileStream stream = File.OpenRead(filename);
+            return await XxHashFromFile(stream);
         }
 
         public static async Task<List<string>> XxHashFromChunkedFile(FileStream stream, uint chunk_count)
