@@ -1,7 +1,6 @@
 ﻿using opogsr_launcher.Extensions;
 using opogsr_launcher.Extensions.StreamExtensions;
 using opogsr_launcher.Hasher;
-using opogsr_launcher.JsonContext;
 using System;
 using System.Buffers;
 using System.Collections.Concurrent;
@@ -10,52 +9,11 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace opogsr_launcher.Managers
+namespace opogsr_launcher.Managers.Github
 {
-    public enum FileStates
-    {
-        NoFiles = 2,
-        NeedUpdate = 1,
-        Every = 0
-    }
-
-    public class GithubAsset
-    {
-        [JsonPropertyName("name")]
-        public string name { get; set; }
-        [JsonPropertyName("size")]
-        public ulong size { get; set; }
-        [JsonPropertyName("url")]
-        public string url { get; set; }
-        [JsonPropertyName("created_at")]
-        public DateTime createdAtTime { get; set; }
-    }
-
-    public class GithubRelease
-    {
-        [JsonPropertyName("assets")]
-        public List<GithubAsset> assets { get; set; }
-        [JsonPropertyName("upload_url")]
-        public string upload_url { get; set; }
-    }
-
-    public class IndexData
-    {
-        [JsonPropertyName("name")]
-        public string name { get; set; }
-        [JsonPropertyName("hash")]
-        public string? hash { get; set; }
-        [JsonPropertyName("hash_list")]
-        public List<string>? hash_list { get; set; }
-        [JsonPropertyName("directory")]
-        public string? directory { get; set; }
-    }
-
     public class GithubDownloadManager : GithubManager
     {
         private ConcurrentBag<IndexData> not_validated_data = new();
@@ -65,7 +23,7 @@ namespace opogsr_launcher.Managers
         {
             List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(d.name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
             List<string> hash_list = FileHasher.XxHashFromChunkedFile(stream, Convert.ToUInt32(assets.Count)).GetAwaiter().GetResult();
-            if (!Enumerable.SequenceEqual(hash_list, d.hash_list))
+            if (!hash_list.SequenceEqual(d.hash_list))
                 return false;
 
             return true;
@@ -157,7 +115,7 @@ namespace opogsr_launcher.Managers
                     }
                     Logger.Info("Calculating hashes for chunked file [{0}]", d.name);
                     List<string> hash_list = await FileHasher.XxHashFromChunkedFile(stream, chunk_count);
-                    result = Enumerable.SequenceEqual(hash_list, d.hash_list);
+                    result = hash_list.SequenceEqual(d.hash_list);
                 }
                 else
                 {
@@ -259,7 +217,7 @@ namespace opogsr_launcher.Managers
 
             writer.Start();
 
-            var tasks = assets.WithMaxConcurrency(semaphore, async (asset) => 
+            var tasks = assets.WithMaxConcurrency(semaphore, async (asset) =>
             {
                 long start_position = assets.IndexOf(asset) * StaticGlobals.Variables.LargeChunkSize;
                 long position = start_position;
@@ -366,7 +324,7 @@ namespace opogsr_launcher.Managers
 
                     if (position > 0)
                     {
-                        if (File.GetCreationTimeUtc(path) == asset.createdAtTime && File.GetLastWriteTimeUtc(path) == asset.createdAtTime) 
+                        if (File.GetCreationTimeUtc(path) == asset.createdAtTime && File.GetLastWriteTimeUtc(path) == asset.createdAtTime)
                         {
                             bool supports = await AddRangeRequestAsync(request, asset.url, position);
                             if (!supports)
@@ -447,94 +405,13 @@ namespace opogsr_launcher.Managers
             return size;
         }
 
-        public GithubDownloadManager(string Token, string Repo) : base(Token, Repo) 
+        public GithubDownloadManager(string Token, string Repo) : base(Token, Repo)
         {
             download_client.DefaultRequestHeaders.Add("Accept", "application/octet-stream");
             download_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
             download_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("product", "1"));
             download_client.DefaultRequestHeaders.ExpectContinue = false;
             download_client.Timeout = TimeSpan.FromHours(1);
-        }
-    }
-
-    public class GithubManager
-    {
-        protected HttpClient api_client = new();
-
-        protected GithubRelease release = new();
-        public List<IndexData> data { get; private set; } = new();
-
-        protected Task ReadRepoTask;
-
-        private async Task ReadConfig()
-        {
-            GithubAsset asset = release.assets.Find(x => x.name == "index.json");
-
-            if (asset is null)
-            {
-                Logger.Exception(new Exception("Can't find index.json file in release."));
-                return;
-            }
-
-            HttpRequestMessage msg = new();
-            msg.Headers.Add("Accept", "application/octet-stream");
-            msg.RequestUri = new Uri(asset.url);
-
-            var httpResult = await api_client.SendAsync(msg);
-            httpResult.EnsureSuccessStatusCode();
-            string contents = await httpResult.Content.ReadAsStringAsync();
-            data = JsonSerializer.Deserialize(contents, SourceGenerationContext.Default.ListIndexData);
-        }
-
-        private async Task ReadRelease(string repo)
-        {
-            var httpResult = await api_client.GetAsync($"https://api.github.com/repos/{repo}/releases/tags/base");
-            httpResult.EnsureSuccessStatusCode();
-            string contents = await httpResult.Content.ReadAsStringAsync();
-            release = JsonSerializer.Deserialize(contents, SourceGenerationContext.Default.GithubRelease);
-            release.upload_url = release.upload_url.Replace("{?name,label}", "");
-        }
-
-        public async Task RepoTask() => await ReadRepoTask.WaitAsync(CancellationToken.None);
-
-        public async Task<ulong> Size(string name, bool no_assert = false)
-        {
-            await RepoTask();
-
-            ulong size = 0;
-            List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
-
-            if (assets.Count != 0)
-                assets.ForEach(a => size += a.size);
-            else
-            {
-                GithubAsset? a = release.assets.Find(x => x.name == name);
-
-                if (a is null)
-                {
-                    if (no_assert)
-                        return 0;
-                    else
-                        Logger.Exception(new Exception($"Github asset is null. Name: {name}"));
-                }
-
-                size += a.size;
-            }
-
-            return size;
-        }
-
-        public GithubManager(string Token, string Repo)
-        {
-            api_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
-            api_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("product", "1"));
-            api_client.Timeout = TimeSpan.FromSeconds(15);
-
-            ReadRepoTask = Task.Run(async () =>
-            {
-                await ReadRelease(Repo);
-                await ReadConfig();
-            });
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using opogsr_launcher.Helpers;
 using opogsr_launcher.Managers;
+using opogsr_launcher.Managers.Github;
 using opogsr_launcher.Other.Converters;
 using opogsr_launcher.Other.RuntimeResource;
 using ReactiveUI;

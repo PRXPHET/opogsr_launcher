@@ -2,7 +2,7 @@
 using opogsr_launcher;
 using opogsr_launcher.Hasher;
 using opogsr_launcher.JsonContext;
-using opogsr_launcher.Managers;
+using opogsr_launcher.Managers.Github;
 using opogsr_launcher.Other;
 using opogsr_launcher.Other.Converters;
 using opogsr_launcher.Other.Secrets;

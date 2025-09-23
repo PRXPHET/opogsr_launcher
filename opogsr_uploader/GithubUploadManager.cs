@@ -1,6 +1,6 @@
 ﻿using opogsr_launcher;
 using opogsr_launcher.Extensions.StreamExtensions;
-using opogsr_launcher.Managers;
+using opogsr_launcher.Managers.Github;
 using System.Net.Http.Headers;
 
 namespace opogsr_uploader

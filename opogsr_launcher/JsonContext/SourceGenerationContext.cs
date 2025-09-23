@@ -1,4 +1,5 @@
 ﻿using opogsr_launcher.Managers;
+using opogsr_launcher.Managers.Github;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
