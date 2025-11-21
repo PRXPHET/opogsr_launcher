@@ -59,13 +59,14 @@ namespace opogsr_launcher.Managers.Github
 
         protected Task ReadRepoTask;
 
-        private async Task ReadConfig()
+        protected async Task ReadConfig(bool no_assert)
         {
             GithubAsset asset = release.assets.Find(x => x.name == "index.json");
 
             if (asset is null)
             {
-                Logger.Exception(new Exception("Can't find index.json file in release."));
+                if (!no_assert)
+                    Logger.Exception(new Exception("Can't find index.json file in release."));
                 return;
             }
 
@@ -78,6 +79,8 @@ namespace opogsr_launcher.Managers.Github
             string contents = await httpResult.Content.ReadAsStringAsync();
             data = JsonSerializer.Deserialize(contents, SourceGenerationContext.Default.ListIndexData);
         }
+
+        protected virtual async Task ReadConfig() => await ReadConfig(false);
 
         private async Task ReadRelease(string repo)
         {

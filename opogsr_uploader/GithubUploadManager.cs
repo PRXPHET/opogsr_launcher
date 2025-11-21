@@ -16,6 +16,8 @@ namespace opogsr_uploader
             response.EnsureSuccessStatusCode();
         }
 
+        protected override async Task ReadConfig() => await ReadConfig(true);
+
         public async Task UploadFile(IndexData d, IProgress<(ulong Sent, ulong Total)>? progress = null)
         {
             await RepoTask();
