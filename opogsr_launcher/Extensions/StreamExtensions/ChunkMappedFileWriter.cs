@@ -31,11 +31,15 @@ namespace opogsr_launcher.Extensions.StreamExtensions
         public bool IsDestroyed { get; private set; } = false;
         public bool FileCreated { get; private set; } = false;
 
+        public bool FileUpdated { get; private set; } = false;
+
+        public bool DateChanged { get; private set; } = false;
+
         private readonly BlockingCollection<MappedMemory> Data = [];
 
         private readonly CancellationToken _ct;
 
-        public ChunkMappedFileWriter(string path, long size, CancellationToken ct = default)
+        public ChunkMappedFileWriter(string path, long size, DateTime dt,  CancellationToken ct = default)
         {
             _path = path;
             _size = size;
@@ -45,6 +49,11 @@ namespace opogsr_launcher.Extensions.StreamExtensions
             {
                 _fileStream.SetLength(_size);
                 FileCreated = true;
+            }
+            else if (File.GetCreationTimeUtc(path) != dt || File.GetLastWriteTimeUtc(path) != dt)
+            {
+                _fileStream.SetLength(_size);
+                FileUpdated = true;
             }
 
             _fileStream.Position = 0;
@@ -97,30 +106,15 @@ namespace opogsr_launcher.Extensions.StreamExtensions
             IsWorking = false;
         }
 
-        public async Task ZeroFill(long start)
+        public void UpdateDate(DateTime dt)
         {
-            if (!IsWorking)
-            {
-                throw new InvalidOperationException("Attempt to fill with zeros when writer is not working.");
-            }
+            if (DateChanged)
+                return;
 
-            ArgumentOutOfRangeException.ThrowIfNegative(start);
+            DateChanged = true;
 
-            int cnt = Convert.ToInt32(Math.Min(StaticGlobals.Variables.LargeChunkSize, _size - start));
-
-            var memory = new MappedMemory()
-            {
-                memory = new byte[cnt],
-                position = start,
-                count = cnt
-            };
-
-            Data.Add(memory);
-
-            while (Data.IndexOf(memory) != -1)
-            {
-                await Task.Delay(100);
-            }
+            File.SetCreationTimeUtc(_fileStream.SafeFileHandle, dt);
+            File.SetLastAccessTimeUtc(_fileStream.SafeFileHandle, dt);
         }
 
         async ValueTask IAsyncDisposable.DisposeAsync()
@@ -137,6 +131,8 @@ namespace opogsr_launcher.Extensions.StreamExtensions
             _fileStream.Close();
 
             IsDisposed = true;
+
+            GC.SuppressFinalize(this);
         }
 
         public void Dispose()
@@ -153,6 +149,8 @@ namespace opogsr_launcher.Extensions.StreamExtensions
             _fileStream.Close();
 
             IsDisposed = true;
+
+            GC.SuppressFinalize(this);
         }
 
         public void Destroy()

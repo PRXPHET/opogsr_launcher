@@ -181,6 +181,8 @@ namespace opogsr_launcher.Managers.Github
                 if (!result)
                     return false;
 
+            ChunkMetadataManager.DestroyInstance();
+
             return true;
         }
 
@@ -211,11 +213,11 @@ namespace opogsr_launcher.Managers.Github
 
             string path = Path.Combine(directory, d.name);
 
-            EnsureFile(path);
-
-            using ChunkMappedFileWriter writer = new(path, size, ct);
+            using ChunkMappedFileWriter writer = new(path, size, assets.First().createdAtTime, ct);
 
             writer.Start();
+
+            ChunkMetadataManager manager = ChunkMetadataManager.GetInstance();
 
             var tasks = assets.WithMaxConcurrency(semaphore, async (asset) =>
             {
@@ -230,17 +232,32 @@ namespace opogsr_launcher.Managers.Github
                     {
                         using var request = new HttpRequestMessage(HttpMethod.Get, asset.url);
 
-                        if (retry >= 1)
+                        ChunkMetadata metadata = manager.GetOrCreateChunk(d.name, asset.name);
+
+                        if (retry >= 1 || (!writer.FileCreated && !writer.FileUpdated))
                         {
                             bool supports = await AddRangeRequestAsync(request, asset.url, position - start_position);
                             if (!supports)
                             {
-                                Logger.Error("Range request not supported. Filling chunk with zeros: {0}", asset.name);
-                                await writer.ZeroFill(start_position);
+                                Logger.Error("Range request not supported. Redownloading chunk: {0}", asset.name);
                                 position = start_position;
+                                metadata.Length = 0;
                             }
                             else
+                            {
                                 Logger.Info("Trying to download with range request: {0}", asset.name);
+                                position = start_position + metadata.Length;
+                            }
+                        }
+                        else
+                        {
+                            if (writer.FileUpdated)
+                                Logger.Info("Chunked file was updated. Redownloading part: {0}", asset.name);
+                            else
+                                Logger.Info("New chunked file part download initialization: {0}", asset.name);
+
+                            position = start_position;
+                            metadata.Length = 0;
                         }
 
                         using var response = await download_client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
@@ -248,9 +265,11 @@ namespace opogsr_launcher.Managers.Github
 
                         await using var ms = await response.Content.ReadAsStreamAsync();
 
+                        writer.UpdateDate(asset.createdAtTime);
+
                         var buffer = new byte[32768];
 
-                        int total_bytes_read = retry >= 1 ? Convert.ToInt32(position - start_position) : 0;
+                        int total_bytes_read = Convert.ToInt32(metadata.Length);
                         int bytes_read;
 
                         Logger.Info("File part download started: {0}", asset.name);
@@ -268,8 +287,9 @@ namespace opogsr_launcher.Managers.Github
 
                             writer.Produce(read_memory, position, bytes_read);
 
-                            position += bytes_read;
                             total_bytes_read += bytes_read;
+                            position += bytes_read;
+                            metadata.Length += bytes_read;
 
                             progress?.Report((asset.name, Convert.ToUInt64(total_bytes_read)));
                         }
@@ -332,6 +352,8 @@ namespace opogsr_launcher.Managers.Github
                                 Logger.Error("Range request not supported. Starting again: {0}", asset.name);
                                 File.Delete(path);
                             }
+                            else
+                                Logger.Info("Trying to download with range request: {0}", asset.name);
                         }
                         else
                         {
@@ -339,6 +361,10 @@ namespace opogsr_launcher.Managers.Github
                             position = 0;
                             File.Delete(path);
                         }
+                    }
+                    else
+                    {
+                        Logger.Info("New file download initialization: {0}", asset.name);
                     }
 
                     using var response = await download_client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
