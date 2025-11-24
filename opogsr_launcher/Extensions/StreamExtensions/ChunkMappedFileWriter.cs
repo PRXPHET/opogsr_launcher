@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace opogsr_launcher.Extensions.StreamExtensions
 {
-    public class ChunkMappedFileWriter : IAsyncDisposable, IDisposable
+    internal class ChunkMappedFileWriter : IAsyncDisposable, IDisposable
     {
         private struct MappedMemory
         {

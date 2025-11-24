@@ -12,7 +12,7 @@ namespace opogsr_launcher.Other.RuntimeResource
 
         [Reactive] public string Language { get; private set; } = CultureInfo.CurrentCulture.ThreeLetterISOLanguageName;
 
-        public string GetString(string key)
+        public static string GetString(string key)
         {
             string text = _resourceManager.GetString(key, Resources.Culture);
 

@@ -8,10 +8,6 @@
 			 x:DataType="vm:HomeViewModel"
              x:Class="opogsr_launcher.Views.HomeView">
 
-			<UserControl.Styles>
-				<StyleInclude Source="/Styles/DefaultStyles.axaml"/>
-			</UserControl.Styles>
-
 			<Grid>
   				<Border HorizontalAlignment="Center" VerticalAlignment="Center">
 					<Grid>
@@ -27,7 +23,7 @@
 					<Grid RowDefinitions="* *" IsVisible="{Binding IsDownloading}">
 						<Border Grid.Row="0">
 							<Grid ColumnDefinitions="* *">
-								<Label Content="{Binding DownloadSpeedStr}" Classes="LoadBar" HorizontalAlignment="Left" Grid.Column="0"/>
+								<Label Content="{Binding DownloadSpeedStr} " Classes="LoadBar" HorizontalAlignment="Left" Grid.Column="0"/>
 								<Label Content="{Binding SizeStr}" Classes="LoadBar" HorizontalAlignment="Right" Grid.Column="1"/>
 							</Grid>
 						</Border>

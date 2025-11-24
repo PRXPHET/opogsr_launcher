@@ -7,10 +7,6 @@
 			 x:DataType="vm:LogViewModel"
              x:Class="opogsr_launcher.LogView">
 
-			<UserControl.Styles>
-				<StyleInclude Source="/Styles/DefaultStyles.axaml"/>
-			</UserControl.Styles>
-	
 	        <Border>
 				<Border.Background>
 					<SolidColorBrush Color="Black" Opacity="0.5"/>

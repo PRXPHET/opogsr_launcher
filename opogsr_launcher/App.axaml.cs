@@ -11,7 +11,7 @@ using System.Text;
 
 namespace opogsr_launcher
 {
-    public partial class App : Application
+    internal partial class App : Application
     {
         private readonly IServiceProvider _serviceProvider = ConfigureServiceProvider().BuildServiceProvider();
 

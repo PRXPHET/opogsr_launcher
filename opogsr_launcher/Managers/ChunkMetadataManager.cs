@@ -20,7 +20,7 @@ namespace opogsr_launcher.Managers
         public ConcurrentDictionary<string, ChunkMetadata> Chunks { get; set; } = new();
     }
 
-    public class ChunkMetadataManager : IDisposable
+    internal class ChunkMetadataManager : IDisposable
     {
         private static readonly string MetaPath = Path.Combine(StaticGlobals.Locations.Appdata, "chunks.meta");
 

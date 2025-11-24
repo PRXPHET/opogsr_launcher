@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace opogsr_launcher.Helpers
 {
-    public static class LauncherHelper
+    internal static class LauncherHelper
     {
         public static void LaunchGame(IList<string>? args = null)
         {

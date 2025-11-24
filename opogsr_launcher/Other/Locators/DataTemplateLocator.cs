@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace opogsr_launcher
 {
-    public class DataTemplateLocator : IDataTemplate
+    internal class DataTemplateLocator : IDataTemplate
     {
         private static readonly Dictionary<Type, Func<Control>> Factory = new()
         {

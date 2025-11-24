@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace opogsr_launcher.Managers.Github
 {
-    public class GithubDownloadManager : GithubManager
+    internal class GithubDownloadManager : GithubManager
     {
         private ConcurrentBag<IndexData> not_validated_data = new();
         protected HttpClient download_client = new();

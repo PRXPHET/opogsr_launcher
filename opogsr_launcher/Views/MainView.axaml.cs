@@ -1,6 +1,4 @@
 using Avalonia.Controls;
-using opogsr_launcher.ViewModels;
-using System;
 
 namespace opogsr_launcher
 {
