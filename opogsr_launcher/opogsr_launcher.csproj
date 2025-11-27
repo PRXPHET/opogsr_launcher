@@ -81,6 +81,13 @@
   </ItemGroup>
 
   <ItemGroup>
+	  <AvaloniaXaml Remove="appdata\**" />
+	  <Compile Remove="appdata\**" />
+	  <EmbeddedResource Remove="appdata\**" />
+	  <None Remove="appdata\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove=".gitattributes" />
     <None Remove=".gitignore" />
     <None Remove="dotnet.log" />
