@@ -134,6 +134,19 @@ namespace opogsr_launcher.Managers.Github
                 }
             }
 
+            ChunkMetadataManager manager = ChunkMetadataManager.GetInstance();
+
+            if (progress is not null && !manager.Files.IsEmpty)
+            {
+                foreach (var file in manager.Files)
+                {
+                    foreach (var chunk in file.Value.Chunks)
+                    {
+                        progress.Report((chunk.Key, Convert.ToUInt64(chunk.Value.Length)));
+                    }
+                }
+            }
+
             var cts = new CancellationTokenSource();
 
             var semaphore = new SemaphoreSlim(4);
@@ -195,15 +208,34 @@ namespace opogsr_launcher.Managers.Github
             }
         }
 
-        private async Task<bool> AddRangeRequestAsync(HttpRequestMessage msg, string url, long position)
+        private async Task<bool> AddRangeRequestAsync(HttpRequestMessage msg, string url, string name, long position)
         {
-            using var response = await download_client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
+            using var head = new HttpRequestMessage(HttpMethod.Head, url);
+            using var response = await download_client.SendAsync(head, HttpCompletionOption.ResponseHeadersRead);
 
             bool supports = response.Headers.AcceptRanges.Contains("bytes");
-            if (supports)
-                msg.Headers.Range = new RangeHeaderValue(position, null);
+            long? length = response.Content.Headers.ContentLength;
 
-            return supports;
+            if (!supports)
+            {
+                Logger.Warn("Response header doesn't contain bytes value. File: {0}", name);
+                return false;
+            }
+
+            if (!length.HasValue)
+            {
+                Logger.Warn("Content length value is empty. File: {0}", name);
+                return false;
+            }
+
+            if (position >= length.Value || position < 0)
+            {
+                Logger.Warn("Invalid Range values. Position: [{0}], Content length: [{1}]. Skipping Range. File: {2}", position, length.Value, name);
+                return false;
+            }
+
+            msg.Headers.Range = new RangeHeaderValue(position, null);
+            return true;
         }
 
         public async Task<bool> DownloadFile(IndexData d, List<GithubAsset> assets, string directory, string output, IProgress<(string name, ulong Total)>? progress, CancellationToken ct, SemaphoreSlim semaphore)
@@ -236,7 +268,7 @@ namespace opogsr_launcher.Managers.Github
 
                         if (retry >= 1 || (!writer.FileCreated && !writer.FileUpdated))
                         {
-                            bool supports = await AddRangeRequestAsync(request, asset.url, position - start_position);
+                            bool supports = await AddRangeRequestAsync(request, asset.url, asset.name, metadata.Length);
                             if (!supports)
                             {
                                 Logger.Error("Range request not supported. Redownloading chunk: {0}", asset.name);
@@ -264,8 +296,6 @@ namespace opogsr_launcher.Managers.Github
                         response.EnsureSuccessStatusCode();
 
                         await using var ms = await response.Content.ReadAsStreamAsync();
-
-                        writer.UpdateDate(asset.createdAtTime);
 
                         var buffer = new byte[32768];
 
@@ -346,7 +376,7 @@ namespace opogsr_launcher.Managers.Github
                     {
                         if (File.GetCreationTimeUtc(path) == asset.createdAtTime && File.GetLastWriteTimeUtc(path) == asset.createdAtTime)
                         {
-                            bool supports = await AddRangeRequestAsync(request, asset.url, position);
+                            bool supports = await AddRangeRequestAsync(request, asset.url, asset.name, position);
                             if (!supports)
                             {
                                 Logger.Error("Range request not supported. Starting again: {0}", asset.name);

@@ -58,6 +58,9 @@ namespace opogsr_launcher.Extensions.StreamExtensions
 
             _fileStream.Position = 0;
             _ct = ct;
+
+            File.SetCreationTimeUtc(_fileStream.SafeFileHandle, dt);
+            File.SetLastWriteTimeUtc(_fileStream.SafeFileHandle, dt);
         }
 
         public void Start()
@@ -104,17 +107,6 @@ namespace opogsr_launcher.Extensions.StreamExtensions
             }
 
             IsWorking = false;
-        }
-
-        public void UpdateDate(DateTime dt)
-        {
-            if (DateChanged)
-                return;
-
-            DateChanged = true;
-
-            File.SetCreationTimeUtc(_fileStream.SafeFileHandle, dt);
-            File.SetLastAccessTimeUtc(_fileStream.SafeFileHandle, dt);
         }
 
         async ValueTask IAsyncDisposable.DisposeAsync()

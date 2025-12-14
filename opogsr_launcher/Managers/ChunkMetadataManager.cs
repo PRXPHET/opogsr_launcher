@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -20,23 +19,29 @@ namespace opogsr_launcher.Managers
         public ConcurrentDictionary<string, ChunkMetadata> Chunks { get; set; } = new();
     }
 
-    internal class ChunkMetadataManager : IDisposable
+    internal sealed class ChunkMetadataManager : IDisposable
     {
         private static readonly string MetaPath = Path.Combine(StaticGlobals.Locations.Appdata, "chunks.meta");
 
-        private ConcurrentDictionary<string, ChunkedFileMetadata> Files { get; set; }
+        public ConcurrentDictionary<string, ChunkedFileMetadata> Files { get; private set; }
 
         private static ChunkMetadataManager? Instance { get; set; } = null;
 
         public static ChunkMetadataManager GetInstance()
         {
-            return Instance ??= new();
+            Instance ??= new ChunkMetadataManager();
+            return Instance;
         }
 
         public ChunkMetadata GetOrCreateChunk(string name, string part_name)
         {
-            ChunkedFileMetadata metadata = Files.GetOrAdd(name, c => { return new ChunkedFileMetadata(); });
-            return metadata.Chunks.GetOrAdd(part_name, c => { return new ChunkMetadata(); });
+            if (!Files.TryGetValue(name, out var meta))
+                meta = Files[name] = new ChunkedFileMetadata();
+
+            if (!meta.Chunks.TryGetValue(part_name, out var chunk))
+                chunk = meta.Chunks[part_name] = new ChunkMetadata();
+
+            return chunk;
         }
 
         private ChunkMetadataManager()

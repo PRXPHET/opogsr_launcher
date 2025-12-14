@@ -19,8 +19,9 @@ namespace opogsr_launcher.ViewModels
         private Dictionary<string, SolidColorBrush> Colors = new()
         {
             ["! "] = new SolidColorBrush(Color.FromRgb(255, 0, 0)),
-            ["~ "] = WhiteBrush,
+            ["- "] = new SolidColorBrush(Color.FromRgb(255, 255, 0)),
             ["# "] = new SolidColorBrush(Color.FromRgb(0, 255, 0)),
+            ["~ "] = WhiteBrush,
         };
 
         [Reactive] public ObservableCollection<LogText> Logs { get; set; } = new();

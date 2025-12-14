@@ -42,6 +42,11 @@ namespace opogsr_launcher
             Write("~ " + message, args);
         }
 
+        public static void Warn(string message, params object[] args)
+        {
+            Write("- " + message, args);
+        }
+
         public static void Error(string message, params object[] args)
         {
             Write("! " + message, args);
@@ -65,6 +70,7 @@ namespace opogsr_launcher
         private static Dictionary<string, ConsoleColor> ConsoleColors = new()
         {
             ["! "] = ConsoleColor.Red,
+            ["- "] = ConsoleColor.Yellow,
             ["~ "] = ConsoleColor.White,
             ["# "] = ConsoleColor.Green
         };
