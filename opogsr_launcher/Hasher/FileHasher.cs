@@ -32,7 +32,7 @@ namespace opogsr_launcher.Hasher
             byte[] buffer = new byte[64 * 1024];
             for (uint i = 1; i <= chunk_count; i++)
             {
-                long position = Math.Min(stream.Length, StaticGlobals.Variables.LargeChunkSize * i) - (buffer.Length);
+                long position = Math.Min(stream.Length, StaticGlobals.Variables.LargeChunkSize * i) - buffer.Length;
                 stream.Seek(position, SeekOrigin.Begin);
                 await stream.ReadExactlyAsync(buffer.AsMemory(0, buffer.Length));
                 XxHash3 hash = new();
@@ -41,6 +41,17 @@ namespace opogsr_launcher.Hasher
                 Array.Clear(buffer);
             }
             return list;
+        }
+
+        public static async Task<string> XxHashFromChunk(FileStream stream, uint chunk_index)
+        {
+            byte[] buffer = new byte[64 * 1024];
+            long position = Math.Min(stream.Length, StaticGlobals.Variables.LargeChunkSize * chunk_index) - buffer.Length;
+            stream.Seek(position, SeekOrigin.Begin);
+            await stream.ReadExactlyAsync(buffer.AsMemory(0, buffer.Length));
+            XxHash3 hash = new();
+            hash.Append(buffer.AsSpan(0, buffer.Length));
+            return BitConverter.ToString(hash.GetHashAndReset()).Replace("-", "").ToLowerInvariant();
         }
     }
 }

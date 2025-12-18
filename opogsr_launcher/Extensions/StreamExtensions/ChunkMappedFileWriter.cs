@@ -63,6 +63,8 @@ namespace opogsr_launcher.Extensions.StreamExtensions
             File.SetLastWriteTimeUtc(_fileStream.SafeFileHandle, dt);
         }
 
+        public FileStream GetStream() => _fileStream;
+
         public void Start()
         {
             if (IsWorking)

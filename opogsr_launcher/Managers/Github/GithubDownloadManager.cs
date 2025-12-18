@@ -253,7 +253,22 @@ namespace opogsr_launcher.Managers.Github
 
             var tasks = assets.WithMaxConcurrency(semaphore, async (asset) =>
             {
-                long start_position = assets.IndexOf(asset) * StaticGlobals.Variables.LargeChunkSize;
+                int chunk_index = assets.IndexOf(asset);
+                ChunkMetadata metadata = manager.GetOrCreateChunk(d.name, asset.name);
+
+                if (!writer.FileCreated && !writer.FileUpdated && metadata.Length == Convert.ToInt64(asset.size))
+                {
+                    string hash = await FileHasher.XxHashFromChunk(writer.GetStream(), Convert.ToUInt32(chunk_index));
+                    if (d.hash_list[chunk_index] == hash)
+                    {
+                        Logger.Ok("File chunk is already downloaded and valid: {0}", asset.name);
+                        return true;
+                    }
+                    else
+                        metadata.Length = 0;
+                }
+
+                long start_position = chunk_index * StaticGlobals.Variables.LargeChunkSize;
                 long position = start_position;
 
                 int retry = 0;
@@ -263,8 +278,6 @@ namespace opogsr_launcher.Managers.Github
                     try
                     {
                         using var request = new HttpRequestMessage(HttpMethod.Get, asset.url);
-
-                        ChunkMetadata metadata = manager.GetOrCreateChunk(d.name, asset.name);
 
                         if (retry >= 1 || (!writer.FileCreated && !writer.FileUpdated))
                         {
