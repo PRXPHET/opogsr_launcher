@@ -21,7 +21,7 @@ namespace opogsr_launcher.Managers
 
     internal sealed class ChunkMetadataManager : IDisposable
     {
-        private static readonly string MetaPath = Path.Combine(StaticGlobals.Locations.Appdata, "chunks.meta");
+        private static readonly string MetaPath = Path.Combine(StaticGlobals.Locations.Launcher, "chunks.meta");
 
         public ConcurrentDictionary<string, ChunkedFileMetadata> Files { get; private set; }
 
