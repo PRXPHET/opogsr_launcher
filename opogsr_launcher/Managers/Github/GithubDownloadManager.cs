@@ -29,7 +29,27 @@ namespace opogsr_launcher.Managers.Github
             return true;
         }
 
-        private bool ValidateSize(IndexData d, Stream stream)
+        private bool ValidateDate(IndexData d, FileStream stream)
+        {
+            List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(d.name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
+
+            if (assets.Count > 0)
+            {
+                DateTime dt = assets.First().createdAtTime;
+                if (File.GetCreationTimeUtc(stream.SafeFileHandle) == dt && File.GetLastWriteTimeUtc(stream.SafeFileHandle) == dt)
+                    return true;
+            }
+            else
+            {
+                GithubAsset a = release.assets.Find(x => x.name == d.name);
+                if (File.GetCreationTimeUtc(stream.SafeFileHandle) == a.createdAtTime && File.GetLastWriteTimeUtc(stream.SafeFileHandle) == a.createdAtTime)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private bool ValidateSize(IndexData d, FileStream stream)
         {
             List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(d.name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
 
@@ -74,7 +94,7 @@ namespace opogsr_launcher.Managers.Github
 
                 using var stream = File.OpenRead(path);
 
-                if (!ValidateSize(d, stream))
+                if (!ValidateDate(d, stream) || !ValidateSize(d, stream))
                 {
                     not_validated_data.Add(d);
                     return;
