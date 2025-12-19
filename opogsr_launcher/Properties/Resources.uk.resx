@@ -159,4 +159,7 @@
   <data name="LoadSave" xml:space="preserve">
     <value>Запустити</value>
   </data>
+  <data name="RateLimited" xml:space="preserve">
+    <value>Перевищено ліміт запитів. Очікування скидання. Не закривайте лаунчер.</value>
+  </data>
 </root>

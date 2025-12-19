@@ -7,8 +7,6 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Media;
 using System.Reactive;
@@ -39,7 +37,7 @@ namespace opogsr_launcher.ViewModels
 
         public HomeViewModel(DiscordRPCManager discordRPCManager, RuntimeResource resource)
         {
-            _githubDownloadManager = new(Other.Secrets.Secrets.GithubToken, Other.Secrets.Secrets.GithubRepo);
+            _githubDownloadManager = new(Other.Secrets.Secrets.GithubToken, Other.Secrets.Secrets.GithubRepo, Other.Secrets.Secrets.IsGithubPublicRepo);
 
             _discordRPCManager = discordRPCManager;
             Resource = resource;
@@ -70,6 +68,18 @@ namespace opogsr_launcher.ViewModels
 
                 if (FileProgress.IsEmpty)
                     continue;
+
+                if (_githubDownloadManager.IsRateLimited)
+                {
+                    if (ValidationStr.Key != "RateLimited")
+                        ValidationStr.Key = "RateLimited";
+
+                    continue;
+                }
+                else if (!_githubDownloadManager.IsRateLimited && !string.IsNullOrEmpty(ValidationStr.Key) && ValidationStr.Key != "Downloading")
+                {
+                    ValidationStr.Key = "Downloading";
+                }
 
                 cur_size = FileProgress.Values.Aggregate((a, b) => a + b);
 

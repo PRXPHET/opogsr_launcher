@@ -52,12 +52,31 @@ namespace opogsr_launcher.Managers.Github
 
     public class GithubManager
     {
+        protected HttpClient api_client_unauthorized = new();
         protected HttpClient api_client = new();
 
         protected GithubRelease release = new();
-        public List<IndexData> data { get; private set; } = new();
 
         protected Task ReadRepoTask;
+
+        public bool IsPublic { get; private set; } = false;
+
+        public List<IndexData> data { get; private set; } = new();
+
+        private async Task<HttpClient> GetClient()
+        {
+            if (!IsPublic)
+                return api_client;
+
+            HttpResponseMessage msg = await api_client_unauthorized.GetAsync(StaticGlobals.Links.GithubRateLimit);
+
+            msg.EnsureSuccessStatusCode();
+
+            if (msg.Headers.TryGetValues("x-ratelimit-remaining", out var limits) && long.TryParse(limits.First(), out long left) && left != 0)
+                return api_client_unauthorized;
+            else
+                return api_client;
+        }
 
         protected async Task ReadConfig(bool no_assert)
         {
@@ -74,7 +93,8 @@ namespace opogsr_launcher.Managers.Github
             msg.Headers.Add("Accept", "application/octet-stream");
             msg.RequestUri = new Uri(asset.url);
 
-            var httpResult = await api_client.SendAsync(msg);
+            var client = await GetClient();
+            var httpResult = await client.SendAsync(msg);
             httpResult.EnsureSuccessStatusCode();
             string contents = await httpResult.Content.ReadAsStringAsync();
             data = JsonSerializer.Deserialize(contents, SourceGenerationContext.Default.ListIndexData);
@@ -84,18 +104,19 @@ namespace opogsr_launcher.Managers.Github
 
         private async Task ReadRelease(string repo)
         {
-            var httpResult = await api_client.GetAsync($"https://api.github.com/repos/{repo}/releases/tags/base");
+            var client = await GetClient();
+            var httpResult = await client.GetAsync($"https://api.github.com/repos/{repo}/releases/tags/base");
             httpResult.EnsureSuccessStatusCode();
             string contents = await httpResult.Content.ReadAsStringAsync();
             release = JsonSerializer.Deserialize(contents, SourceGenerationContext.Default.GithubRelease);
             release.upload_url = release.upload_url.Replace("{?name,label}", "");
         }
 
-        public async Task RepoTask() => await ReadRepoTask.WaitAsync(CancellationToken.None);
+        public async Task WaitAsync() => await ReadRepoTask.WaitAsync(CancellationToken.None);
 
         public async Task<ulong> Size(string name, bool no_assert = false)
         {
-            await RepoTask();
+            await WaitAsync();
 
             ulong size = 0;
             List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
@@ -120,8 +141,13 @@ namespace opogsr_launcher.Managers.Github
             return size;
         }
 
-        public GithubManager(string Token, string Repo)
+        public GithubManager(string Token, string Repo, bool isPublic)
         {
+            IsPublic = isPublic;
+
+            api_client_unauthorized.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("product", "1"));
+            api_client_unauthorized.Timeout = TimeSpan.FromSeconds(15);
+
             api_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
             api_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("product", "1"));
             api_client.Timeout = TimeSpan.FromSeconds(15);

@@ -24,7 +24,7 @@ namespace opogsr_uploader
 
         public async Task UploadFile(IndexData d, IProgress<(ulong Sent, ulong Total)>? progress = null)
         {
-            await RepoTask();
+            await WaitAsync();
 
             await DeleteFile(d.name);
 
@@ -107,7 +107,7 @@ namespace opogsr_uploader
             }
         }
 
-        public GithubUploadManager(string Token, string Repo) : base(Token, Repo)
+        public GithubUploadManager(string Token, string Repo) : base(Token, Repo, false)
         {
             api_client.Timeout = TimeSpan.FromHours(6);
         }

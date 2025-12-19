@@ -156,4 +156,7 @@
   <data name="LoadSave" xml:space="preserve">
     <value>Start</value>
   </data>
+  <data name="RateLimited" xml:space="preserve">
+    <value>Rate limit exceeded. Waiting for the reset. Do not close the launcher.</value>
+  </data>
 </root>

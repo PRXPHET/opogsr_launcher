@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -14,10 +15,22 @@ using System.Threading.Tasks;
 
 namespace opogsr_launcher.Managers.Github
 {
+    internal class RateLimitInfo
+    {
+        public long Remaining;
+        public DateTime Reset;
+    }
+
     internal class GithubDownloadManager : GithubManager
     {
-        private ConcurrentBag<IndexData> not_validated_data = new();
+        private readonly ConcurrentBag<IndexData> not_validated_data = [];
+
+        private RateLimitInfo? RateInfoUnauthorized = null;
+
+        protected HttpClient download_client_unauthorized = new();
         protected HttpClient download_client = new();
+
+        public bool IsRateLimited { get; private set; } = false;
 
         private bool ValidateChunked(IndexData d, FileStream stream)
         {
@@ -67,7 +80,7 @@ namespace opogsr_launcher.Managers.Github
 
         public async Task<FileStates> Validate()
         {
-            await RepoTask();
+            await WaitAsync();
 
             List<IndexData> no_json_data = [.. data.FindAll(x => !x.name.EndsWith(".json"))];
 
@@ -228,6 +241,56 @@ namespace opogsr_launcher.Managers.Github
             }
         }
 
+        private static async Task<RateLimitInfo> GetRateLimitsAsync(HttpClient client)
+        {
+            HttpResponseMessage msg = await client.GetAsync(StaticGlobals.Links.GithubRateLimit);
+            msg.EnsureSuccessStatusCode();
+
+            return new()
+            {
+                Remaining = msg.Headers.TryGetValues("x-ratelimit-remaining", out var limitsEnum) && long.TryParse(limitsEnum.First(), out var left) ? left : 0,
+                Reset = msg.Headers.TryGetValues("x-ratelimit-reset", out var resetEnum) && DateTimeOffset.TryParse(resetEnum.First(), out var dt) ? dt.UtcDateTime.ToLocalTime() : DateTime.Now,
+            };
+        }
+
+        private async Task<HttpResponseMessage> PrepareDownloadAsync(HttpRequestMessage msg)
+        {
+            if (RateInfoUnauthorized is null || DateTime.UtcNow > RateInfoUnauthorized.Reset)
+                RateInfoUnauthorized = await GetRateLimitsAsync(download_client_unauthorized);
+
+            if (IsPublic && RateInfoUnauthorized.Remaining != 0)
+            {
+                HttpResponseMessage response = await download_client_unauthorized.SendAsync(msg, HttpCompletionOption.ResponseHeadersRead);
+                RateInfoUnauthorized.Remaining--;
+                return response;
+            }
+            else
+            {
+                HttpResponseMessage response = await download_client.SendAsync(msg, HttpCompletionOption.ResponseHeadersRead);
+
+                if (!response.IsSuccessStatusCode && (response.StatusCode == HttpStatusCode.Forbidden || response.StatusCode == HttpStatusCode.TooManyRequests))
+                {
+                    if (response.Headers.TryGetValues("x-ratelimit-reset", out var resetEnum) && DateTimeOffset.TryParse(resetEnum.First(), out var dtf))
+                    {
+                        bool use_unauthorized = dtf.UtcDateTime > RateInfoUnauthorized.Reset && IsPublic;
+                        TimeSpan span = (use_unauthorized ? RateInfoUnauthorized.Reset : dtf.UtcDateTime) - DateTime.UtcNow + TimeSpan.FromSeconds(10);
+                        if (span > TimeSpan.Zero)
+                        {
+                            Logger.Warn("Rate limit exceeded. Waiting for reset until: {0}", dtf.UtcDateTime.ToLocalTime().ToString());
+                            IsRateLimited = true;
+                            await Task.Delay(span);
+                            IsRateLimited = false;
+                            var client = use_unauthorized ? download_client_unauthorized : download_client;
+                            response = await client.SendAsync(msg, HttpCompletionOption.ResponseHeadersRead);
+                            return response;
+                        }
+                    }
+                }
+
+                return response;
+            }
+        }
+
         private async Task<bool> AddRangeRequestAsync(HttpRequestMessage msg, string url, string name, long position)
         {
             using var head = new HttpRequestMessage(HttpMethod.Head, url);
@@ -325,7 +388,7 @@ namespace opogsr_launcher.Managers.Github
                             metadata.Length = 0;
                         }
 
-                        using var response = await download_client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                        using var response = await PrepareDownloadAsync(request);
                         response.EnsureSuccessStatusCode();
 
                         await using var ms = await response.Content.ReadAsStreamAsync();
@@ -430,7 +493,7 @@ namespace opogsr_launcher.Managers.Github
                         Logger.Info("New file download initialization: {0}", asset.name);
                     }
 
-                    using var response = await download_client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                    using var response = await PrepareDownloadAsync(request);
                     response.EnsureSuccessStatusCode();
 
                     await using var ms = await response.Content.ReadAsStreamAsync();
@@ -494,8 +557,13 @@ namespace opogsr_launcher.Managers.Github
             return size;
         }
 
-        public GithubDownloadManager(string Token, string Repo) : base(Token, Repo)
+        public GithubDownloadManager(string Token, string Repo, bool isPublic) : base(Token, Repo, isPublic)
         {
+            download_client_unauthorized.DefaultRequestHeaders.Add("Accept", "application/octet-stream");
+            download_client_unauthorized.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("product", "1"));
+            download_client_unauthorized.DefaultRequestHeaders.ExpectContinue = false;
+            download_client_unauthorized.Timeout = TimeSpan.FromHours(1);
+
             download_client.DefaultRequestHeaders.Add("Accept", "application/octet-stream");
             download_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
             download_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("product", "1"));

@@ -156,4 +156,7 @@
   <data name="LoadSave" xml:space="preserve">
     <value>Запустить</value>
   </data>
+  <data name="RateLimited" xml:space="preserve">
+    <value>Превышен лимит запросов. Ожидание сброса. Не закрывайте лаунчер.</value>
+  </data>
 </root>

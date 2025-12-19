@@ -133,6 +133,15 @@ namespace opogsr_launcher.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Rate limit exceeded. Waiting for reset. Do not close the launcher..
+        /// </summary>
+        public static string RateLimited {
+            get {
+                return ResourceManager.GetString("RateLimited", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Start download.
         /// </summary>
         public static string StartDownload {

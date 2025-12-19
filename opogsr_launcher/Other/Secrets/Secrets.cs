@@ -5,5 +5,6 @@
         public const string GithubToken = "";
         public const string GithubUploadToken = "";
         public const string GithubRepo = "";
+        public const bool IsGithubPublicRepo = false;
     }
 }
