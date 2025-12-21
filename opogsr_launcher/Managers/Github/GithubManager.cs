@@ -1,4 +1,5 @@
-﻿using opogsr_launcher.JsonContext;
+﻿using Avalonia.Controls;
+using opogsr_launcher.JsonContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -154,6 +155,8 @@ namespace opogsr_launcher.Managers.Github
 
             ReadRepoTask = Task.Run(async () =>
             {
+                if (Design.IsDesignMode)
+                    return;
                 await ReadRelease(Repo);
                 await ReadConfig();
             });

@@ -1,4 +1,5 @@
-﻿using opogsr_launcher.Helpers;
+﻿using Avalonia.Controls;
+using opogsr_launcher.Helpers;
 using opogsr_launcher.Managers;
 using opogsr_launcher.Managers.Github;
 using opogsr_launcher.Other.Converters;
@@ -99,6 +100,9 @@ namespace opogsr_launcher.ViewModels
 
         public async void ValidateFiles()
         {
+            if (Design.IsDesignMode)
+                return;
+
             ValidationStr.Key = "ValidatingFiles";
 
             FileStates state = await _githubDownloadManager.Validate();
