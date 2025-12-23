@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Security.Authentication;
 
 namespace opogsr_launcher.Managers.Github
 {
@@ -53,8 +54,8 @@ namespace opogsr_launcher.Managers.Github
 
     public class GithubManager
     {
-        protected HttpClient api_client_unauthorized = new();
-        protected HttpClient api_client = new();
+        protected HttpClient api_client_unauthorized = new(ConfigureClientHandler());
+        protected HttpClient api_client = new(ConfigureClientHandler());
 
         protected GithubRelease release = new();
 
@@ -78,6 +79,13 @@ namespace opogsr_launcher.Managers.Github
             else
                 return api_client;
         }
+
+        protected static HttpClientHandler ConfigureClientHandler() => new()
+        {
+            // Enable TLS 1.3 if we are on Windows 11 as it's supported on it
+            // Enabling it without checking the OS version is not a safe system configuration
+            SslProtocols = OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000) ? (SslProtocols.Tls13 | SslProtocols.Tls12) : SslProtocols.Tls12
+        };
 
         protected async Task ReadConfig(bool no_assert)
         {

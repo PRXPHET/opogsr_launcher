@@ -27,8 +27,8 @@ namespace opogsr_launcher.Managers.Github
 
         private RateLimitInfo? RateInfoUnauthorized = null;
 
-        protected HttpClient download_client_unauthorized = new();
-        protected HttpClient download_client = new();
+        protected HttpClient download_client_unauthorized = new(ConfigureClientHandler());
+        protected HttpClient download_client = new(ConfigureClientHandler());
 
         public bool IsRateLimited { get; private set; } = false;
 
