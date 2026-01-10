@@ -159,4 +159,34 @@
   <data name="RateLimited" xml:space="preserve">
     <value>Превышен лимит запросов. Ожидание сброса. Не закрывайте лаунчер.</value>
   </data>
+  <data name="max_download_threads" xml:space="preserve">
+    <value>Макс. кол-во потоков скачиваний</value>
+  </data>
+  <data name="max_amount_of_tries" xml:space="preserve">
+    <value>Макс. кол-во попыток скачивания</value>
+  </data>
+  <data name="sep_launcher_warn" xml:space="preserve">
+    <value>Изменяйте эти значения только если наблюдаете проблемы со скачиванием.</value>
+  </data>
+  <data name="rus" xml:space="preserve">
+    <value>Русский</value>
+  </data>
+  <data name="eng" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="ukr" xml:space="preserve">
+    <value>Українська</value>
+  </data>
+  <data name="tab_launcher" xml:space="preserve">
+    <value>Лаунчер</value>
+  </data>
+  <data name="launcher_language" xml:space="preserve">
+    <value>Язык лаунчера</value>
+  </data>
+  <data name="max_download_threads_desc" xml:space="preserve">
+    <value>Эта настройка регулирует максимальное количество потоков скачиваний. Более простым языком, макисмальное количество файлов, сколько может скачиваться в данный момент. Увеличение значения данного параметра может улучшить скорость скачивания.</value>
+  </data>
+  <data name="max_amount_of_tries_desc" xml:space="preserve">
+    <value>Эта настройка регулирует максимальное количество попыток скачивания одного файла. Увеличение данного параметра может быть полезно при нестабильном подключении к интернету.</value>
+  </data>
 </root>

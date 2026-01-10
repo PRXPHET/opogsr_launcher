@@ -6,8 +6,12 @@ using System.Resources;
 
 namespace opogsr_launcher.Other.RuntimeResource
 {
-    public class RuntimeResource : ReactiveObject
+    public sealed class RuntimeResource : ReactiveObject
     {
+        private static readonly RuntimeResource _instance = new();
+
+        public static RuntimeResource Instance { get { return _instance; } }
+
         private static readonly ResourceManager _resourceManager = Resources.ResourceManager;
 
         [Reactive] public string Language { get; private set; } = CultureInfo.CurrentCulture.ThreeLetterISOLanguageName;
@@ -19,8 +23,13 @@ namespace opogsr_launcher.Other.RuntimeResource
             if (!string.IsNullOrEmpty(text))
                 return text;
 
-            Logger.Error("Can't find resource string with key [{0}] for culture [{1}].", key, Resources.Culture);
             return $"[{key}]";
+        }
+
+        public static bool ContainsString(string key)
+        {
+            var set = _resourceManager.GetResourceSet(Resources.Culture, false, true);
+            return set != null && set.GetString(key) != null;
         }
 
         public string this[string key] => GetString(key);
@@ -30,7 +39,7 @@ namespace opogsr_launcher.Other.RuntimeResource
             Resources.Culture = new CultureInfo(culture);
             Language = Resources.Culture.ThreeLetterISOLanguageName;
 
-            this.RaisePropertyChanged(string.Empty);
+            Instance.RaisePropertyChanged(string.Empty);
         }
     }
 }

@@ -106,11 +106,28 @@ namespace opogsr_launcher.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на English.
+        /// </summary>
+        public static string eng {
+            get {
+                return ResourceManager.GetString("eng", resourceCulture);
+            }
+        }
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Launcher.
         /// </summary>
         public static string Launcher {
             get {
                 return ResourceManager.GetString("Launcher", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Launcher language.
+        /// </summary>
+        public static string launcher_language {
+            get {
+                return ResourceManager.GetString("launcher_language", resourceCulture);
             }
         }
         
@@ -123,6 +140,42 @@ namespace opogsr_launcher.Properties {
             }
         }
         
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Max amount of download tries.
+        /// </summary>
+        public static string max_amount_of_tries {
+            get {
+                return ResourceManager.GetString("max_amount_of_tries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на This setting controls the maximum amount of attempts to download a single file. Increasing this parameter may be useful if you have an unstable Internet connection..
+        /// </summary>
+        public static string max_amount_of_tries_desc {
+            get {
+                return ResourceManager.GetString("max_amount_of_tries_desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Max amount of download threads.
+        /// </summary>
+        public static string max_download_threads {
+            get {
+                return ResourceManager.GetString("max_download_threads", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на This setting controls the maximum number of download threads. In simpler terms, it is the maximum number of files that can be downloaded at any given time. Increasing this setting may improve download speed..
+        /// </summary>
+        public static string max_download_threads_desc {
+            get {
+                return ResourceManager.GetString("max_download_threads_desc", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Ищет локализованную строку, похожую на Play.
         /// </summary>
@@ -141,6 +194,23 @@ namespace opogsr_launcher.Properties {
             }
         }
         
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Русский.
+        /// </summary>
+        public static string rus {
+            get {
+                return ResourceManager.GetString("rus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Only change this values if you experiencing download problems..
+        /// </summary>
+        public static string sep_launcher_warn {
+            get {
+                return ResourceManager.GetString("sep_launcher_warn", resourceCulture);
+            }
+        }
         /// <summary>
         ///   Ищет локализованную строку, похожую на Start download.
         /// </summary>
@@ -177,6 +247,22 @@ namespace opogsr_launcher.Properties {
             }
         }
         
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Launcher.
+        /// </summary>
+        public static string tab_launcher {
+            get {
+                return ResourceManager.GetString("tab_launcher", resourceCulture);
+            }
+        }
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Українська.
+        /// </summary>
+        public static string ukr {
+            get {
+                return ResourceManager.GetString("ukr", resourceCulture);
+            }
+        }
         /// <summary>
         ///   Ищет локализованную строку, похожую на Validating files....
         /// </summary>

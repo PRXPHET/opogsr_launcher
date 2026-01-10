@@ -169,7 +169,10 @@ namespace opogsr_launcher.Managers.Github
 
             var cts = new CancellationTokenSource();
 
-            var semaphore = new SemaphoreSlim(4);
+            int threads = (int)Other.Settings.Storage.GetValue("max_download_threads");
+            var semaphore = new SemaphoreSlim(threads);
+
+            Logger.Info("Initialize {0} download threads...", threads.ToString());
 
             List<IndexData> data = [.. not_validated_data];
             not_validated_data.Clear();
@@ -330,6 +333,8 @@ namespace opogsr_launcher.Managers.Github
 
             ChunkMetadataManager manager = ChunkMetadataManager.GetInstance();
 
+            int tries = (int)Other.Settings.Storage.GetValue("max_amount_of_tries");
+
             var tasks = assets.WithMaxConcurrency(semaphore, async (asset) =>
             {
                 int chunk_index = assets.IndexOf(asset);
@@ -352,7 +357,7 @@ namespace opogsr_launcher.Managers.Github
 
                 int retry = 0;
 
-                while (retry < StaticGlobals.Variables.AmountOfTries)
+                while (retry < tries)
                 {
                     try
                     {
@@ -447,7 +452,9 @@ namespace opogsr_launcher.Managers.Github
         {
             int retry = 0;
 
-            while (retry < StaticGlobals.Variables.AmountOfTries)
+            int tries = (int)Other.Settings.Storage.GetValue("max_amount_of_tries");
+
+            while (retry < tries)
             {
                 try
                 {

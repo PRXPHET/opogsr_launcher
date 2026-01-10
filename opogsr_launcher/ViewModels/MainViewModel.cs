@@ -1,5 +1,6 @@
 ﻿using opogsr_launcher.Managers;
 using opogsr_launcher.Other.RuntimeResource;
+using opogsr_launcher.Other.Settings;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -39,15 +40,12 @@ namespace opogsr_launcher.ViewModels
         private static SettingsViewModel _SettingsPage;
         private static LogViewModel _LogPage;
 
-        public RuntimeResource Resource { get; private set; }
-
         public ReactiveCommand<Unit, Unit> GoToHomeCommand { get; }
         public ReactiveCommand<Unit, Unit> GoToLoadCommand { get; }
         public ReactiveCommand<Unit, Unit> GoToSettingsCommand { get; }
         public ReactiveCommand<Unit, Unit> GoToLogCommand { get; }
 
         public ReactiveCommand<string, Unit> OpenLinkCommand { get; }
-        public ReactiveCommand<string, Unit> LangSelectionCommand { get; }
 
         public ReactiveCommand<Unit, Unit> MinimizeCommand { get; }
         public ReactiveCommand<Unit, Unit> MaximizeCommand { get; }
@@ -60,15 +58,6 @@ namespace opogsr_launcher.ViewModels
         [Reactive] public bool SettingsActive { get; private set; }
         [Reactive] public bool LogActive { get; private set; }
 
-        [Reactive] public ObservableCollection<Lang> Langs { get; private set; } =
-        [
-            new() { Key = "eng", Title = "English" },
-            new() { Key = "rus", Title = "Русский" },
-            new() { Key = "ukr", Title = "Українська" }
-        ];
-
-        [Reactive] public Lang selectedLang { get; set; }
-
         private static void OpenLink(string link)
         {
             Process.Start(new ProcessStartInfo
@@ -78,7 +67,7 @@ namespace opogsr_launcher.ViewModels
             });
         }
 
-        public MainViewModel(HomeViewModel homeViewModel, LoadViewModel loadViewModel, SettingsViewModel settingsViewModel, LogViewModel logViewModel, DiscordRPCManager discordRPCManager, RuntimeResource resource)
+        public MainViewModel(HomeViewModel homeViewModel, LoadViewModel loadViewModel, SettingsViewModel settingsViewModel, LogViewModel logViewModel, DiscordRPCManager discordRPCManager)
         {
             _discordRPCManager = discordRPCManager;
 
@@ -86,8 +75,6 @@ namespace opogsr_launcher.ViewModels
             _LoadPage = loadViewModel;
             _SettingsPage = settingsViewModel;
             _LogPage = logViewModel;
-
-            Resource = resource;
 
             string InformationalVersion = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "unknown";
 
@@ -104,15 +91,11 @@ namespace opogsr_launcher.ViewModels
                 LogActive = page == _LogPage;
             });
 
-            selectedLang = Langs.FirstOrDefault(l => l.Key == Resource.Language, Langs[0]);
-
             OpenLinkCommand = ReactiveCommand.Create<string>(OpenLink);
-            LangSelectionCommand = ReactiveCommand.Create<string>(Resource.SetLanguage);
 
-            this.WhenAnyValue(x => x.selectedLang.Key)
-                .Where(key => !string.IsNullOrEmpty(key))
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .InvokeCommand(LangSelectionCommand);
+            string lang = (string)SettingsPages.Pages["tab_launcher"].Find(c => c.Command == "launcher_language").GetValue();
+            if (lang != RuntimeResource.Instance.Language)
+                RuntimeResource.Instance.SetLanguage(lang);
 
             CurrentPage = _HomePage;
 

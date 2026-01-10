@@ -72,9 +72,9 @@ namespace opogsr_launcher.ViewModels
             ApplicationHelper.MainWindow.Close();
         }
 
-        public LoadViewModel(RuntimeResource resource)
+        public LoadViewModel()
         {
-            LoadSaveStr = new(resource, "LoadSave");
+            LoadSaveStr = new("LoadSave");
 
             LoadSaveCommand = ReactiveCommand.Create(LoadSave);
 

@@ -150,9 +150,6 @@
   <data name="StateIdling" xml:space="preserve">
     <value>Бездіяльність...</value>
   </data>
-  <data name="ValidatingAccess" xml:space="preserve">
-    <value>Перевірка доступу...</value>
-  </data>
   <data name="ValidatingFiles" xml:space="preserve">
     <value>Перевірка файлів...</value>
   </data>
@@ -161,5 +158,35 @@
   </data>
   <data name="RateLimited" xml:space="preserve">
     <value>Перевищено ліміт запитів. Очікування скидання. Не закривайте лаунчер.</value>
+  </data>
+  <data name="max_download_threads" xml:space="preserve">
+    <value>Макс. кількість потоків завантажень</value>
+  </data>
+  <data name="max_amount_of_tries" xml:space="preserve">
+    <value>Макс. кількість спроб завантаження</value>
+  </data>
+  <data name="sep_launcher_warn" xml:space="preserve">
+    <value>Змінюйте ці значення тільки якщо спостерігаються проблеми із завантаженням.</value>
+  </data>
+  <data name="rus" xml:space="preserve">
+    <value>Русский</value>
+  </data>
+  <data name="eng" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="ukr" xml:space="preserve">
+    <value>Українська</value>
+  </data>
+  <data name="tab_launcher" xml:space="preserve">
+    <value>Лаунчер</value>
+  </data>
+  <data name="launcher_language" xml:space="preserve">
+    <value>Мова лаунчера</value>
+  </data>
+  <data name="max_download_threads_desc" xml:space="preserve">
+    <value>Цей параметр регулює максимальну кількість потоків завантаження. Простіше кажучи, це максимальна кількість файлів, які можуть завантажуватися в даний момент. Збільшення значення цього параметра може покращити швидкість завантаження.</value>
+  </data>
+  <data name="max_amount_of_tries_desc" xml:space="preserve">
+    <value>Це налаштування регулює максимальну кількість спроб завантаження одного файлу. Збільшення цього параметра може бути корисним при нестабільному підключенні до Інтернету.</value>
   </data>
 </root>

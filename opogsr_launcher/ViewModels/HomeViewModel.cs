@@ -20,8 +20,6 @@ namespace opogsr_launcher.ViewModels
         private static DiscordRPCManager _discordRPCManager;
         private static GithubDownloadManager _githubDownloadManager;
 
-        public RuntimeResource Resource { get; private set; }
-
         [Reactive] public bool IsDownloading { get; set; }
 
         [Reactive] public string DownloadSpeedStr { get; set; }
@@ -36,15 +34,14 @@ namespace opogsr_launcher.ViewModels
 
         [Reactive] public ReactiveCommand<Unit, Unit> ButtonMainCommand { get; set; }
 
-        public HomeViewModel(DiscordRPCManager discordRPCManager, RuntimeResource resource)
+        public HomeViewModel(DiscordRPCManager discordRPCManager)
         {
             _githubDownloadManager = new(Other.Secrets.Secrets.GithubToken, Other.Secrets.Secrets.GithubRepo, Other.Secrets.Secrets.IsGithubPublicRepo);
 
             _discordRPCManager = discordRPCManager;
-            Resource = resource;
 
-            ValidationStr = new(resource, "");
-            ButtonMainStr = new(resource, "StartDownload");
+            ValidationStr = new("ValidatingAccess");
+            ButtonMainStr = new("StartDownload");
 
             ButtonMainCommand = ReactiveCommand.Create(ButtonMain);
         }

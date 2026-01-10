@@ -159,4 +159,34 @@
   <data name="RateLimited" xml:space="preserve">
     <value>Rate limit exceeded. Waiting for the reset. Do not close the launcher.</value>
   </data>
+  <data name="max_download_threads" xml:space="preserve">
+    <value>Max amount of download threads</value>
+  </data>
+  <data name="max_amount_of_tries" xml:space="preserve">
+    <value>Max amount of download tries</value>
+  </data>
+  <data name="sep_launcher_warn" xml:space="preserve">
+    <value>Only change this values if you experiencing download problems.</value>
+  </data>
+  <data name="rus" xml:space="preserve">
+    <value>Русский</value>
+  </data>
+  <data name="eng" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="ukr" xml:space="preserve">
+    <value>Українська</value>
+  </data>
+  <data name="tab_launcher" xml:space="preserve">
+    <value>Launcher</value>
+  </data>
+  <data name="launcher_language" xml:space="preserve">
+    <value>Launcher language</value>
+  </data>
+  <data name="max_download_threads_desc" xml:space="preserve">
+    <value>This setting controls the maximum number of download threads. In simpler terms, it is the maximum number of files that can be downloaded at any given time. Increasing this setting may improve download speed.</value>
+  </data>
+  <data name="max_amount_of_tries_desc" xml:space="preserve">
+    <value>This setting controls the maximum amount of attempts to download a single file. Increasing this parameter may be useful if you have an unstable Internet connection.</value>
+  </data>
 </root>

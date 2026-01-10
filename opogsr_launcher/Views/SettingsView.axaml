@@ -11,29 +11,16 @@
 				<vm:SettingsViewModel/>
 			</Design.DataContext>
 
-			<UserControl.Styles>
-				<StyleInclude Source="/Styles/DefaultStyles.axaml"/>
-			</UserControl.Styles>
-	
-			<Grid Margin="20,0,20,0">
-				<Grid.Background>
-					<SolidColorBrush Color="Black" Opacity="0.5"/>
-				</Grid.Background>
-				<Border Grid.Column="0" Background="Black">
-					<ScrollViewer>
-						<Grid ColumnDefinitions="0.5* 0.5*">
-							<Border Grid.Column="0">
-								<StackPanel HorizontalAlignment="Center" Margin="10">
-									<Label Foreground="White" Content="Hello World!"></Label>
-								</StackPanel>
-							</Border>
-							<Border Grid.Column="1">
-								<StackPanel HorizontalAlignment="Center" Margin="10">
-									<Label Foreground="White" Content="Hello World!"></Label>
-								</StackPanel>
-							</Border>
-						</Grid>
-					</ScrollViewer>
-				</Border>
+			<Grid>
+				<ScrollViewer>
+					<TabControl x:Name="SettingsTabs">
+						<TabControl.Background>
+							<SolidColorBrush Color="Black" Opacity="0.5"/>
+						</TabControl.Background>
+					</TabControl>
+				</ScrollViewer>
+				<Button Name="ButtonSave" Command="{Binding SaveSettingsCommand}" CommandParameter="{Binding $self}" IsEnabled="False" Margin="0, 0, 0, 10" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+					<TextBlock FontSize="20" Text="Save" />
+				</Button>
 			</Grid>
 </UserControl>

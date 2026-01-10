@@ -13,7 +13,6 @@ namespace opogsr_launcher
         {
             public const long LargeChunkSize = 2 * 1000 * 1000 * 1000;
             //public const long LargeChunkSize = 2 * 1000 * 1000;
-            public const uint AmountOfTries = 5;
         }
 
         public static class Links
@@ -33,12 +32,13 @@ namespace opogsr_launcher
 
             public static string Appdata { get; } = Start + "\\appdata";
 
-            public static string Saves { get; } = Appdata + "\\savedgames";
-
             public static string Launcher { get; } = Appdata + "\\launcher";
 
-            public static string Logs { get; } = Launcher + "\\logs";
+            public static string Saves { get; } = Appdata + "\\savedgames";
 
+            public static string Settings { get; } = Appdata + "\\settings";
+
+            public static string Logs { get; } = Launcher + "\\logs";
         }
 
         public static class Extensions
@@ -48,9 +48,13 @@ namespace opogsr_launcher
 
         public static class Names
         {
-            public static string Executable { get; } = Init();
+            public const string GameScriptSettingsFile = "opogsr_options.ltx";
+            public const string GameSettingsFile = "user.ltx";
+            public const string LauncherSettingsFile = "settings.ltx";
 
-            public static string GameExecutable { get; } = "OPOGSR.exe";
+            public const string GameExecutable = "OPOGSR.exe";
+
+            public static string Executable { get; } = Init();
 
             private static string Init()
             {

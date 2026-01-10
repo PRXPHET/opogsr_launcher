@@ -24,8 +24,6 @@ namespace opogsr_launcher
             collection.AddViewModels();
             collection.AddViews();
 
-            collection.AddSingleton<RuntimeResource>();
-
             return collection;
         }
 

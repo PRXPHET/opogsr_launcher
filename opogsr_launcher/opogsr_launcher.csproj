@@ -35,6 +35,8 @@
 		<DirectPInvoke Include="libSkiaSharp" />
 		<NativeLibrary Include="Native\skia.lib" />
 		<NativeLibrary Include="Native\SkiaSharp.lib" />
+
+		<RdXmlFile Include="Properties\rd.xml" />
 	</ItemGroup>
 
 	<PropertyGroup>
