@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace opogsr_launcher.Extensions.StreamExtensions
 {
-    internal class ChunkMappedFileWriter : IAsyncDisposable, IDisposable
+    internal class ChunkMappedFileWriter : IDisposable
     {
         private struct MappedMemory
         {
@@ -20,7 +20,6 @@ namespace opogsr_launcher.Extensions.StreamExtensions
 
         private readonly FileStream _fileStream;
 
-        private readonly string _path;
         private readonly long _size;
 
         private Task WriteTask;
@@ -28,9 +27,8 @@ namespace opogsr_launcher.Extensions.StreamExtensions
         private bool IsWorking = false;
 
         public bool IsDisposed { get; private set; } = false;
-        public bool IsDestroyed { get; private set; } = false;
-        public bool FileCreated { get; private set; } = false;
 
+        public bool FileCreated { get; private set; } = false;
         public bool FileUpdated { get; private set; } = false;
 
         public bool DateChanged { get; private set; } = false;
@@ -41,9 +39,8 @@ namespace opogsr_launcher.Extensions.StreamExtensions
 
         public ChunkMappedFileWriter(string path, long size, DateTime dt,  CancellationToken ct = default)
         {
-            _path = path;
             _size = size;
-            _fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
+            _fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
 
             if (_fileStream.Length == 0)
             {
@@ -61,6 +58,8 @@ namespace opogsr_launcher.Extensions.StreamExtensions
 
             File.SetCreationTimeUtc(_fileStream.SafeFileHandle, dt);
             File.SetLastWriteTimeUtc(_fileStream.SafeFileHandle, dt);
+            
+            AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
         }
 
         public FileStream GetStream() => _fileStream;
@@ -111,22 +110,15 @@ namespace opogsr_launcher.Extensions.StreamExtensions
             IsWorking = false;
         }
 
-        async ValueTask IAsyncDisposable.DisposeAsync()
+        public void UpdateDate(DateTime dt)
         {
-            if (IsDisposed)
+            if (DateChanged)
                 return;
 
-            IsWorking = false;
+            DateChanged = true;
 
-            Data.CompleteAdding();
-
-            await WriteTask?.WaitAsync(CancellationToken.None);
-
-            _fileStream.Close();
-
-            IsDisposed = true;
-
-            GC.SuppressFinalize(this);
+            File.SetCreationTimeUtc(_fileStream.SafeFileHandle, dt);
+            File.SetLastAccessTimeUtc(_fileStream.SafeFileHandle, dt);
         }
 
         public void Dispose()
@@ -147,16 +139,6 @@ namespace opogsr_launcher.Extensions.StreamExtensions
             GC.SuppressFinalize(this);
         }
 
-        public void Destroy()
-        {
-            if (IsDestroyed)
-                return;
-
-            Dispose();
-
-            File.Delete(_path);
-
-            IsDestroyed = true;
-        }
+        private void OnProcessExit(object? sender, EventArgs e) => Dispose();
     }
 }

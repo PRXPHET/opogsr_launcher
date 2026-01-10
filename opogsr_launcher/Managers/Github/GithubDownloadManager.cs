@@ -167,25 +167,30 @@ namespace opogsr_launcher.Managers.Github
                 }
             }
 
-            ChunkMetadataManager manager = ChunkMetadataManager.GetInstance();
-
-            if (progress is not null && !manager.Files.IsEmpty)
-            {
-                foreach (var file in manager.Files)
-                {
-                    foreach (var chunk in file.Value.Chunks)
-                    {
-                        progress.Report((chunk.Key, Convert.ToUInt64(chunk.Value.Length)));
-                    }
-                }
-            }
-
             var cts = new CancellationTokenSource();
 
             var semaphore = new SemaphoreSlim(4);
 
             List<IndexData> data = [.. not_validated_data];
             not_validated_data.Clear();
+
+            ChunkMetadataManager manager = ChunkMetadataManager.GetInstance();
+
+            if (progress is not null && !manager.Files.IsEmpty)
+            {
+                foreach (var file in manager.Files)
+                {
+                    IndexData d = data.Find(x => x.name == file.Key);
+                    bool exists = File.Exists(Path.Combine(StaticGlobals.Locations.Start, d.directory ?? "", d.name));
+                    foreach (var chunk in file.Value.Chunks)
+                    {
+                        if (exists)
+                            progress.Report((chunk.Key, Convert.ToUInt64(chunk.Value.Length)));
+                        else
+                            chunk.Value.Length = 0;
+                    }
+                }
+            }
 
             var tasks = data.Select(async (d) =>
             {
@@ -230,15 +235,6 @@ namespace opogsr_launcher.Managers.Github
             ChunkMetadataManager.DestroyInstance();
 
             return true;
-        }
-
-        private static void EnsureFile(string path)
-        {
-            if (File.Exists(path))
-            {
-                File.SetAttributes(path, FileAttributes.Normal);
-                File.Delete(path);
-            }
         }
 
         private static async Task<RateLimitInfo> GetRateLimitsAsync(HttpClient client)
@@ -402,9 +398,9 @@ namespace opogsr_launcher.Managers.Github
 
                         while ((bytes_read = await ms.ReadAsync(buffer, 0, buffer.Length)) > 0)
                         {
-                            if (ct.IsCancellationRequested || writer.IsDestroyed)
+                            if (ct.IsCancellationRequested || writer.IsDisposed)
                             {
-                                writer.Destroy();
+                                writer.Dispose();
                                 return false;
                             }
 
@@ -431,13 +427,6 @@ namespace opogsr_launcher.Managers.Github
                         retry++;
 
                         Logger.Error($"Error file during download. Exception: {ex.Message}, Name: {asset.name}, Attempt {retry}.");
-                    }
-                    finally
-                    {
-                        if (retry >= StaticGlobals.Variables.AmountOfTries)
-                        {
-                            EnsureFile(path);
-                        }
                     }
                 }
 
@@ -513,7 +502,6 @@ namespace opogsr_launcher.Managers.Github
                     {
                         if (ct.IsCancellationRequested)
                         {
-                            EnsureFile(path);
                             return false;
                         }
 
@@ -536,10 +524,6 @@ namespace opogsr_launcher.Managers.Github
                 }
                 finally
                 {
-                    if (retry >= StaticGlobals.Variables.AmountOfTries)
-                    {
-                        EnsureFile(path);
-                    }
                     semaphore.Release();
                 }
             }
