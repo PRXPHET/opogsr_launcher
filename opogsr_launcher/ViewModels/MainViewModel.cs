@@ -1,7 +1,14 @@
-﻿using ReactiveUI;
+﻿using opogsr_launcher.Managers;
+using opogsr_launcher.Other.RuntimeResource;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
+using System.Reflection;
 using opogsr_launcher.Properties;
 using MsBox.Avalonia;
 using System.Media;
@@ -82,6 +89,9 @@ namespace opogsr_launcher.ViewModels
 
             Resource = resource;
 
+            string InformationalVersion = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "unknown";
+
+            Logger.Info("OP OGSR Launcher. Build Date: " + InformationalVersion + ".");
             Logger.Info("Start...");
 
             _HomePage.ValidateFiles();

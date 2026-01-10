@@ -37,11 +37,17 @@
 		<NativeLibrary Include="Native\SkiaSharp.lib" />
 	</ItemGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <NoWarn>IL3050;IL2026;MSB3270;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CA1416;LNK4099</NoWarn>
+	<PropertyGroup>
+		<BuildDate>$([System.DateTime]::Now.ToString("dd-MM-yyyy HH:mm:ss"))</BuildDate>
+		<InformationalVersion>$(BuildDate)</InformationalVersion>
+		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	<ItemGroup>
+		<AssemblyMetadata Include="BuildDate" Value="$(BuildDate)" />
+	</ItemGroup>
+
+	<PropertyGroup>
 	  <NoWarn>IL3050;IL2026;MSB3270;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CA1416;LNK4099</NoWarn>
 	</PropertyGroup>
 
