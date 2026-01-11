@@ -29,26 +29,32 @@
 			<Border.Background>
 				<SolidColorBrush Color="Black" Opacity="0.5"/>
 			</Border.Background>
-			<Grid RowDefinitions="* * Auto">
-				<StackPanel Grid.Row="0" Spacing="15">
+			<Grid RowDefinitions="0.55* * 0.22*">
+				<Border Grid.Row="0">
 					<Image VerticalAlignment="Top" Source="/Assets/Images/logo.png"/>
-					<Button Content="{Binding Source={x:Static rs:RuntimeResource.Instance}, Path=[ButtonHome]}" Classes="SidebarButton" Classes.Active="{Binding HomeActive}" Command="{Binding GoToHomeCommand}"/>
-					<Button Content="{Binding Source={x:Static rs:RuntimeResource.Instance}, Path=[ButtonLoad]}" Classes="SidebarButton" Classes.Active="{Binding LoadActive}" Command="{Binding GoToLoadCommand}" />
-					<Button Content="{Binding Source={x:Static rs:RuntimeResource.Instance}, Path=[ButtonSettings]}" Classes="SidebarButton" Classes.Active="{Binding SettingsActive}" Command="{Binding GoToSettingsCommand}"/>
-					<Button Content="{Binding Source={x:Static rs:RuntimeResource.Instance}, Path=[ButtonLog]}" Classes="SidebarButton" Classes.Active="{Binding LogActive}" Command="{Binding GoToLogCommand}"/>
-				</StackPanel>
+				</Border>
+				<Border Grid.Row="1">
+					<StackPanel Spacing="15">
+						<Button Content="{Binding Source={x:Static rs:RuntimeResource.Instance}, Path=[ButtonHome]}" Classes="SidebarButton" Classes.Active="{Binding HomeActive}" Command="{Binding GoToHomeCommand}"/>
+						<Button Content="{Binding Source={x:Static rs:RuntimeResource.Instance}, Path=[ButtonLoad]}" Classes="SidebarButton" Classes.Active="{Binding LoadActive}" Command="{Binding GoToLoadCommand}" />
+						<Button Content="{Binding Source={x:Static rs:RuntimeResource.Instance}, Path=[ButtonSettings]}" Classes="SidebarButton" Classes.Active="{Binding SettingsActive}" Command="{Binding GoToSettingsCommand}"/>
+						<Button Content="{Binding Source={x:Static rs:RuntimeResource.Instance}, Path=[ButtonLog]}" Classes="SidebarButton" Classes.Active="{Binding LogActive}" Command="{Binding GoToLogCommand}"/>
+					</StackPanel>
+				</Border>
 				<Border Grid.Row="2">
-					<Grid VerticalAlignment="Bottom" ColumnDefinitions="* * *">
-						<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.Discord}" Grid.Column="0" Classes="IconButton">
-							<Image Source="/Assets/Images/discord.png"/>
-						</Button>
-						<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.ApPro}" Grid.Column="1" Classes="IconButton">
-							<Image Source="/Assets/Images/appro.png"/>
-						</Button>
-						<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.AMK}" Grid.Column="2" Classes="IconButton">
-							<Image Source="/Assets/Images/amk.png"/>
-						</Button>
-					</Grid>
+					<Viewbox Stretch="Uniform">
+						<Grid ColumnDefinitions="* * *">
+							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.Discord}" Grid.Column="0" Classes="IconButton">
+								<Image Source="/Assets/Images/discord.png"/>
+							</Button>
+							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.ApPro}" Grid.Column="1" Classes="IconButton">
+								<Image Source="/Assets/Images/appro.png"/>
+							</Button>
+							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.AMK}" Grid.Column="2" Classes="IconButton">
+								<Image Source="/Assets/Images/amk.png"/>
+							</Button>
+						</Grid>
+					</Viewbox>
 				</Border>
 			</Grid>
 		</Border>
