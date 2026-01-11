@@ -159,6 +159,30 @@
   <data name="RateLimited" xml:space="preserve">
     <value>Перевищено ліміт запитів. Очікування скидання. Не закривайте лаунчер.</value>
   </data>
+  <data name="gd_novice" xml:space="preserve">
+    <value>Навчання</value>
+  </data>
+  <data name="gd_stalker" xml:space="preserve">
+    <value>Сталкер</value>
+  </data>
+  <data name="gd_veteran" xml:space="preserve">
+    <value>Розвiдник</value>
+  </data>
+  <data name="gd_master" xml:space="preserve">
+    <value>Легенда</value>
+  </data>
+  <data name="tab_gameplay" xml:space="preserve">
+    <value>Гра</value>
+  </data>
+  <data name="tab_video" xml:space="preserve">
+    <value>Вiдео</value>
+  </data>
+  <data name="tab_audio" xml:space="preserve">
+    <value>Звук</value>
+  </data>
+  <data name="g_game_difficulty" xml:space="preserve">
+    <value>Складність</value>
+  </data>
   <data name="max_download_threads" xml:space="preserve">
     <value>Макс. кількість потоків завантажень</value>
   </data>
@@ -183,10 +207,199 @@
   <data name="launcher_language" xml:space="preserve">
     <value>Мова лаунчера</value>
   </data>
+  <data name="inventory_window_delay" xml:space="preserve">
+    <value>Затримка вікна опису</value>
+  </data>
+  <data name="inventory_window_delay_desc" xml:space="preserve">
+    <value>Це налаштування регулює затримку появи вікна опису предмета в інвентарі після наведення на нього курсором.</value>
+  </data>
+  <data name="hud_crosshair" xml:space="preserve">
+    <value>Показати приціл</value>
+  </data>
+  <data name="cl_dynamiccrosshair" xml:space="preserve">
+    <value>Динамічний приціл</value>
+  </data>
+  <data name="hud_info" xml:space="preserve">
+    <value>Розпізнавання НПС</value>
+  </data>
+  <data name="hud_crosshair_dist" xml:space="preserve">
+    <value>Відстань до мети</value>
+  </data>
+  <data name="fakescope_enable" xml:space="preserve">
+    <value>Шейдерні 2D-приціли</value>
+  </data>
+  <data name="fakescope_enable_desc" xml:space="preserve">
+    <value>Це налаштування включає 2D-приціли з псевдоефектом паралакса і розмиттям.</value>
+  </data>
+  <data name="g_3d_scopes" xml:space="preserve">
+    <value>3D прицiли</value>
+  </data>
+  <data name="g_3d_pda" xml:space="preserve">
+    <value>3D КПК</value>
+  </data>
+  <data name="wpn_aim_toggle" xml:space="preserve">
+    <value>Прицілювання натисканням/утриманням</value>
+  </data>
+  <data name="g_mouse_wheel_switch_slot" xml:space="preserve">
+    <value>Перемикання слота коліщатком миші</value>
+  </data>
+  <data name="rs_always_active" xml:space="preserve">
+    <value>Не ставити паузу при згортанні гри</value>
+  </data>
+  <data name="ssfx_saturation" xml:space="preserve">
+    <value>Насичення</value>
+  </data>
+  <data name="ssfx_exposure" xml:space="preserve">
+    <value>Експозиція</value>
+  </data>
+  <data name="ssfx_gamma" xml:space="preserve">
+    <value>Гамма</value>
+  </data>
+  <data name="sep_op2" xml:space="preserve">
+    <value>Налаштування ОП</value>
+  </data>
+  <data name="sep_opt_edit" xml:space="preserve">
+    <value>Полегшене проходження</value>
+  </data>
+  <data name="sep_opt_edit_warn" xml:space="preserve">
+    <value>Будьте обережні! Ці опції значно полегшують і прискорюють проходження, але можуть позбавити задоволення від гри. Ці опції не будуть недоступні на складності «Легенда».</value>
+  </data>
   <data name="max_download_threads_desc" xml:space="preserve">
     <value>Цей параметр регулює максимальну кількість потоків завантаження. Простіше кажучи, це максимальна кількість файлів, які можуть завантажуватися в даний момент. Збільшення значення цього параметра може покращити швидкість завантаження.</value>
   </data>
   <data name="max_amount_of_tries_desc" xml:space="preserve">
     <value>Це налаштування регулює максимальну кількість спроб завантаження одного файлу. Збільшення цього параметра може бути корисним при нестабільному підключенні до Інтернету.</value>
+  </data>
+  <data name="r_fps_lock" xml:space="preserve">
+    <value>Ліміт FPS</value>
+  </data>
+  <data name="r_fps_lock_in_menu" xml:space="preserve">
+    <value>Ліміт FPS в меню</value>
+  </data>
+  <data name="g_font_scale_x" xml:space="preserve">
+    <value>Ширина шрифту</value>
+  </data>
+  <data name="g_font_scale_y" xml:space="preserve">
+    <value>Висота шрифту</value>
+  </data>
+  <data name="sep_video_adv" xml:space="preserve">
+    <value>Розширені налаштування графіки</value>
+  </data>
+  <data name="fov" xml:space="preserve">
+    <value>Поле зору</value>
+  </data>
+  <data name="r__detail_radius" xml:space="preserve">
+    <value>Дальність відтворення трави</value>
+  </data>
+  <data name="r__detail_density" xml:space="preserve">
+    <value>Щільність трави</value>
+  </data>
+  <data name="r__detail_radius_desc" xml:space="preserve">
+    <value>Це налаштування регулює максимальну відстань, на якій відображається трава. Чим далі повзунок, тим далі буде край трави. УВАГА! Алгоритм малювання трави грою такий, що при збільшенні радіусу трави навантаження на відеокарту збільшується в геометричній прогресії. Більш-менш прийнятні величини лежать в межах 150-200 метрів.</value>
+  </data>
+  <data name="r__detail_density_desc" xml:space="preserve">
+    <value>Ця настройка регулює, наскільки щільно відмальовуються кущики трави в грі. Чим далі повзунок, тим ближче один до одного будуть відмальовуватися елементи трави і тим густішою вона буде. УВАГА! Надмірна густота трави призводить до сильного гальмування. Якщо хочете відрегулювати цей параметр, робіть це потроху, щоразу перевіряючи, що вийшло.</value>
+  </data>
+  <data name="r__detail_scale" xml:space="preserve">
+    <value>Висота трави</value>
+  </data>
+  <data name="r_aa_mode" xml:space="preserve">
+    <value>Згладжування</value>
+  </data>
+  <data name="r_aa_mode_desc" xml:space="preserve">
+    <value>Це налаштування перемикає тип згладжування. Доступні SMAA (Subpixel Morphological Anti-Aliasing), TAA (Temporal Anti-Aliasing), AMD FidelityFX Super Resolution (FSR) 2 і Nvidia DLSS (Deep Learning Super-Sampling). AMD FSR 2 доступний тільки на відеокартах GTX 10 серії і вище. Nvidia DLSS - RTX 20 серії і вище.</value>
+  </data>
+  <data name="r_ao_mode" xml:space="preserve">
+    <value>Тип AO</value>
+  </data>
+  <data name="r_ao_mode_desc" xml:space="preserve">
+    <value>Це налаштування регулює режим роботи ефекту глобального освітлення в грі. Доступні для вибору SSDO (ScreenSpace Directional Occlusion) і GTAO (Ground Truth-based Ambient Occlusion).</value>
+  </data>
+  <data name="r_ao_quality" xml:space="preserve">
+    <value>Якість AO</value>
+  </data>
+  <data name="r__smap_size" xml:space="preserve">
+    <value>Роздільна здатність карт тіней</value>
+  </data>
+  <data name="r__smap_size_desc" xml:space="preserve">
+    <value>Чим вища роздільна здатність карт тіней, тим чіткіші тіні будуть на відстані (більше ~15-20 метрів від ГГ - за межами ближнього каскаду тіней). Щоб не було помітного погіршення якості тіней на цій межі, рекомендується виставляти роздільну здатність не нижче 4096x4096. Налаштування дуже сильно впливає на продуктивність.</value>
+  </data>
+  <data name="r2_sun_quality" xml:space="preserve">
+    <value>М'які тіні від сонця</value>
+  </data>
+  <data name="r_sunshafts_mode" xml:space="preserve">
+    <value>Тип сонячних променів</value>
+  </data>
+  <data name="r_sunshafts_mode_desc" xml:space="preserve">
+    <value>Це налаштування перемикає тип сонячних променів. Виберіть той, який більше сподобається.</value>
+  </data>
+  <data name="r__actor_shadow" xml:space="preserve">
+    <value>Тінь від головного героя</value>
+  </data>
+  <data name="r2_sun_details" xml:space="preserve">
+    <value>Тінь від трави</value>
+  </data>
+  <data name="r2_sun_details_desc" xml:space="preserve">
+    <value>Це налаштування включає відкидання травою тіней від сонячного світла та інших джерел динамічного освітлення. Зменшує продуктивність пропорційно щільності та відстані трави.</value>
+  </data>
+  <data name="st_opt_off" xml:space="preserve">
+    <value>Відключено</value>
+  </data>
+  <data name="st_opt_low" xml:space="preserve">
+    <value>Низько</value>
+  </data>
+  <data name="st_opt_medium" xml:space="preserve">
+    <value>Середнє</value>
+  </data>
+  <data name="st_opt_high" xml:space="preserve">
+    <value>Високо</value>
+  </data>
+  <data name="st_opt_ultra" xml:space="preserve">
+    <value>Ультра</value>
+  </data>
+  <data name="st_opt_extreme" xml:space="preserve">
+    <value>Екстрим</value>
+  </data>
+  <data name="st_opt_taa" xml:space="preserve">
+    <value>TAA</value>
+  </data>
+  <data name="st_opt_smaa" xml:space="preserve">
+    <value>SMAA</value>
+  </data>
+  <data name="st_opt_fsr2" xml:space="preserve">
+    <value>AMD FSR 2</value>
+  </data>
+  <data name="st_opt_dlss" xml:space="preserve">
+    <value>Nvidia DLSS</value>
+  </data>
+  <data name="ss_ogse" xml:space="preserve">
+    <value>Screen Space (OGSE)</value>
+  </data>
+  <data name="ss_manowar" xml:space="preserve">
+    <value>Screen Space (Mrmnwar)</value>
+  </data>
+  <data name="combined_ogse" xml:space="preserve">
+    <value>Комбінований (Volumetric + OGSE)</value>
+  </data>
+  <data name="combined_manowar" xml:space="preserve">
+    <value>Комбінований (Volumetric + Mrmnwar)</value>
+  </data>
+  <data name="volumetric" xml:space="preserve">
+    <value>Volumetric</value>
+  </data>
+  <data name="snd_volume" xml:space="preserve">
+    <value>Загальна гучність</value>
+  </data>
+  <data name="snd_volume_effect" xml:space="preserve">
+    <value>Гучність ефектів</value>
+  </data>
+  <data name="snd_volume_music" xml:space="preserve">
+    <value>Гучність музики</value>
+  </data>
+  <data name="snd_volume_weapon" xml:space="preserve">
+    <value>Гучність зброї</value>
+  </data>
+  <data name="snd_volume_ui" xml:space="preserve">
+    <value>Гучність інтерфейсу</value>
   </data>
 </root>

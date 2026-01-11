@@ -159,6 +159,30 @@
   <data name="RateLimited" xml:space="preserve">
     <value>Rate limit exceeded. Waiting for reset. Do not close the launcher.</value>
   </data>
+  <data name="gd_novice" xml:space="preserve">
+    <value>Too Young To Die</value>
+  </data>
+  <data name="gd_stalker" xml:space="preserve">
+    <value>Hurt Me Plenty</value>
+  </data>
+  <data name="gd_veteran" xml:space="preserve">
+    <value>Ultra-Violence</value>
+  </data>
+  <data name="gd_master" xml:space="preserve">
+    <value>Nightmare</value>
+  </data>
+  <data name="tab_gameplay" xml:space="preserve">
+    <value>Gameplay</value>
+  </data>
+  <data name="tab_video" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="tab_audio" xml:space="preserve">
+    <value>Audio</value>
+  </data>
+  <data name="g_game_difficulty" xml:space="preserve">
+    <value>Difficulty</value>
+  </data>
   <data name="max_download_threads" xml:space="preserve">
     <value>Max amount of download threads</value>
   </data>
@@ -183,10 +207,199 @@
   <data name="launcher_language" xml:space="preserve">
     <value>Launcher language</value>
   </data>
+  <data name="inventory_window_delay" xml:space="preserve">
+    <value>Description Window Delay</value>
+  </data>
+  <data name="inventory_window_delay_desc" xml:space="preserve">
+    <value>This setting controls the delay before the item description window appears in the inventory when you hover over it with the cursor.</value>
+  </data>
+  <data name="hud_crosshair" xml:space="preserve">
+    <value>Show crosshair</value>
+  </data>
+  <data name="cl_dynamiccrosshair" xml:space="preserve">
+    <value>Dynamic crosshair</value>
+  </data>
+  <data name="hud_info" xml:space="preserve">
+    <value>NPC recognition</value>
+  </data>
+  <data name="hud_crosshair_dist" xml:space="preserve">
+    <value>Distance to target</value>
+  </data>
+  <data name="fakescope_enable" xml:space="preserve">
+    <value>Shader-based 2D Scopes</value>
+  </data>
+  <data name="fakescope_enable_desc" xml:space="preserve">
+    <value>This setting enables 2D sights with pseudo-parallax and blur effects.</value>
+  </data>
+  <data name="g_3d_scopes" xml:space="preserve">
+    <value>3D Scopes</value>
+  </data>
+  <data name="g_3d_pda" xml:space="preserve">
+    <value>3D PDA</value>
+  </data>
+  <data name="wpn_aim_toggle" xml:space="preserve">
+    <value>Aim by pressing/holding</value>
+  </data>
+  <data name="g_mouse_wheel_switch_slot" xml:space="preserve">
+    <value>Switch slots with the mouse wheel</value>
+  </data>
+  <data name="rs_always_active" xml:space="preserve">
+    <value>Do not pause when minimizing the game</value>
+  </data>
+  <data name="ssfx_saturation" xml:space="preserve">
+    <value>Saturation</value>
+  </data>
+  <data name="ssfx_exposure" xml:space="preserve">
+    <value>Exposure</value>
+  </data>
+  <data name="ssfx_gamma" xml:space="preserve">
+    <value>Gamma</value>
+  </data>
+  <data name="sep_op2" xml:space="preserve">
+    <value>OP settings</value>
+  </data>
+  <data name="sep_opt_edit" xml:space="preserve">
+    <value>Game reliefs</value>
+  </data>
+  <data name="sep_opt_edit_warn" xml:space="preserve">
+    <value>Be careful! These options make the game much easier and faster, but they can take away some of the fun. These options will not be available on the “Legend” difficulty.</value>
+  </data>
   <data name="max_download_threads_desc" xml:space="preserve">
     <value>This setting controls the maximum number of download threads. In simpler terms, it is the maximum number of files that can be downloaded at any given time. Increasing this setting may improve download speed.</value>
   </data>
   <data name="max_amount_of_tries_desc" xml:space="preserve">
     <value>This setting controls the maximum amount of attempts to download a single file. Increasing this parameter may be useful if you have an unstable Internet connection.</value>
+  </data>
+  <data name="r_fps_lock" xml:space="preserve">
+    <value>FPS limit</value>
+  </data>
+  <data name="r_fps_lock_in_menu" xml:space="preserve">
+    <value>FPS menu limit</value>
+  </data>
+  <data name="g_font_scale_x" xml:space="preserve">
+    <value>Font width</value>
+  </data>
+  <data name="g_font_scale_y" xml:space="preserve">
+    <value>Font height</value>
+  </data>
+  <data name="sep_video_adv" xml:space="preserve">
+    <value>Advanced video settings</value>
+  </data>
+  <data name="fov" xml:space="preserve">
+    <value>Field of view</value>
+  </data>
+  <data name="r__detail_radius" xml:space="preserve">
+    <value>Grass draw distance</value>
+  </data>
+  <data name="r__detail_density" xml:space="preserve">
+    <value>Grass density</value>
+  </data>
+  <data name="r__detail_radius_desc" xml:space="preserve">
+    <value>This setting controls the maximum distance at which grass is rendered. The further the slider is moved, the further away the edge of the grass will be. ATTENTION! The game's grass rendering algorithm is such that increasing the grass radius increases the load on the video card exponentially. More or less acceptable values are in the range of 150-200 meters.</value>
+  </data>
+  <data name="r__detail_density_desc" xml:space="preserve">
+    <value>This setting controls how tightly the grass bushes are drawn in the game. The further the slider is, the closer the grass elements will be drawn to each other and the thicker it will be. ATTENTION! Excessive density of grass leads to strong brakes, if you want to adjust this parameter, do it a little, each time checking what happened.</value>
+  </data>
+  <data name="r__detail_scale" xml:space="preserve">
+    <value>Grass height</value>
+  </data>
+  <data name="r_aa_mode" xml:space="preserve">
+    <value>Anti-Aliasing</value>
+  </data>
+  <data name="r_aa_mode_desc" xml:space="preserve">
+    <value>This setting switches the anti-aliasing type. SMAA (Subpixel Morphological Anti-Aliasing), TAA (Temporal Anti-Aliasing), AMD FidelityFX Super Resolution (FSR) 2, and Nvidia DLSS (Deep Learning Super-Sampling) are available. AMD FSR 2 is only available on GTX 10 series graphics cards and above. Nvidia DLSS is available on RTX 20 series graphics cards and above.</value>
+  </data>
+  <data name="r_ao_mode" xml:space="preserve">
+    <value>AO Type</value>
+  </data>
+  <data name="r_ao_mode_desc" xml:space="preserve">
+    <value>This setting controls how the global illumination effect works in the game. You can choose between SSDO (ScreenSpace Directional Occlusion) and GTAO (Ground Truth-based Ambient Occlusion).</value>
+  </data>
+  <data name="r_ao_quality" xml:space="preserve">
+    <value>AO Quality</value>
+  </data>
+  <data name="r__smap_size" xml:space="preserve">
+    <value>Shadow map resolution</value>
+  </data>
+  <data name="r__smap_size_desc" xml:space="preserve">
+    <value>The higher the resolution of shadow maps, the clearer the shadows will be in the distance (more than ~15-20 meters from the GG - beyond the boundary of the near shadow cascade). To avoid noticeable deterioration in shadow quality at this boundary, it is recommended to set the resolution to at least 4096x4096. This setting has a significant impact on performance.</value>
+  </data>
+  <data name="r2_sun_quality" xml:space="preserve">
+    <value>Soft sun shadows</value>
+  </data>
+  <data name="r_sunshafts_mode" xml:space="preserve">
+    <value>Type of sunshafts</value>
+  </data>
+  <data name="r_sunshafts_mode_desc" xml:space="preserve">
+    <value>This setting changes the type of sunlight. Choose the one you like best.</value>
+  </data>
+  <data name="r__actor_shadow" xml:space="preserve">
+    <value>Shadow of the main character</value>
+  </data>
+  <data name="r2_sun_details" xml:space="preserve">
+    <value>Grass shadow</value>
+  </data>
+  <data name="r2_sun_details_desc" xml:space="preserve">
+    <value>This setting enables grass to cast shadows from sunlight and other dynamic light sources. Reduces performance proportionally to grass density and distance.</value>
+  </data>
+  <data name="st_opt_off" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="st_opt_low" xml:space="preserve">
+    <value>Low</value>
+  </data>
+  <data name="st_opt_medium" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+  <data name="st_opt_high" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="st_opt_ultra" xml:space="preserve">
+    <value>Ultra</value>
+  </data>
+  <data name="st_opt_extreme" xml:space="preserve">
+    <value>Extreme</value>
+  </data>
+  <data name="st_opt_taa" xml:space="preserve">
+    <value>TAA</value>
+  </data>
+  <data name="st_opt_smaa" xml:space="preserve">
+    <value>SMAA</value>
+  </data>
+  <data name="st_opt_fsr2" xml:space="preserve">
+    <value>AMD FSR 2</value>
+  </data>
+  <data name="st_opt_dlss" xml:space="preserve">
+    <value>Nvidia DLSS</value>
+  </data>
+  <data name="ss_ogse" xml:space="preserve">
+    <value>Screen Space (OGSE)</value>
+  </data>
+  <data name="ss_manowar" xml:space="preserve">
+    <value>Screen Space (Mrmnwar)</value>
+  </data>
+  <data name="combined_ogse" xml:space="preserve">
+    <value>Combined (Volumetric + OGSE)</value>
+  </data>
+  <data name="combined_manowar" xml:space="preserve">
+    <value>Combined (Volumetric + Mrmnwar)</value>
+  </data>
+  <data name="volumetric" xml:space="preserve">
+    <value>Volumetric</value>
+  </data>
+  <data name="snd_volume" xml:space="preserve">
+    <value>General volume</value>
+  </data>
+  <data name="snd_volume_effect" xml:space="preserve">
+    <value>Effects volume</value>
+  </data>
+  <data name="snd_volume_music" xml:space="preserve">
+    <value>Music volume</value>
+  </data>
+  <data name="snd_volume_weapon" xml:space="preserve">
+    <value>Weapon volume</value>
+  </data>
+  <data name="snd_volume_ui" xml:space="preserve">
+    <value>Interface volume</value>
   </data>
 </root>

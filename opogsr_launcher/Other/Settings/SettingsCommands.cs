@@ -26,5 +26,66 @@ namespace opogsr_launcher.Other.Settings
                     .InvokeCommand(LangSelectionCommand);
             }
         }
+
+        internal static readonly Token SmapToken = 
+        [
+            "1536x1536",
+            "2048x2048",
+            "2560x2560",
+            "3072x3072",
+            "4096x4096",
+            "6144x6144",
+            "8192x8192"
+        ];
+
+        internal static readonly Token AAToken =
+        [
+            "st_opt_off",
+            "st_opt_smaa",
+            "st_opt_taa",
+            "st_opt_fsr2",
+            "st_opt_dlss"
+        ];
+
+        internal static readonly Token AOToken =
+        [
+            "st_opt_off",
+            "st_ssdo",
+            "st_gtao"
+        ];
+
+        internal static readonly Token AOQualityToken =
+        [
+            "st_opt_low",
+            "st_opt_medium",
+            "st_opt_high"
+        ];
+
+        internal static readonly Token SunQualityToken =
+        [
+            "st_opt_low",
+            "st_opt_medium",
+            "st_opt_high",
+            "st_opt_ultra",
+            "st_opt_extreme"
+        ];
+
+        internal static readonly Token SunshaftsModeToken =
+        [
+            "st_opt_off",
+            "ss_ogse",
+            "ss_manowar",
+            "volumetric",
+            "combined_ogse",
+            "combined_manowar"
+        ];
+
+        internal static readonly Token GameDifficultyToken =
+        [
+            "gd_novice",
+            "gd_stalker",
+            "gd_veteran",
+            "gd_master"
+        ];
     }
 }

@@ -97,6 +97,33 @@ namespace opogsr_launcher.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Dynamic crosshair.
+        /// </summary>
+        public static string cl_dynamiccrosshair {
+            get {
+                return ResourceManager.GetString("cl_dynamiccrosshair", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Combined (Volumetric + Mrmnwar).
+        /// </summary>
+        public static string combined_manowar {
+            get {
+                return ResourceManager.GetString("combined_manowar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Combined (Volumetric + OGSE).
+        /// </summary>
+        public static string combined_ogse {
+            get {
+                return ResourceManager.GetString("combined_ogse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Downloading....
         /// </summary>
         public static string Downloading {
@@ -113,6 +140,169 @@ namespace opogsr_launcher.Properties {
                 return ResourceManager.GetString("eng", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Shader-based 2D Scopes.
+        /// </summary>
+        public static string fakescope_enable {
+            get {
+                return ResourceManager.GetString("fakescope_enable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на This setting enables 2D sights with pseudo-parallax and blur effects..
+        /// </summary>
+        public static string fakescope_enable_desc {
+            get {
+                return ResourceManager.GetString("fakescope_enable_desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Field of view.
+        /// </summary>
+        public static string fov {
+            get {
+                return ResourceManager.GetString("fov", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на 3D PDA.
+        /// </summary>
+        public static string g_3d_pda {
+            get {
+                return ResourceManager.GetString("g_3d_pda", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на 3D Scopes.
+        /// </summary>
+        public static string g_3d_scopes {
+            get {
+                return ResourceManager.GetString("g_3d_scopes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Font width.
+        /// </summary>
+        public static string g_font_scale_x {
+            get {
+                return ResourceManager.GetString("g_font_scale_x", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Font height.
+        /// </summary>
+        public static string g_font_scale_y {
+            get {
+                return ResourceManager.GetString("g_font_scale_y", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Difficulty.
+        /// </summary>
+        public static string g_game_difficulty {
+            get {
+                return ResourceManager.GetString("g_game_difficulty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Switch slots with the mouse wheel.
+        /// </summary>
+        public static string g_mouse_wheel_switch_slot {
+            get {
+                return ResourceManager.GetString("g_mouse_wheel_switch_slot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Nightmare.
+        /// </summary>
+        public static string gd_master {
+            get {
+                return ResourceManager.GetString("gd_master", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Too Young To Die.
+        /// </summary>
+        public static string gd_novice {
+            get {
+                return ResourceManager.GetString("gd_novice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Hurt Me Plenty.
+        /// </summary>
+        public static string gd_stalker {
+            get {
+                return ResourceManager.GetString("gd_stalker", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Ultra-Violence.
+        /// </summary>
+        public static string gd_veteran {
+            get {
+                return ResourceManager.GetString("gd_veteran", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Show crosshair.
+        /// </summary>
+        public static string hud_crosshair {
+            get {
+                return ResourceManager.GetString("hud_crosshair", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Distance to target.
+        /// </summary>
+        public static string hud_crosshair_dist {
+            get {
+                return ResourceManager.GetString("hud_crosshair_dist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на NPC recognition.
+        /// </summary>
+        public static string hud_info {
+            get {
+                return ResourceManager.GetString("hud_info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Description Window Delay.
+        /// </summary>
+        public static string inventory_window_delay {
+            get {
+                return ResourceManager.GetString("inventory_window_delay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на This setting controls the delay before the item description window appears in the inventory when you hover over it with the cursor..
+        /// </summary>
+        public static string inventory_window_delay_desc {
+            get {
+                return ResourceManager.GetString("inventory_window_delay_desc", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Ищет локализованную строку, похожую на Launcher.
         /// </summary>
@@ -195,6 +385,195 @@ namespace opogsr_launcher.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Shadow of the main character.
+        /// </summary>
+        public static string r__actor_shadow {
+            get {
+                return ResourceManager.GetString("r__actor_shadow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Grass density.
+        /// </summary>
+        public static string r__detail_density {
+            get {
+                return ResourceManager.GetString("r__detail_density", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на This setting controls how tightly the grass bushes are drawn in the game. The further the slider is, the closer the grass elements will be drawn to each other and the thicker it will be. ATTENTION! Excessive density of grass leads to strong brakes, if you want to adjust this parameter, do it a little, each time checking what happened..
+        /// </summary>
+        public static string r__detail_density_desc {
+            get {
+                return ResourceManager.GetString("r__detail_density_desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Grass draw distance.
+        /// </summary>
+        public static string r__detail_radius {
+            get {
+                return ResourceManager.GetString("r__detail_radius", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на This setting controls the maximum distance at which grass is rendered. The further the slider is moved, the further away the edge of the grass will be. ATTENTION! The game&apos;s grass rendering algorithm is such that increasing the grass radius increases the load on the video card exponentially. More or less acceptable values are in the range of 150-200 meters..
+        /// </summary>
+        public static string r__detail_radius_desc {
+            get {
+                return ResourceManager.GetString("r__detail_radius_desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Grass height.
+        /// </summary>
+        public static string r__detail_scale {
+            get {
+                return ResourceManager.GetString("r__detail_scale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Shadow map resolution.
+        /// </summary>
+        public static string r__smap_size {
+            get {
+                return ResourceManager.GetString("r__smap_size", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на The higher the resolution of shadow maps, the clearer the shadows will be in the distance (more than ~15-20 meters from the GG - beyond the boundary of the near shadow cascade). To avoid noticeable deterioration in shadow quality at this boundary, it is recommended to set the resolution to at least 4096x4096. This setting has a significant impact on performance..
+        /// </summary>
+        public static string r__smap_size_desc {
+            get {
+                return ResourceManager.GetString("r__smap_size_desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Anti-Aliasing.
+        /// </summary>
+        public static string r_aa_mode {
+            get {
+                return ResourceManager.GetString("r_aa_mode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на This setting switches the anti-aliasing type. SMAA (Subpixel Morphological Anti-Aliasing), TAA (Temporal Anti-Aliasing), AMD FidelityFX Super Resolution (FSR) 2, and Nvidia DLSS (Deep Learning Super-Sampling) are available. AMD FSR 2 is only available on GTX 10 series graphics cards and above. Nvidia DLSS is available on RTX 20 series graphics cards and above..
+        /// </summary>
+        public static string r_aa_mode_desc {
+            get {
+                return ResourceManager.GetString("r_aa_mode_desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на AO Type.
+        /// </summary>
+        public static string r_ao_mode {
+            get {
+                return ResourceManager.GetString("r_ao_mode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на This setting controls how the global illumination effect works in the game. You can choose between SSDO (ScreenSpace Directional Occlusion) and GTAO (Ground Truth-based Ambient Occlusion)..
+        /// </summary>
+        public static string r_ao_mode_desc {
+            get {
+                return ResourceManager.GetString("r_ao_mode_desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на AO Quality.
+        /// </summary>
+        public static string r_ao_quality {
+            get {
+                return ResourceManager.GetString("r_ao_quality", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на FPS limit.
+        /// </summary>
+        public static string r_fps_lock {
+            get {
+                return ResourceManager.GetString("r_fps_lock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на FPS menu limit.
+        /// </summary>
+        public static string r_fps_lock_in_menu {
+            get {
+                return ResourceManager.GetString("r_fps_lock_in_menu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Type of sunshafts.
+        /// </summary>
+        public static string r_sunshafts_mode {
+            get {
+                return ResourceManager.GetString("r_sunshafts_mode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на This setting changes the type of sunlight. Choose the one you like best..
+        /// </summary>
+        public static string r_sunshafts_mode_desc {
+            get {
+                return ResourceManager.GetString("r_sunshafts_mode_desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Grass shadow.
+        /// </summary>
+        public static string r2_sun_details {
+            get {
+                return ResourceManager.GetString("r2_sun_details", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на This setting enables grass to cast shadows from sunlight and other dynamic light sources. Reduces performance proportionally to grass density and distance..
+        /// </summary>
+        public static string r2_sun_details_desc {
+            get {
+                return ResourceManager.GetString("r2_sun_details_desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Soft sun shadows.
+        /// </summary>
+        public static string r2_sun_quality {
+            get {
+                return ResourceManager.GetString("r2_sun_quality", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Do not pause when minimizing the game.
+        /// </summary>
+        public static string rs_always_active {
+            get {
+                return ResourceManager.GetString("rs_always_active", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Русский.
         /// </summary>
         public static string rus {
@@ -211,6 +590,223 @@ namespace opogsr_launcher.Properties {
                 return ResourceManager.GetString("sep_launcher_warn", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на OP settings.
+        /// </summary>
+        public static string sep_op2 {
+            get {
+                return ResourceManager.GetString("sep_op2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Game reliefs.
+        /// </summary>
+        public static string sep_opt_edit {
+            get {
+                return ResourceManager.GetString("sep_opt_edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Be careful! These options make the game much easier and faster, but they can take away some of the fun. These options will not be available on the “Legend” difficulty..
+        /// </summary>
+        public static string sep_opt_edit_warn {
+            get {
+                return ResourceManager.GetString("sep_opt_edit_warn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Advanced video settings.
+        /// </summary>
+        public static string sep_video_adv {
+            get {
+                return ResourceManager.GetString("sep_video_adv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на General volume.
+        /// </summary>
+        public static string snd_volume {
+            get {
+                return ResourceManager.GetString("snd_volume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Effects volume.
+        /// </summary>
+        public static string snd_volume_effect {
+            get {
+                return ResourceManager.GetString("snd_volume_effect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Music volume.
+        /// </summary>
+        public static string snd_volume_music {
+            get {
+                return ResourceManager.GetString("snd_volume_music", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Interface volume.
+        /// </summary>
+        public static string snd_volume_ui {
+            get {
+                return ResourceManager.GetString("snd_volume_ui", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Weapon volume.
+        /// </summary>
+        public static string snd_volume_weapon {
+            get {
+                return ResourceManager.GetString("snd_volume_weapon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Screen Space (Mrmnwar).
+        /// </summary>
+        public static string ss_manowar {
+            get {
+                return ResourceManager.GetString("ss_manowar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Screen Space (OGSE).
+        /// </summary>
+        public static string ss_ogse {
+            get {
+                return ResourceManager.GetString("ss_ogse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Exposure.
+        /// </summary>
+        public static string ssfx_exposure {
+            get {
+                return ResourceManager.GetString("ssfx_exposure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Gamma.
+        /// </summary>
+        public static string ssfx_gamma {
+            get {
+                return ResourceManager.GetString("ssfx_gamma", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Saturation.
+        /// </summary>
+        public static string ssfx_saturation {
+            get {
+                return ResourceManager.GetString("ssfx_saturation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Nvidia DLSS.
+        /// </summary>
+        public static string st_opt_dlss {
+            get {
+                return ResourceManager.GetString("st_opt_dlss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Extreme.
+        /// </summary>
+        public static string st_opt_extreme {
+            get {
+                return ResourceManager.GetString("st_opt_extreme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на AMD FSR 2.
+        /// </summary>
+        public static string st_opt_fsr2 {
+            get {
+                return ResourceManager.GetString("st_opt_fsr2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на High.
+        /// </summary>
+        public static string st_opt_high {
+            get {
+                return ResourceManager.GetString("st_opt_high", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Low.
+        /// </summary>
+        public static string st_opt_low {
+            get {
+                return ResourceManager.GetString("st_opt_low", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Medium.
+        /// </summary>
+        public static string st_opt_medium {
+            get {
+                return ResourceManager.GetString("st_opt_medium", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Off.
+        /// </summary>
+        public static string st_opt_off {
+            get {
+                return ResourceManager.GetString("st_opt_off", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на SMAA.
+        /// </summary>
+        public static string st_opt_smaa {
+            get {
+                return ResourceManager.GetString("st_opt_smaa", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на TAA.
+        /// </summary>
+        public static string st_opt_taa {
+            get {
+                return ResourceManager.GetString("st_opt_taa", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Ultra.
+        /// </summary>
+        public static string st_opt_ultra {
+            get {
+                return ResourceManager.GetString("st_opt_ultra", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Ищет локализованную строку, похожую на Start download.
         /// </summary>
@@ -248,6 +844,24 @@ namespace opogsr_launcher.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Audio.
+        /// </summary>
+        public static string tab_audio {
+            get {
+                return ResourceManager.GetString("tab_audio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Gameplay.
+        /// </summary>
+        public static string tab_gameplay {
+            get {
+                return ResourceManager.GetString("tab_gameplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Launcher.
         /// </summary>
         public static string tab_launcher {
@@ -255,6 +869,16 @@ namespace opogsr_launcher.Properties {
                 return ResourceManager.GetString("tab_launcher", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Video.
+        /// </summary>
+        public static string tab_video {
+            get {
+                return ResourceManager.GetString("tab_video", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Ищет локализованную строку, похожую на Українська.
         /// </summary>
@@ -269,6 +893,24 @@ namespace opogsr_launcher.Properties {
         public static string ValidatingFiles {
             get {
                 return ResourceManager.GetString("ValidatingFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Volumetric.
+        /// </summary>
+        public static string volumetric {
+            get {
+                return ResourceManager.GetString("volumetric", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Aim by pressing/holding.
+        /// </summary>
+        public static string wpn_aim_toggle {
+            get {
+                return ResourceManager.GetString("wpn_aim_toggle", resourceCulture);
             }
         }
     }
