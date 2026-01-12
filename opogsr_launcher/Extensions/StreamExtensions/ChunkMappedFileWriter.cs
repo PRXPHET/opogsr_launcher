@@ -62,7 +62,12 @@ namespace opogsr_launcher.Extensions.StreamExtensions
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
         }
 
-        public FileStream GetStream() => _fileStream;
+        public FileStream GetStream()
+        {
+            return IsDisposed
+                   ? throw new ObjectDisposedException(nameof(ChunkMappedFileWriter))
+                   : _fileStream ?? throw new InvalidOperationException("Internal stream is null.");
+        }
 
         public void Start()
         {

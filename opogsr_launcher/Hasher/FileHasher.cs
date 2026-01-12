@@ -10,6 +10,7 @@ namespace opogsr_launcher.Hasher
     {
         public static async Task<string> XxHashFromFile(FileStream stream)
         {
+            ArgumentNullException.ThrowIfNull(stream);
             long size = Math.Min(stream.Length, 64 * 1024);
             byte[] buffer = new byte[size];
             long position = stream.Length - buffer.Length;
@@ -28,6 +29,7 @@ namespace opogsr_launcher.Hasher
 
         public static async Task<List<string>> XxHashFromChunkedFile(FileStream stream, uint chunk_count)
         {
+            ArgumentNullException.ThrowIfNull(stream);
             List<string> list = [];
             byte[] buffer = new byte[64 * 1024];
             for (uint i = 1; i <= chunk_count; i++)
@@ -45,6 +47,7 @@ namespace opogsr_launcher.Hasher
 
         public static async Task<string> XxHashFromChunk(FileStream stream, uint chunk_index)
         {
+            ArgumentNullException.ThrowIfNull(stream);
             byte[] buffer = new byte[64 * 1024];
             long position = Math.Min(stream.Length, StaticGlobals.Variables.LargeChunkSize * chunk_index) - buffer.Length;
             stream.Seek(position, SeekOrigin.Begin);
