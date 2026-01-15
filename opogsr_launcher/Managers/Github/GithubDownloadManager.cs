@@ -344,7 +344,7 @@ namespace opogsr_launcher.Managers.Github
 
                 if (!writer.FileCreated && !writer.FileUpdated && metadata.Length == Convert.ToInt64(asset.size))
                 {
-                    string hash = await FileHasher.XxHashFromChunk(readStream, Convert.ToUInt32(chunk_index));
+                    string hash = await FileHasher.XxHashFromChunk(readStream, Convert.ToUInt32(chunk_index + 1));
                     if (d.hash_list[chunk_index] == hash)
                     {
                         Logger.Ok("File chunk is already downloaded and valid: {0}", asset.name);
