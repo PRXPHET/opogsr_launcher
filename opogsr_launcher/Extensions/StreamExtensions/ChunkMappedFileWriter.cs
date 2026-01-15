@@ -40,7 +40,7 @@ namespace opogsr_launcher.Extensions.StreamExtensions
         public ChunkMappedFileWriter(string path, long size, DateTime dt,  CancellationToken ct = default)
         {
             _size = size;
-            _fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            _fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read);
 
             if (_fileStream.Length == 0)
             {

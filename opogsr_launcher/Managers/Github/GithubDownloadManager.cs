@@ -331,6 +331,8 @@ namespace opogsr_launcher.Managers.Github
 
             writer.Start();
 
+            using FileStream readStream = new(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
             ChunkMetadataManager manager = ChunkMetadataManager.GetInstance();
 
             int tries = (int)Other.Settings.Storage.GetValue("max_amount_of_tries");
@@ -342,7 +344,7 @@ namespace opogsr_launcher.Managers.Github
 
                 if (!writer.FileCreated && !writer.FileUpdated && metadata.Length == Convert.ToInt64(asset.size))
                 {
-                    string hash = await FileHasher.XxHashFromChunk(writer.GetStream(), Convert.ToUInt32(chunk_index));
+                    string hash = await FileHasher.XxHashFromChunk(readStream, Convert.ToUInt32(chunk_index));
                     if (d.hash_list[chunk_index] == hash)
                     {
                         Logger.Ok("File chunk is already downloaded and valid: {0}", asset.name);
