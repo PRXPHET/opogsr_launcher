@@ -183,11 +183,11 @@ namespace opogsr_launcher.Managers.Github
             {
                 foreach (var file in manager.Files)
                 {
-                    IndexData d = data.Find(x => x.name == file.Key);
-                    bool exists = File.Exists(Path.Combine(StaticGlobals.Locations.Start, d.directory ?? "", d.name));
+                    IndexData? d = data.Find(x => x.name == file.Key);
+                    bool exists_not_validated = d is not null && File.Exists(Path.Combine(StaticGlobals.Locations.Start, d.directory ?? "", d.name));
                     foreach (var chunk in file.Value.Chunks)
                     {
-                        if (exists)
+                        if (exists_not_validated)
                             progress.Report((chunk.Key, Convert.ToUInt64(chunk.Value.Length)));
                         else
                             chunk.Value.Length = 0;
