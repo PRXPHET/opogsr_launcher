@@ -17,9 +17,13 @@ namespace opogsr_launcher
 
         public static class Links
         {
+            public const string Youtube = "https://www.youtube.com/@prxphet666";
+            public const string Steam = "https://store.steampowered.com/franchise/stalker";
             public const string Discord = "https://discord.gg/XsWasFeTrC";
-            public const string ApPro = "https://ap-pro.ru/forums/topic/2371-op-ogsr";
-            public const string AMK = "https://www.amk-team.ru/forum/forum/178-op-ogsr/";
+
+            public const string Yoomoney = "https://yoomoney.ru/to/4100117348307270";
+            public const string Boosty = "https://boosty.to/prxphet";
+            public const string DonationAlerts = "https://dalink.to/prxphet";
 
             public const string GithubRateLimit = "https://api.github.com/rate_limit";
         }

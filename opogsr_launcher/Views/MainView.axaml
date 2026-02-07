@@ -29,7 +29,7 @@
 			<Border.Background>
 				<SolidColorBrush Color="Black" Opacity="0.5"/>
 			</Border.Background>
-			<Grid RowDefinitions="0.55* * 0.22*">
+			<Grid RowDefinitions="0.55* * 0.3*">
 				<Border Grid.Row="0">
 					<Image VerticalAlignment="Top" Source="/Assets/Images/logo.png"/>
 				</Border>
@@ -43,15 +43,24 @@
 				</Border>
 				<Border Grid.Row="2">
 					<Viewbox Stretch="Uniform">
-						<Grid ColumnDefinitions="* * *">
-							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.Discord}" Grid.Column="0" Classes="IconButton">
+						<Grid RowDefinitions="* *" ColumnDefinitions="* * *">
+							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.Youtube}" Grid.Row="0" Grid.Column="0" Classes="IconButton">
+								<Image Source="/Assets/Images/youtube.png"/>
+							</Button>
+							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.Steam}" Grid.Row="0" Grid.Column="1" Classes="IconButton">
+								<Image Source="/Assets/Images/steam.png"/>
+							</Button>
+							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.Discord}" Grid.Row="0" Grid.Column="2" Classes="IconButton">
 								<Image Source="/Assets/Images/discord.png"/>
 							</Button>
-							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.ApPro}" Grid.Column="1" Classes="IconButton">
-								<Image Source="/Assets/Images/appro.png"/>
+							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.Yoomoney}" Grid.Row="1" Grid.Column="0" Classes="IconButton">
+								<Image Source="/Assets/Images/yoomoney.png"/>
 							</Button>
-							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.AMK}" Grid.Column="2" Classes="IconButton">
-								<Image Source="/Assets/Images/amk.png"/>
+							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.Boosty}" Grid.Row="1" Grid.Column="1" Classes="IconButton">
+								<Image Source="/Assets/Images/boosty.png"/>
+							</Button>
+							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.DonationAlerts}" Grid.Row="1" Grid.Column="2" Classes="IconButton">
+								<Image Source="/Assets/Images/donationalerts.png"/>
 							</Button>
 						</Grid>
 					</Viewbox>
