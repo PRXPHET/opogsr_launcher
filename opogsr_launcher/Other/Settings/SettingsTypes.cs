@@ -2,7 +2,8 @@
 
 using Avalonia.Media;
 using opogsr_launcher.Other.RuntimeResource;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI;
+using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,7 +24,7 @@ namespace opogsr_launcher.Other.Settings
         public static object GetValue(string key) => StorageDict[key].GetValue();
     }
 
-    internal class SettingsSeparator : ISettingsControl
+    internal partial class SettingsSeparator : ReactiveObject, ISettingsControl
     {
         private static readonly Dictionary<string, SolidColorBrush> Brushes = new()
         {
@@ -36,7 +37,7 @@ namespace opogsr_launcher.Other.Settings
 
         public SolidColorBrush Brush { get; set; }
 
-        [Reactive] public RuntimeResourceString Str { get; set; }
+        [Reactive] public partial RuntimeResourceString Str { get; set; }
 
         internal SettingsSeparator(string text_id, string color = "orange") 
         {

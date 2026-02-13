@@ -1,6 +1,6 @@
 ﻿
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using System;
 using System.Globalization;
 
@@ -13,9 +13,9 @@ namespace opogsr_launcher.Other.Settings
         Launcher = 2
     }
 
-    internal class SettingsControl<T> : ReactiveObject, ISettingsControl
+    internal partial class SettingsControl<T> : ReactiveObject, ISettingsControl
     {
-        [Reactive] public T CurrentValue { get; protected set; }
+        [Reactive] public partial T CurrentValue { get; protected set; }
 
         public T DefaultValue { get; protected set; }
 

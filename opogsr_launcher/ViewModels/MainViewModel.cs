@@ -2,7 +2,7 @@
 using opogsr_launcher.Other.RuntimeResource;
 using opogsr_launcher.Other.Settings;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -25,7 +25,7 @@ using opogsr_launcher.Other.RuntimeResource;
 
 namespace opogsr_launcher.ViewModels
 {
-    public class MainViewModel : ViewModelBase
+    public partial class MainViewModel : ViewModelBase
     {
         public class Lang
         {
@@ -51,12 +51,12 @@ namespace opogsr_launcher.ViewModels
         public ReactiveCommand<Unit, Unit> MaximizeCommand { get; }
         public ReactiveCommand<Unit, Unit> CloseCommand { get; }
 
-        [Reactive] public ViewModelBase CurrentPage { get; set; }
+        [Reactive] public partial ViewModelBase CurrentPage { get; set; }
 
-        [Reactive] public bool HomeActive { get; private set; }
-        [Reactive] public bool LoadActive { get; private set; }
-        [Reactive] public bool SettingsActive { get; private set; }
-        [Reactive] public bool LogActive { get; private set; }
+        [Reactive] public partial bool HomeActive { get; private set; }
+        [Reactive] public partial bool LoadActive { get; private set; }
+        [Reactive] public partial bool SettingsActive { get; private set; }
+        [Reactive] public partial bool LogActive { get; private set; }
 
         private static void OpenLink(string link)
         {

@@ -1,12 +1,12 @@
 ﻿using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using System;
 
 namespace opogsr_launcher.Other.RuntimeResource
 {
-    public class RuntimeResourceString : ReactiveObject
+    public partial class RuntimeResourceString : ReactiveObject
     {
-        [Reactive] public string Key { get; set; }
+        [Reactive] public partial string Key { get; set; }
 
         public string Text { get; private set; }
 

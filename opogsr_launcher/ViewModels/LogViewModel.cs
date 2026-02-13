@@ -1,6 +1,6 @@
 ﻿using Avalonia.Media;
 using System.Collections.Generic;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using System.Collections.ObjectModel;
 using System.Threading;
 
@@ -12,7 +12,7 @@ namespace opogsr_launcher.ViewModels
         public SolidColorBrush Brush { get; set; }
     };
 
-    public class LogViewModel : ViewModelBase
+    public partial class LogViewModel : ViewModelBase
     {
         private static SolidColorBrush WhiteBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
 
@@ -24,7 +24,7 @@ namespace opogsr_launcher.ViewModels
             ["~ "] = WhiteBrush,
         };
 
-        [Reactive] public ObservableCollection<LogText> Logs { get; set; } = new();
+        [Reactive] public partial ObservableCollection<LogText> Logs { get; set; }
 
         private readonly Lock LogLock = new();
 
@@ -49,6 +49,8 @@ namespace opogsr_launcher.ViewModels
 
         public LogViewModel() 
         {
+            Logs = [];
+
             Logger.SetCallback(LogCallback);
         }
 

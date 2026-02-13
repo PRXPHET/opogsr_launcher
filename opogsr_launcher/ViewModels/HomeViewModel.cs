@@ -5,7 +5,7 @@ using opogsr_launcher.Managers.Github;
 using opogsr_launcher.Other.Converters;
 using opogsr_launcher.Other.RuntimeResource;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -15,24 +15,24 @@ using System.Threading.Tasks;
 
 namespace opogsr_launcher.ViewModels
 {
-    public class HomeViewModel : ViewModelBase
+    public partial class HomeViewModel : ViewModelBase
     {
         private static DiscordRPCManager _discordRPCManager;
         private static GithubDownloadManager _githubDownloadManager;
 
-        [Reactive] public bool IsDownloading { get; set; }
+        [Reactive] public partial bool IsDownloading { get; set; }
 
-        [Reactive] public string DownloadSpeedStr { get; set; }
+        [Reactive] public partial string DownloadSpeedStr { get; set; }
 
-        [Reactive] public RuntimeResourceString ValidationStr { get; set; }
+        [Reactive] public partial RuntimeResourceString ValidationStr { get; set; }
 
-        [Reactive] public RuntimeResourceString ButtonMainStr { get; set; }
+        [Reactive] public partial RuntimeResourceString ButtonMainStr { get; set; }
 
-        [Reactive] public string SizeStr { get; set; }
+        [Reactive] public partial string SizeStr { get; set; }
 
-        [Reactive] public double Progress { get; set; }
+        [Reactive] public partial double Progress { get; set; }
 
-        [Reactive] public ReactiveCommand<Unit, Unit> ButtonMainCommand { get; set; }
+        [Reactive] public partial ReactiveCommand<Unit, Unit> ButtonMainCommand { get; set; }
 
         public HomeViewModel(DiscordRPCManager discordRPCManager)
         {

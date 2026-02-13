@@ -1,7 +1,7 @@
 ﻿using opogsr_launcher.Helpers;
 using opogsr_launcher.Other.RuntimeResource;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -17,15 +17,15 @@ namespace opogsr_launcher.ViewModels
         public string WriteTime { get; set; }
     }
 
-    public class LoadViewModel : ViewModelBase
+    public partial class LoadViewModel : ViewModelBase
     {
-        [Reactive] public ObservableCollection<SaveFile> Saves { get; set; } = new();
+        [Reactive] public partial ObservableCollection<SaveFile> Saves { get; set; }
 
-        [Reactive] public SaveFile SelectedSave { get; set; }
+        [Reactive] public partial SaveFile SelectedSave { get; set; }
 
-        [Reactive] public ReactiveCommand<Unit, Unit> LoadSaveCommand { get; set; }
+        [Reactive] public partial ReactiveCommand<Unit, Unit> LoadSaveCommand { get; set; }
 
-        [Reactive] public RuntimeResourceString LoadSaveStr { get; set; }
+        [Reactive] public partial RuntimeResourceString LoadSaveStr { get; set; }
 
         private Encoding GetEncoding()
         {
@@ -74,6 +74,8 @@ namespace opogsr_launcher.ViewModels
 
         public LoadViewModel()
         {
+            Saves = [];
+
             LoadSaveStr = new("LoadSave");
 
             LoadSaveCommand = ReactiveCommand.Create(LoadSave);

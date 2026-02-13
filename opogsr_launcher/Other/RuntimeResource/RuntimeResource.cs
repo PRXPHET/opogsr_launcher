@@ -1,12 +1,12 @@
 ﻿using opogsr_launcher.Properties;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using System.Globalization;
 using System.Resources;
 
 namespace opogsr_launcher.Other.RuntimeResource
 {
-    public sealed class RuntimeResource : ReactiveObject
+    public sealed partial class RuntimeResource : ReactiveObject
     {
         private static readonly RuntimeResource _instance = new();
 
@@ -14,7 +14,12 @@ namespace opogsr_launcher.Other.RuntimeResource
 
         private static readonly ResourceManager _resourceManager = Resources.ResourceManager;
 
-        [Reactive] public string Language { get; private set; } = CultureInfo.CurrentCulture.ThreeLetterISOLanguageName;
+        [Reactive] public partial string Language { get; private set; }
+
+        private RuntimeResource()
+        {
+            Language = CultureInfo.CurrentCulture.ThreeLetterISOLanguageName;
+        }
 
         public static string GetString(string key)
         {
