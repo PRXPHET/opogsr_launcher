@@ -5,6 +5,7 @@ using System;
 using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -80,7 +81,7 @@ namespace opogsr_launcher.Managers.Github
 
         public async Task<FileStates> Validate()
         {
-            await WaitAsync();
+            Trace.Assert(IsInitialized);
 
             List<IndexData> no_json_data = [.. data.FindAll(x => !x.name.EndsWith(".json"))];
 
@@ -540,12 +541,12 @@ namespace opogsr_launcher.Managers.Github
             return false;
         }
 
-        public async Task<ulong> Size()
+        public ulong Size()
         {
             ulong size = 0;
 
             foreach (IndexData d in not_validated_data)
-                size += await Size(d.name);
+                size += Size(d.name);
 
             return size;
         }

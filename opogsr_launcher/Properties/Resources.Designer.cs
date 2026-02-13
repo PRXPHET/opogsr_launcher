@@ -124,6 +124,24 @@ namespace opogsr_launcher.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Connecting....
+        /// </summary>
+        public static string Connecting {
+            get {
+                return ResourceManager.GetString("Connecting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Connection failed. See log..
+        /// </summary>
+        public static string ConnectionFailed {
+            get {
+                return ResourceManager.GetString("ConnectionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Downloading....
         /// </summary>
         public static string Downloading {
@@ -376,15 +394,6 @@ namespace opogsr_launcher.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Rate limit exceeded. Waiting for reset. Do not close the launcher..
-        /// </summary>
-        public static string RateLimited {
-            get {
-                return ResourceManager.GetString("RateLimited", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Ищет локализованную строку, похожую на Shadow of the main character.
         /// </summary>
         public static string r__actor_shadow {
@@ -561,6 +570,15 @@ namespace opogsr_launcher.Properties {
         public static string r2_sun_quality {
             get {
                 return ResourceManager.GetString("r2_sun_quality", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Rate limit exceeded. Waiting for reset. Do not close the launcher..
+        /// </summary>
+        public static string RateLimited {
+            get {
+                return ResourceManager.GetString("RateLimited", resourceCulture);
             }
         }
         
@@ -880,6 +898,15 @@ namespace opogsr_launcher.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Try again.
+        /// </summary>
+        public static string TryConnectAgain {
+            get {
+                return ResourceManager.GetString("TryConnectAgain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Українська.
         /// </summary>
         public static string ukr {
@@ -887,6 +914,7 @@ namespace opogsr_launcher.Properties {
                 return ResourceManager.GetString("ukr", resourceCulture);
             }
         }
+        
         /// <summary>
         ///   Ищет локализованную строку, похожую на Validating files....
         /// </summary>

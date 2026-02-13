@@ -24,13 +24,15 @@ namespace opogsr_launcher.ViewModels
 
         [Reactive] public partial string DownloadSpeedStr { get; set; }
 
-        [Reactive] public partial RuntimeResourceString ValidationStr { get; set; }
+        [Reactive] public partial RuntimeResourceString StateStr { get; set; }
 
         [Reactive] public partial RuntimeResourceString ButtonMainStr { get; set; }
 
         [Reactive] public partial string SizeStr { get; set; }
 
         [Reactive] public partial double Progress { get; set; }
+
+        [Reactive] public partial bool ButtonMainVisible { get; set; }
 
         [Reactive] public partial ReactiveCommand<Unit, Unit> ButtonMainCommand { get; set; }
 
@@ -40,7 +42,9 @@ namespace opogsr_launcher.ViewModels
 
             _discordRPCManager = discordRPCManager;
 
-            ValidationStr = new("ValidatingAccess");
+            ButtonMainVisible = false;
+
+            StateStr = new("Connecting");
             ButtonMainStr = new("StartDownload");
 
             ButtonMainCommand = ReactiveCommand.Create(ButtonMain);
@@ -58,7 +62,7 @@ namespace opogsr_launcher.ViewModels
                 FileProgress[data.Name] = data.Total;
             };
 
-            ulong total_size = await _githubDownloadManager.Size();
+            ulong total_size = _githubDownloadManager.Size();
 
             while (IsDownloading)
             {
@@ -69,14 +73,14 @@ namespace opogsr_launcher.ViewModels
 
                 if (_githubDownloadManager.IsRateLimited)
                 {
-                    if (ValidationStr.Key != "RateLimited")
-                        ValidationStr.Key = "RateLimited";
+                    if (StateStr.Key != "RateLimited")
+                        StateStr.Key = "RateLimited";
 
                     continue;
                 }
-                else if (!_githubDownloadManager.IsRateLimited && !string.IsNullOrEmpty(ValidationStr.Key) && ValidationStr.Key != "Downloading")
+                else if (!_githubDownloadManager.IsRateLimited && !string.IsNullOrEmpty(StateStr.Key) && StateStr.Key != "Downloading")
                 {
-                    ValidationStr.Key = "Downloading";
+                    StateStr.Key = "Downloading";
                 }
 
                 cur_size = FileProgress.Values.Aggregate((a, b) => a + b);
@@ -95,12 +99,24 @@ namespace opogsr_launcher.ViewModels
             _discordRPCManager.Client.UpdateState(Properties.Resources.StateIdling);
         }
 
-        public async void ValidateFiles()
+        public async Task ValidateFiles()
         {
             if (Design.IsDesignMode)
                 return;
 
-            ValidationStr.Key = "ValidatingFiles";
+            ButtonMainVisible = false;
+
+            StateStr.Key = "Connecting";
+
+            if (!await _githubDownloadManager.TryInitialize())
+            {
+                StateStr.Key = "ConnectionFailed";
+                ButtonMainStr.Key = "TryConnectAgain";
+                ButtonMainVisible = true;
+                return;
+            }
+
+            StateStr.Key = "ValidatingFiles";
 
             FileStates state = await _githubDownloadManager.Validate();
 
@@ -114,14 +130,17 @@ namespace opogsr_launcher.ViewModels
                 StaticGlobals.Stats.CanPlay = true;
             }
 
-            ValidationStr.Key = "";
+            StateStr.Key = "";
+
+            ButtonMainVisible = true;
         }
 
         private async void StartDownload()
         {
             IsDownloading = true;
+            ButtonMainVisible = false;
 
-            ValidationStr.Key = "Downloading";
+            StateStr.Key = "Downloading";
 
             var progress = new Progress<(string Name, ulong Total)>();
 
@@ -136,8 +155,9 @@ namespace opogsr_launcher.ViewModels
             }
 
             IsDownloading = false;
+            ButtonMainVisible = true;
 
-            ValidationStr.Key = "";
+            StateStr.Key = "";
         }
 
         private static void StartGame()
@@ -148,7 +168,9 @@ namespace opogsr_launcher.ViewModels
 
         private void ButtonMain()
         {
-            if (StaticGlobals.Stats.CanPlay)
+            if (ButtonMainStr.Key == "TryConnectAgain")
+                Task.Run(ValidateFiles);
+            else if (StaticGlobals.Stats.CanPlay)
                 StartGame();
             else if (!IsDownloading)
                 StartDownload();

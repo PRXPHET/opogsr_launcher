@@ -10,14 +10,14 @@
 
 			<Grid>
   				<Border HorizontalAlignment="Center" VerticalAlignment="Center">
-					<Grid>
-						<Border Grid.Row="0" IsVisible="{Binding ValidationStr.Text, Converter={x:Static StringConverters.IsNullOrEmpty}}"  BoxShadow="3 3 8 0 Black">
-							<Button Content="{Binding ButtonMainStr.Text}" Background="Orange" FontSize="24" Command="{Binding ButtonMainCommand}"></Button>
-						</Border>
-						<Border IsVisible="{Binding ValidationStr.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Grid.Row="1">
-							<Label Classes="LoadBar" Content="{Binding ValidationStr.Text}" Foreground="White" Background="Transparent" FontSize="24"/>
-						</Border>
-					</Grid>
+						  <StackPanel HorizontalAlignment="Stretch">
+							  <Border IsVisible="{Binding StateStr.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+								  <Label Classes="LoadBar" Content="{Binding StateStr.Text}" Foreground="White" Background="Transparent" FontSize="24"/>
+							  </Border>
+							  <Border HorizontalAlignment="Center" IsVisible="{Binding ButtonMainVisible}" BoxShadow="3 3 8 0 Black">
+								  <Button Name="MainButton" Content="{Binding ButtonMainStr.Text}" Background="Orange" FontSize="24" Command="{Binding ButtonMainCommand}"></Button>
+							  </Border>
+						  </StackPanel>
 				</Border>
 				<Border Padding="10" VerticalAlignment="Bottom">
 					<Grid RowDefinitions="* *" IsVisible="{Binding IsDownloading}">

@@ -2,6 +2,7 @@
 using opogsr_launcher.Extensions.StreamExtensions;
 using opogsr_launcher.JsonContext;
 using opogsr_launcher.Managers.Github;
+using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -24,7 +25,7 @@ namespace opogsr_uploader
 
         public async Task UploadFile(IndexData d, IProgress<(ulong Sent, ulong Total)>? progress = null)
         {
-            await WaitAsync();
+            Trace.Assert(IsInitialized);
 
             await DeleteFile(d.name);
 

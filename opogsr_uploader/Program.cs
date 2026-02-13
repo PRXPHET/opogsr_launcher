@@ -34,7 +34,11 @@ const string repo = Secrets.GithubRepo;
 
 GithubUploadManager manager = new(token, repo);
 
-await manager.WaitAsync();
+while (!await manager.TryInitialize())
+{
+    Console.WriteLine("Trying again in 5 seconds...");
+    await Task.Delay(5000);
+}
 
 List<IndexData> data = JsonSerializer.Deserialize(File.ReadAllText(index), SourceGenerationContext.Default.ListIndexData);
 

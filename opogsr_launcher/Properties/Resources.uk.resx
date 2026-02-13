@@ -402,4 +402,13 @@
   <data name="snd_volume_ui" xml:space="preserve">
     <value>Гучність інтерфейсу</value>
   </data>
+  <data name="TryConnectAgain" xml:space="preserve">
+    <value>Повторити спробу</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Підключення...</value>
+  </data>
+  <data name="ConnectionFailed" xml:space="preserve">
+    <value>З'єднання не вдалося. Дивіться лог.</value>
+  </data>
 </root>

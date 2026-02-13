@@ -93,7 +93,7 @@ namespace opogsr_launcher.ViewModels
 
             OpenLinkCommand = ReactiveCommand.Create<string>(OpenLink);
 
-            string lang = (string)SettingsPages.Pages["tab_launcher"].Find(c => c.Command == "launcher_language").GetValue();
+            string lang = (string)Other.Settings.Storage.GetValue("launcher_language");
             if (lang != RuntimeResource.Instance.Language)
                 RuntimeResource.Instance.SetLanguage(lang);
 

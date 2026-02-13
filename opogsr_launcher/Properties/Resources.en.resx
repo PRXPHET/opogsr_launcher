@@ -402,4 +402,13 @@
   <data name="snd_volume_ui" xml:space="preserve">
     <value>Interface volume</value>
   </data>
+  <data name="TryConnectAgain" xml:space="preserve">
+    <value>Try again</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Connecting...</value>
+  </data>
+  <data name="ConnectionFailed" xml:space="preserve">
+    <value>Connection failed. See log.</value>
+  </data>
 </root>

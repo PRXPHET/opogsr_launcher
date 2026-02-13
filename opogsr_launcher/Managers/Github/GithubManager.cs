@@ -61,9 +61,13 @@ namespace opogsr_launcher.Managers.Github
 
         protected Task ReadRepoTask;
 
-        public bool IsPublic { get; private set; } = false;
+        public string RepoName { get; private set; }
 
-        public List<IndexData> data { get; private set; } = new();
+        public bool IsPublic { get; private set; }
+
+        public bool IsInitialized { get; private set; } = false;
+
+        public List<IndexData> data { get; private set; } = [];
 
         private async Task<HttpClient> GetClient()
         {
@@ -111,22 +115,47 @@ namespace opogsr_launcher.Managers.Github
 
         protected virtual async Task ReadConfig() => await ReadConfig(false);
 
-        private async Task ReadRelease(string repo)
+        private async Task ReadRelease()
         {
             var client = await GetClient();
-            var httpResult = await client.GetAsync($"https://api.github.com/repos/{repo}/releases/tags/base");
+            var httpResult = await client.GetAsync($"https://api.github.com/repos/{RepoName}/releases/tags/base");
             httpResult.EnsureSuccessStatusCode();
             string contents = await httpResult.Content.ReadAsStringAsync();
             release = JsonSerializer.Deserialize(contents, SourceGenerationContext.Default.GithubRelease);
             release.upload_url = release.upload_url.Replace("{?name,label}", "");
         }
 
-        public async Task WaitAsync() => await ReadRepoTask.WaitAsync(CancellationToken.None);
-
-        public async Task<ulong> Size(string name, bool no_assert = false)
+        public async Task<bool> TryInitialize()
         {
-            await WaitAsync();
+            if (IsInitialized)
+                return true;
 
+            try
+            {
+                if (Design.IsDesignMode)
+                    return true;
+
+                await ReadRelease();
+                await ReadConfig();
+
+                IsInitialized = true;
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Logger.Error("Github attemption connect failed.");
+                Logger.Error("Exception message: {0}", ex.Message);
+
+                if (ex.InnerException != null)
+                    Logger.Error("Inner exception message: {0}", ex.InnerException.Message);
+
+                return false;
+            }
+        }
+
+        public ulong Size(string name, bool no_assert = false)
+        {
             ulong size = 0;
             List<GithubAsset> assets = [.. release.assets.FindAll(x => x.name.StartsWith(name + ".part_", StringComparison.InvariantCultureIgnoreCase)).OrderBy(a => a.name)];
 
@@ -152,6 +181,8 @@ namespace opogsr_launcher.Managers.Github
 
         public GithubManager(string Token, string Repo, bool isPublic)
         {
+            RepoName = Repo;
+
             IsPublic = isPublic;
 
             api_client_unauthorized.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("product", "1"));
@@ -160,14 +191,6 @@ namespace opogsr_launcher.Managers.Github
             api_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
             api_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("product", "1"));
             api_client.Timeout = TimeSpan.FromSeconds(15);
-
-            ReadRepoTask = Task.Run(async () =>
-            {
-                if (Design.IsDesignMode)
-                    return;
-                await ReadRelease(Repo);
-                await ReadConfig();
-            });
         }
     }
 }
