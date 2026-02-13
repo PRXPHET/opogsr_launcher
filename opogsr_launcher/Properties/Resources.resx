@@ -411,4 +411,10 @@
   <data name="ConnectionFailed" xml:space="preserve">
     <value>Connection failed. See log.</value>
   </data>
+  <data name="allow_unsafe_connection" xml:space="preserve">
+    <value>Allow unsafe connection</value>
+  </data>
+  <data name="allow_unsafe_connection_desc" xml:space="preserve">
+    <value>This setting will bypass any certificate checks, which could potentially make the connection unsafe, but may prevent issues when certificates are replaced by the provider or some software. DO NOT ENABLE UNLESS NECESSARY!</value>
+  </data>
 </root>

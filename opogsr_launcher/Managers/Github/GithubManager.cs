@@ -1,15 +1,18 @@
 ﻿using Avalonia.Controls;
 using opogsr_launcher.JsonContext;
+using opogsr_launcher.Other.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Security;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Security.Authentication;
 
 namespace opogsr_launcher.Managers.Github
 {
@@ -54,10 +57,10 @@ namespace opogsr_launcher.Managers.Github
 
     public class GithubManager
     {
-        protected HttpClient api_client_unauthorized = new(ConfigureClientHandler());
-        protected HttpClient api_client = new(ConfigureClientHandler());
-
         protected GithubRelease release = new();
+
+        protected HttpClient api_client_unauthorized;
+        protected HttpClient api_client;
 
         protected Task ReadRepoTask;
 
@@ -84,12 +87,23 @@ namespace opogsr_launcher.Managers.Github
                 return api_client;
         }
 
-        protected static HttpClientHandler ConfigureClientHandler() => new()
+        protected HttpClientHandler ConfigureClientHandler() => new()
         {
             // Enable TLS 1.3 if we are on Windows 11 as it's supported on it
             // Enabling it without checking the OS version is not a safe system configuration
-            SslProtocols = OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000) ? (SslProtocols.Tls13 | SslProtocols.Tls12) : SslProtocols.Tls12
+            SslProtocols = OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000) ? (SslProtocols.Tls13 | SslProtocols.Tls12) : SslProtocols.Tls12,
+            ServerCertificateCustomValidationCallback = ServerCertificateCallback
         };
+
+        protected virtual bool ServerCertificateCallback(HttpRequestMessage sender, X509Certificate2? cert, X509Chain? chain, SslPolicyErrors policy)
+        {
+            bool skip = (bool)Other.Settings.Storage.GetValue("allow_unsafe_connection");
+
+            if (skip)
+                return true;
+
+            return policy == System.Net.Security.SslPolicyErrors.None;
+        }
 
         protected async Task ReadConfig(bool no_assert)
         {
@@ -185,9 +199,11 @@ namespace opogsr_launcher.Managers.Github
 
             IsPublic = isPublic;
 
+            api_client_unauthorized = new(ConfigureClientHandler());
             api_client_unauthorized.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("product", "1"));
             api_client_unauthorized.Timeout = TimeSpan.FromSeconds(15);
 
+            api_client = new(ConfigureClientHandler());
             api_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
             api_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("product", "1"));
             api_client.Timeout = TimeSpan.FromSeconds(15);

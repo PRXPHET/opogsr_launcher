@@ -411,4 +411,10 @@
   <data name="ConnectionFailed" xml:space="preserve">
     <value>З'єднання не вдалося. Дивіться лог.</value>
   </data>
+  <data name="allow_unsafe_connection" xml:space="preserve">
+    <value>Дозволити небезпечне з'єднання</value>
+  </data>
+  <data name="allow_unsafe_connection_desc" xml:space="preserve">
+    <value>Це налаштування дозволить пропускати будь-які перевірки сертифікатів, що потенційно робить з'єднання небезпечним, але може позбавити від проблем, коли сертифікати підміняються з боку провайдера або будь-якого програмного забезпечення. БЕЗ НЕОБХІДНОСТІ НЕ ВКЛЮЧАТИ!</value>
+  </data>
 </root>

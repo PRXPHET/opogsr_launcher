@@ -28,8 +28,8 @@ namespace opogsr_launcher.Managers.Github
 
         private RateLimitInfo? RateInfoUnauthorized = null;
 
-        protected HttpClient download_client_unauthorized = new(ConfigureClientHandler());
-        protected HttpClient download_client = new(ConfigureClientHandler());
+        protected HttpClient download_client_unauthorized;
+        protected HttpClient download_client;
 
         public bool IsRateLimited { get; private set; } = false;
 
@@ -553,11 +553,13 @@ namespace opogsr_launcher.Managers.Github
 
         public GithubDownloadManager(string Token, string Repo, bool isPublic) : base(Token, Repo, isPublic)
         {
+            download_client_unauthorized = new(ConfigureClientHandler());
             download_client_unauthorized.DefaultRequestHeaders.Add("Accept", "application/octet-stream");
             download_client_unauthorized.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("product", "1"));
             download_client_unauthorized.DefaultRequestHeaders.ExpectContinue = false;
             download_client_unauthorized.Timeout = TimeSpan.FromHours(1);
 
+            download_client = new(ConfigureClientHandler());
             download_client.DefaultRequestHeaders.Add("Accept", "application/octet-stream");
             download_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
             download_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("product", "1"));

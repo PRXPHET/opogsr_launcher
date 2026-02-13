@@ -61,6 +61,24 @@ namespace opogsr_launcher.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Allow unsafe connection.
+        /// </summary>
+        public static string allow_unsafe_connection {
+            get {
+                return ResourceManager.GetString("allow_unsafe_connection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на This setting will bypass any certificate checks, which could potentially make the connection unsafe, but may prevent issues when certificates are replaced by the provider or some software. DO NOT ENABLE UNLESS NECESSARY!.
+        /// </summary>
+        public static string allow_unsafe_connection_desc {
+            get {
+                return ResourceManager.GetString("allow_unsafe_connection_desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Home.
         /// </summary>
         public static string ButtonHome {

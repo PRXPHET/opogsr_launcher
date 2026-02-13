@@ -4,6 +4,8 @@ using opogsr_launcher.JsonContext;
 using opogsr_launcher.Managers.Github;
 using System.Diagnostics;
 using System.Net.Http.Headers;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 
 namespace opogsr_uploader
@@ -106,6 +108,11 @@ namespace opogsr_uploader
                     release.assets.Remove(asset);
                 }
             }
+        }
+
+        protected override bool ServerCertificateCallback(HttpRequestMessage sender, X509Certificate2? cert, X509Chain? chain, SslPolicyErrors policy)
+        {
+            return policy == System.Net.Security.SslPolicyErrors.None;
         }
 
         public GithubUploadManager(string Token, string Repo) : base(Token, Repo, false)
