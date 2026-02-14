@@ -358,6 +358,24 @@ namespace opogsr_launcher.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Launcher update found. Do you want to update?.
+        /// </summary>
+        public static string LauncherUpdateDesc {
+            get {
+                return ResourceManager.GetString("LauncherUpdateDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Launcher is outdated.
+        /// </summary>
+        public static string LauncherUpdateTitle {
+            get {
+                return ResourceManager.GetString("LauncherUpdateTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Start.
         /// </summary>
         public static string LoadSave {
@@ -399,6 +417,24 @@ namespace opogsr_launcher.Properties {
         public static string max_download_threads_desc {
             get {
                 return ResourceManager.GetString("max_download_threads_desc", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на No.
+        /// </summary>
+        public static string MsgBoxNo {
+            get {
+                return ResourceManager.GetString("MsgBoxNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Yes.
+        /// </summary>
+        public static string MsgBoxYes {
+            get {
+                return ResourceManager.GetString("MsgBoxYes", resourceCulture);
             }
         }
 

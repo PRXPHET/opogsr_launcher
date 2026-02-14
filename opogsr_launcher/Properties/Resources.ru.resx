@@ -417,4 +417,16 @@
   <data name="allow_unsafe_connection_desc" xml:space="preserve">
     <value>Эта настройка позволит пропускать любые проверки сертификатов, что потенциально делает соединение небезопасным, но может избавить от проблем, когда сертификаты подменяются со стороны провайдера или какого-либо программного обеспечения. БЕЗ НАДОБНОСТИ НЕ ВКЛЮЧАТЬ!</value>
   </data>
+  <data name="LauncherUpdateTitle" xml:space="preserve">
+    <value>Лаунчер устарел</value>
+  </data>
+  <data name="LauncherUpdateDesc" xml:space="preserve">
+    <value>Найдено обновление лаунчера. Хотите обновить?</value>
+  </data>
+  <data name="MsgBoxYes" xml:space="preserve">
+    <value>Да</value>
+  </data>
+  <data name="MsgBoxNo" xml:space="preserve">
+    <value>Нет</value>
+  </data>
 </root>

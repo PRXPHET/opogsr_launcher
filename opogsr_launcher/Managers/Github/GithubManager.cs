@@ -47,12 +47,14 @@ namespace opogsr_launcher.Managers.Github
     {
         [JsonPropertyName("name")]
         public string name { get; set; }
+        [JsonPropertyName("directory")]
+        public string? directory { get; set; }
+        [JsonPropertyName("game_file")]
+        public bool game_file { get; set; } = true;
         [JsonPropertyName("hash")]
         public string? hash { get; set; }
         [JsonPropertyName("hash_list")]
         public List<string>? hash_list { get; set; }
-        [JsonPropertyName("directory")]
-        public string? directory { get; set; }
     }
 
     public class GithubManager

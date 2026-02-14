@@ -1,4 +1,7 @@
 ﻿using Avalonia.Controls;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Models;
+using MsBox.Avalonia.Enums;
 using opogsr_launcher.Helpers;
 using opogsr_launcher.Managers;
 using opogsr_launcher.Managers.Github;
@@ -8,10 +11,12 @@ using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Media;
 using System.Reactive;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 
 namespace opogsr_launcher.ViewModels
 {
@@ -50,7 +55,7 @@ namespace opogsr_launcher.ViewModels
             ButtonMainCommand = ReactiveCommand.Create(ButtonMain);
         }
 
-        private async void UpdateProgressBar(Progress<(string Name, ulong Total)> progress)
+        private async void UpdateProgressBar(Progress<(string Name, ulong Total)> progress, ulong total_size)
         {
             ConcurrentDictionary<string, ulong> FileProgress = new();
 
@@ -61,8 +66,6 @@ namespace opogsr_launcher.ViewModels
             {
                 FileProgress[data.Name] = data.Total;
             };
-
-            ulong total_size = _githubDownloadManager.Size();
 
             while (IsDownloading)
             {
@@ -116,6 +119,40 @@ namespace opogsr_launcher.ViewModels
                 return;
             }
 
+            if (!await _githubDownloadManager.ValidateLauncher())
+            {
+                bool updated = await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    var box = MessageBoxManager.GetMessageBoxCustom(new MsBox.Avalonia.Dto.MessageBoxCustomParams()
+                    {
+                        ContentTitle = RuntimeResource.GetString("LauncherUpdateTitle"),
+                        WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                        CanResize = false,
+                        ShowInCenter = true,
+                        Topmost = true,
+
+                        ContentMessage = RuntimeResource.GetString("LauncherUpdateDesc"),
+                        ButtonDefinitions =
+                        [
+                            new() {Name = RuntimeResource.GetString("MsgBoxYes"), IsDefault = true},
+                            new() {Name = RuntimeResource.GetString("MsgBoxNo"), IsCancel = true}
+                        ],
+                    });
+
+                    string result = await box.ShowAsync();
+                    if (result == RuntimeResource.GetString("MsgBoxYes"))
+                    {
+                        await StartLauncherUpdate();
+                        return true;
+                    }
+
+                    return false;
+                });
+
+                if (updated)
+                    return;
+            }
+
             StateStr.Key = "ValidatingFiles";
 
             FileStates state = await _githubDownloadManager.Validate();
@@ -135,6 +172,24 @@ namespace opogsr_launcher.ViewModels
             ButtonMainVisible = true;
         }
 
+        private async Task StartLauncherUpdate()
+        {
+            IsDownloading = true;
+            ButtonMainVisible = false;
+
+            StateStr.Key = "Downloading";
+
+            var progress = new Progress<(string Name, ulong Total)>();
+
+            UpdateProgressBar(progress, _githubDownloadManager.Size(StaticGlobals.Names.Executable));
+
+            await _githubDownloadManager.UpdateLauncher(progress);
+
+            StateStr.Key = "";
+
+            IsDownloading = false;
+        }
+
         private async void StartDownload()
         {
             IsDownloading = true;
@@ -144,7 +199,7 @@ namespace opogsr_launcher.ViewModels
 
             var progress = new Progress<(string Name, ulong Total)>();
 
-            UpdateProgressBar(progress);
+            UpdateProgressBar(progress, _githubDownloadManager.Size());
 
             StaticGlobals.Stats.CanPlay = await _githubDownloadManager.DownloadInvalid(progress);
 

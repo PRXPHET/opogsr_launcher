@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 
 namespace opogsr_launcher
 {
@@ -58,17 +59,7 @@ namespace opogsr_launcher
 
             public const string GameExecutable = "OPOGSR.exe";
 
-            public static string Executable { get; } = Init();
-
-            private static string Init()
-            {
-                string myName = System.Diagnostics.Process.GetCurrentProcess().ProcessName.ToLower();
-
-                if (Path.GetExtension(myName) == string.Empty)
-                    myName += ".exe";
-
-                return myName;
-            }
+            public static string Executable { get; } = Path.GetFileName(System.Environment.ProcessPath);
         }
     }
 }

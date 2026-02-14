@@ -79,11 +79,108 @@ namespace opogsr_launcher.Managers.Github
             return size == Convert.ToUInt64(stream.Length);
         }
 
+        public async Task<bool> ValidateLauncher()
+        {
+            Trace.Assert(IsInitialized);
+
+#if DEBUG
+            if (Debugger.IsAttached)
+                return true;
+#endif
+
+            IndexData ld = data.Find(x => !x.game_file && x.name.Equals(StaticGlobals.Names.Executable, StringComparison.InvariantCulture));
+
+            using FileStream stream = new(Path.Combine(StaticGlobals.Locations.Start, StaticGlobals.Names.Executable), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+            string selfHash = await FileHasher.XxHashFromFile(stream);
+
+            return selfHash.Equals(ld.hash, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        public async Task UpdateLauncher(IProgress<(string name, ulong Total)>? progress)
+        {
+            IndexData ld = data.Find(x => !x.game_file && x.name.Equals(StaticGlobals.Names.Executable, StringComparison.InvariantCulture));
+
+            GithubAsset asset = release.assets.Find(x => x.name == ld.name);
+
+            string cur_name = StaticGlobals.Names.Executable;
+            string cur_path = Path.Combine(StaticGlobals.Locations.Start, cur_name);
+
+            string temp_name = StaticGlobals.Names.Executable + "_old";
+            string temp_path = Path.Combine(Path.GetTempPath(), temp_name);
+
+            int retry = 0;
+
+            int tries = (int)Other.Settings.Storage.GetValue("max_amount_of_tries");
+
+            while (retry < tries)
+            {
+                try
+                {
+                    using var request = new HttpRequestMessage(HttpMethod.Get, asset.url);
+
+                    using var response = await PrepareDownloadAsync(request);
+                    response.EnsureSuccessStatusCode();
+
+                    await using var ms = await response.Content.ReadAsStreamAsync();
+                    await using var fs = new FileStream(temp_path, FileMode.Create, FileAccess.Write, FileShare.None);
+
+                    var buffer = new byte[32768];
+
+                    int total_bytes_read = 0;
+                    int bytes_read;
+
+                    Logger.Info("File download started: {0}", asset.name);
+
+                    while ((bytes_read = await ms.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                    {
+                        await fs.WriteAsync(buffer.AsMemory(0, bytes_read));
+
+                        total_bytes_read += bytes_read;
+
+                        progress?.Report((asset.name, Convert.ToUInt64(total_bytes_read)));
+                    }
+
+                    progress?.Report((asset.name, Convert.ToUInt64(total_bytes_read)));
+
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    retry++;
+
+                    Logger.Error($"Error file during download. Exception: {ex.Message}, Name: {asset.name}, Attempt {retry}.");
+                }
+            }
+
+            var bat_name = Guid.NewGuid().ToString() + ".bat";
+
+            using (var SW = new StreamWriter(bat_name))
+            {
+                SW.WriteLine(
+                    $"ren \"{cur_path}\" \"{temp_name}\"  \r\n " + // rename current executable to old
+                    $"move \"{temp_path}\" \"{cur_path}\" \r\n " + // move new file to needed path with the name of the current executable
+                    $"start \"\" \"{cur_path}\" \r\n " + // start new executable
+                    $"del \"{cur_path + "_old"}\" \r\n " + // delete old file
+                    $"del \"{bat_name}\"" // delete bat file
+                    );
+                SW.Flush();
+                SW.Close();
+            }
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            Process.Start(new ProcessStartInfo() { UseShellExecute = false, FileName = bat_name, CreateNoWindow = true });
+            Environment.Exit(0);
+        }
+
         public async Task<FileStates> Validate()
         {
             Trace.Assert(IsInitialized);
 
-            List<IndexData> no_json_data = [.. data.FindAll(x => !x.name.EndsWith(".json"))];
+            List<IndexData> no_json_data = [.. data.FindAll(x => x.game_file)];
 
             if (no_json_data.Count == 0)
                 Logger.Exception(new Exception("Validate data count is 0. Something strange."));

@@ -417,4 +417,16 @@
   <data name="allow_unsafe_connection_desc" xml:space="preserve">
     <value>This setting will bypass any certificate checks, which could potentially make the connection unsafe, but may prevent issues when certificates are replaced by the provider or some software. DO NOT ENABLE UNLESS NECESSARY!</value>
   </data>
+  <data name="LauncherUpdateTitle" xml:space="preserve">
+    <value>Launcher is outdated</value>
+  </data>
+  <data name="LauncherUpdateDesc" xml:space="preserve">
+    <value>Launcher update found. Do you want to update?</value>
+  </data>
+  <data name="MsgBoxYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="MsgBoxNo" xml:space="preserve">
+    <value>No</value>
+  </data>
 </root>
