@@ -17,6 +17,7 @@ using System.Media;
 using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using opogsr_launcher.Extensions;
 
 namespace opogsr_launcher.ViewModels
 {
@@ -88,11 +89,11 @@ namespace opogsr_launcher.ViewModels
 
                 cur_size = FileProgress.Values.Aggregate((a, b) => a + b);
 
-                DownloadSpeedStr = $"{BytesToString.Convert(cur_size - prev_size)}/s";
+                DownloadSpeedStr = $"{Convert.BytesToString(cur_size - prev_size)}/s";
 
                 prev_size = cur_size;
 
-                SizeStr = $"{BytesToString.Convert(cur_size)} / {BytesToString.Convert(total_size)}";
+                SizeStr = $"{Convert.BytesToString(cur_size)} / {Convert.BytesToString(total_size)}";
 
                 Progress = Math.Floor(cur_size * (1.0 / total_size) * 100);
 

@@ -139,7 +139,7 @@ async Task<bool> ProcessDifference(List<IndexData> current, List<IndexData> remo
                 ulong speed = cur_sent - prev_sent;
 
                 if (size > 0 && cur_sent > 0 && speed > 0)
-                    Console.WriteLine($"[{d.name}]: {BytesToString.Convert(cur_sent)} of {BytesToString.Convert(size)}. Speed = {BytesToString.Convert(speed)}/s.");
+                    Console.WriteLine($"[{d.name}]: {Convert.BytesToString(cur_sent)} of {Convert.BytesToString(size)}. Speed = {Convert.BytesToString(speed)}/s.");
 
                 prev_sent = cur_sent;
             }

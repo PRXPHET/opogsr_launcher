@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
 	<IsAotCompatible>true</IsAotCompatible>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 	<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-	<LangVersion>13.0</LangVersion>
+	<LangVersion>14.0</LangVersion>
 	<AssemblyName>OPOGSR_Launcher</AssemblyName>
 	<ApplicationIcon>Assets\Images\icon.ico</ApplicationIcon>
   </PropertyGroup>
