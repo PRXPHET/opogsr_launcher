@@ -1,8 +1,9 @@
-﻿using System;
-using Avalonia;
+﻿using Avalonia;
+using ReactiveUI;
 using ReactiveUI.Avalonia;
-using System.Diagnostics;
-using opogsr_launcher.Other;
+using System;
+using System.Reactive;
+using opogsr_common.Exceptions;
 
 namespace opogsr_launcher
 {
@@ -12,19 +13,8 @@ namespace opogsr_launcher
         public static void Main(string[] args)
         {
             GlobalExceptionHandler.Initialize();
-            try
-            {
-                BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
-            }
-            catch(Exception ex)
-            {
-                GlobalExceptionHandler.LogException(ex);
-
-                if (Debugger.IsAttached)
-                    Debugger.Break();
-                else
-                    Environment.Exit(1);
-            }
+            RxApp.DefaultExceptionHandler = Observer.Create<Exception>(GlobalExceptionHandler.LogException);
+            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
         }
 
         public static AppBuilder BuildAvaloniaApp()

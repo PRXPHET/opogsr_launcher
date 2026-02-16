@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Diagnostics;
 
-namespace opogsr_launcher
+namespace opogsr_common.Log
 {
-    internal class Logger
+    public static class Logger
     {
         public static string LogFileName { get { return Path.GetFileNameWithoutExtension(StaticGlobals.Names.Executable) + "_" + DateTime.Now.ToString("dd-MM-yy_HH-mm-ss") + ".log"; } }
 
-        private static string s_fileName;
+        private static string? s_fileName;
 
         public static void SetOutputFile(string fileName)
         {
@@ -22,7 +19,7 @@ namespace opogsr_launcher
             }
             else
             {
-                string baseDir = Path.GetDirectoryName(s_fileName);
+                string baseDir = Path.GetDirectoryName(s_fileName)!;
                 if (!Directory.Exists(baseDir))
                 {
                     Directory.CreateDirectory(baseDir);
@@ -30,7 +27,7 @@ namespace opogsr_launcher
             }
         }
 
-        private static Action<string> s_callback;
+        private static Action<string>? s_callback;
 
         public static void SetCallback(Action<string> callback)
         {

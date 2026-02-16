@@ -1,11 +1,8 @@
-﻿using opogsr_launcher.JsonContext;
-using System;
-using System.Collections.Concurrent;
-using System.IO;
+﻿using System.Collections.Concurrent;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace opogsr_launcher.Managers
+namespace opogsr_common.Managers
 {
     public class ChunkMetadata
     {
@@ -19,7 +16,7 @@ namespace opogsr_launcher.Managers
         public ConcurrentDictionary<string, ChunkMetadata> Chunks { get; set; } = new();
     }
 
-    internal sealed class ChunkMetadataManager : IDisposable
+    public sealed class ChunkMetadataManager : IDisposable
     {
         private static readonly string MetaPath = Path.Combine(StaticGlobals.Locations.Launcher, "chunks.meta");
 
@@ -47,8 +44,8 @@ namespace opogsr_launcher.Managers
         private ChunkMetadataManager()
         {
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
-            string content = File.Exists(MetaPath) ? File.ReadAllText(MetaPath) : null;
-            Files = !String.IsNullOrEmpty(content) ? JsonSerializer.Deserialize(content, SourceGenerationContext.Default.ConcurrentDictionaryStringChunkedFileMetadata) : new();
+            string? content = File.Exists(MetaPath) ? File.ReadAllText(MetaPath) : null;
+            Files = !String.IsNullOrEmpty(content) ? JsonSerializer.Deserialize(content, SourceGenerationContext.Default.ConcurrentDictionaryStringChunkedFileMetadata)! : new();
         }
 
         public void Dispose()

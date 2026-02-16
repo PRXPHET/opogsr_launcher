@@ -1,4 +1,4 @@
-﻿
+﻿using opogsr_common.Log;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;

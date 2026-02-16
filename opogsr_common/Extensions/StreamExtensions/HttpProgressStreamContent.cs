@@ -1,10 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Net;
 
-namespace opogsr_launcher.Extensions.StreamExtensions
+namespace opogsr_common.Extensions.StreamExtensions
 {
     public class HttpProgressStreamContent : HttpContent
     {

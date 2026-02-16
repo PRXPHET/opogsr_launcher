@@ -1,14 +1,11 @@
-﻿
-using opogsr_launcher;
-using opogsr_launcher.Hasher;
-using opogsr_launcher.JsonContext;
-using opogsr_launcher.Managers.Github;
-using opogsr_launcher.Other;
-using opogsr_launcher.Other.Converters;
-using opogsr_launcher.Other.Secrets;
+﻿using opogsr_common;
+using opogsr_common.Exceptions;
+using opogsr_common.Hashing;
+using opogsr_common.Managers;
 using opogsr_uploader;
 using System.Diagnostics;
 using System.Text.Json;
+using opogsr_common.Extensions;
 
 Console.Title = "OP OGSR Uploader";
 
@@ -32,7 +29,7 @@ JsonSerializerOptions options = new()
 const string token = Secrets.GithubUploadToken;
 const string repo = Secrets.GithubRepo;
 
-GithubUploadManager manager = new(token, repo);
+UploaderGithubManager manager = new(token, repo);
 
 while (!await manager.TryInitialize())
 {

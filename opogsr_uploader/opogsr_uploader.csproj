@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\opogsr_launcher\opogsr_launcher.csproj" />
+    <ProjectReference Include="..\opogsr_common\opogsr_common.csproj" />
   </ItemGroup>
 
 </Project>

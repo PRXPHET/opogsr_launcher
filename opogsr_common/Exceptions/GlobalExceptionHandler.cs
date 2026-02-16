@@ -1,17 +1,12 @@
-﻿using ReactiveUI;
-﻿using System;
-using System.Diagnostics;
-using System.Reactive;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using opogsr_common.Log;
 
-namespace opogsr_launcher.Other
+namespace opogsr_common.Exceptions
 {
     public static class GlobalExceptionHandler
     {
         public static void Initialize()
         {
-            RxApp.DefaultExceptionHandler = Observer.Create<Exception>(LogException);
-
             TaskScheduler.UnobservedTaskException += (sender, e) =>
             {
                 LogException(e.Exception);

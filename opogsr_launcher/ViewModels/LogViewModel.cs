@@ -1,4 +1,5 @@
-﻿using Avalonia.Media;
+﻿using opogsr_common.Log;
+using Avalonia.Media;
 using System.Collections.Generic;
 using ReactiveUI.SourceGenerators;
 using System.Collections.ObjectModel;

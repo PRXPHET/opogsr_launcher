@@ -1,10 +1,8 @@
-﻿using opogsr_launcher.Managers;
-using opogsr_launcher.Managers.Github;
+﻿using opogsr_common.Managers;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace opogsr_launcher.JsonContext;
+namespace opogsr_common;
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(GithubAsset))]
@@ -15,4 +13,4 @@ namespace opogsr_launcher.JsonContext;
 [JsonSerializable(typeof(ConcurrentDictionary<string, ChunkMetadata>))]
 [JsonSerializable(typeof(ChunkedFileMetadata))]
 [JsonSerializable(typeof(ConcurrentDictionary<string, ChunkedFileMetadata>))]
-public partial class SourceGenerationContext : JsonSerializerContext { }
+public partial class SourceGenerationContext : JsonSerializerContext;

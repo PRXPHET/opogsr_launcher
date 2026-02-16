@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Hashing;
-using System.Threading.Tasks;
+﻿using System.IO.Hashing;
 
-namespace opogsr_launcher.Hasher
+namespace opogsr_common.Hashing
 {
     public class FileHasher
     {

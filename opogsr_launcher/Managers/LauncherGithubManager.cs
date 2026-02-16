@@ -1,6 +1,10 @@
-﻿using opogsr_launcher.Extensions;
-using opogsr_launcher.Extensions.StreamExtensions;
-using opogsr_launcher.Hasher;
+﻿using Avalonia.Controls;
+using opogsr_common;
+using opogsr_common.Extensions;
+using opogsr_common.Extensions.StreamExtensions;
+using opogsr_common.Hashing;
+using opogsr_common.Log;
+using opogsr_common.Managers;
 using System;
 using System.Buffers;
 using System.Collections.Concurrent;
@@ -11,10 +15,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace opogsr_launcher.Managers.Github
+namespace opogsr_launcher.Managers
 {
     internal class RateLimitInfo
     {
@@ -22,7 +28,7 @@ namespace opogsr_launcher.Managers.Github
         public DateTime Reset;
     }
 
-    internal class GithubDownloadManager : GithubManager
+    internal class LauncherGithubManager : GithubManager
     {
         private readonly ConcurrentBag<IndexData> not_validated_data = [];
 
@@ -638,6 +644,13 @@ namespace opogsr_launcher.Managers.Github
             return false;
         }
 
+        protected override bool ServerCertificateCallback(HttpRequestMessage sender, X509Certificate2? cert, X509Chain? chain, SslPolicyErrors policy)
+        {
+            bool skip = (bool)Other.Settings.Storage.GetValue("allow_unsafe_connection");
+
+            return skip || base.ServerCertificateCallback(sender, cert, chain, policy);
+        }
+
         public ulong Size()
         {
             ulong size = 0;
@@ -648,7 +661,15 @@ namespace opogsr_launcher.Managers.Github
             return size;
         }
 
-        public GithubDownloadManager(string Token, string Repo, bool isPublic) : base(Token, Repo, isPublic)
+        public override async Task<bool> TryInitialize()
+        {
+            if (Design.IsDesignMode)
+                return true;
+
+            return await base.TryInitialize();
+        }
+
+        public LauncherGithubManager(string Token, string Repo, bool isPublic) : base(Token, Repo, isPublic)
         {
             download_client_unauthorized = new(ConfigureClientHandler());
             download_client_unauthorized.DefaultRequestHeaders.Add("Accept", "application/octet-stream");

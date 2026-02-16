@@ -1,4 +1,5 @@
-﻿using opogsr_launcher.Helpers;
+﻿using opogsr_common;
+using opogsr_launcher.Helpers;
 using opogsr_launcher.Other.RuntimeResource;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;

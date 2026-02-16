@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:common="clr-namespace:opogsr_common;assembly=opogsr_common"
 		xmlns:local="clr-namespace:opogsr_launcher"
 		xmlns:vm="clr-namespace:opogsr_launcher.ViewModels"
 		xmlns:p="clr-namespace:opogsr_launcher.Properties"
@@ -44,22 +45,22 @@
 				<Border Grid.Row="2">
 					<Viewbox Stretch="Uniform">
 						<Grid RowDefinitions="* *" ColumnDefinitions="* * *">
-							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.Youtube}" Grid.Row="0" Grid.Column="0" Classes="IconButton">
+							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.Youtube}" Grid.Row="0" Grid.Column="0" Classes="IconButton">
 								<Image Source="/Assets/Images/youtube.png"/>
 							</Button>
-							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.Steam}" Grid.Row="0" Grid.Column="1" Classes="IconButton">
+							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.Steam}" Grid.Row="0" Grid.Column="1" Classes="IconButton">
 								<Image Source="/Assets/Images/steam.png"/>
 							</Button>
-							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.Discord}" Grid.Row="0" Grid.Column="2" Classes="IconButton">
+							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.Discord}" Grid.Row="0" Grid.Column="2" Classes="IconButton">
 								<Image Source="/Assets/Images/discord.png"/>
 							</Button>
-							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.Yoomoney}" Grid.Row="1" Grid.Column="0" Classes="IconButton">
+							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.Yoomoney}" Grid.Row="1" Grid.Column="0" Classes="IconButton">
 								<Image Source="/Assets/Images/yoomoney.png"/>
 							</Button>
-							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.Boosty}" Grid.Row="1" Grid.Column="1" Classes="IconButton">
+							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.Boosty}" Grid.Row="1" Grid.Column="1" Classes="IconButton">
 								<Image Source="/Assets/Images/boosty.png"/>
 							</Button>
-							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static local:StaticGlobals+Links.DonationAlerts}" Grid.Row="1" Grid.Column="2" Classes="IconButton">
+							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.DonationAlerts}" Grid.Row="1" Grid.Column="2" Classes="IconButton">
 								<Image Source="/Assets/Images/donationalerts.png"/>
 							</Button>
 						</Grid>

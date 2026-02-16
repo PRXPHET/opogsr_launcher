@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-using System.IO;
-
-namespace opogsr_launcher
+﻿
+namespace opogsr_common
 {
     public static class StaticGlobals
     {
@@ -59,7 +57,7 @@ namespace opogsr_launcher
 
             public const string GameExecutable = "OPOGSR.exe";
 
-            public static string Executable { get; } = Path.GetFileName(System.Environment.ProcessPath);
+            public static string Executable { get; } = Path.GetFileName(Environment.ProcessPath)!;
         }
     }
 }

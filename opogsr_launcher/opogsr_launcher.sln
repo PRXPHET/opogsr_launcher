@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35617.110
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11505.172 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "opogsr_launcher", "opogsr_launcher.csproj", "{3CDBB835-5702-4D1A-8370-9A1B6BB5A731}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "opogsr_uploader", "..\opogsr_uploader\opogsr_uploader.csproj", "{0A6F5F07-A5C5-492E-BB53-EC9BE772462E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "opogsr_common", "..\opogsr_common\opogsr_common.csproj", "{AE0FCE64-7E79-4118-C36F-B167ACCF1629}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{0A6F5F07-A5C5-492E-BB53-EC9BE772462E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A6F5F07-A5C5-492E-BB53-EC9BE772462E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A6F5F07-A5C5-492E-BB53-EC9BE772462E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE0FCE64-7E79-4118-C36F-B167ACCF1629}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE0FCE64-7E79-4118-C36F-B167ACCF1629}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE0FCE64-7E79-4118-C36F-B167ACCF1629}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE0FCE64-7E79-4118-C36F-B167ACCF1629}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

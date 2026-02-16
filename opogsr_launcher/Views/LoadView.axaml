@@ -2,10 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:common="clr-namespace:opogsr_common;assembly=opogsr_common"
 			 xmlns:local="clr-namespace:opogsr_launcher"
 			 xmlns:vm="clr-namespace:opogsr_launcher.ViewModels"
 		     xmlns:p="clr-namespace:opogsr_launcher.Properties"
-             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="450"
+		     mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="450"
              x:Class="opogsr_launcher.Views.LoadView"
 	         x:DataType="vm:LoadViewModel">
 
@@ -37,7 +38,7 @@
 									<Button FontSize="24" Command="{Binding LoadSaveCommand}" Content="{Binding LoadSaveStr.Text}">
 										<Button.IsVisible>
 											<MultiBinding Converter="{x:Static BoolConverters.And}">
-												<Binding Source="{x:Static local:StaticGlobals+Stats.CanPlay}"/>
+												<Binding Source="{x:Static common:StaticGlobals+Stats.CanPlay}"/>
 												<Binding Path="SelectedSave" Converter="{x:Static ObjectConverters.IsNotNull}"/>
 											</MultiBinding>
 										</Button.IsVisible>

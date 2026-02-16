@@ -120,6 +120,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\opogsr_common\opogsr_common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="DiscordRPC">
       <HintPath>Dynamic\DiscordRPC.dll</HintPath>
     </Reference>

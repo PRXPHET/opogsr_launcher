@@ -1,16 +1,13 @@
-﻿using opogsr_launcher;
-using opogsr_launcher.Extensions.StreamExtensions;
-using opogsr_launcher.JsonContext;
-using opogsr_launcher.Managers.Github;
+﻿using opogsr_common;
+using opogsr_common.Extensions.StreamExtensions;
+using opogsr_common.Managers;
 using System.Diagnostics;
 using System.Net.Http.Headers;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 
 namespace opogsr_uploader
 {
-    public class GithubUploadManager : GithubManager
+    public class UploaderGithubManager : GithubManager
     {
         private async Task<GithubAsset> UploadFile(string url, Stream stream, IProgress<(ulong Sent, ulong Total)>? progress)
         {
@@ -110,12 +107,7 @@ namespace opogsr_uploader
             }
         }
 
-        protected override bool ServerCertificateCallback(HttpRequestMessage sender, X509Certificate2? cert, X509Chain? chain, SslPolicyErrors policy)
-        {
-            return policy == System.Net.Security.SslPolicyErrors.None;
-        }
-
-        public GithubUploadManager(string Token, string Repo) : base(Token, Repo, false)
+        public UploaderGithubManager(string Token, string Repo) : base(Token, Repo, false)
         {
             api_client.Timeout = TimeSpan.FromHours(6);
         }

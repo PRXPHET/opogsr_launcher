@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using opogsr_common;
+using opogsr_common.Log;
 
 namespace opogsr_launcher.Helpers
 {

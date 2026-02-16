@@ -7,33 +7,36 @@ namespace opogsr_launcher.Extensions
 {
     internal static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddManagers(this IServiceCollection collection)
+        extension(IServiceCollection collection)
         {
-            collection.AddSingleton<DiscordRPCManager>();
+            public IServiceCollection AddManagers()
+            {
+                collection.AddSingleton<DiscordRPCManager>();
 
-            return collection;
-        }
+                return collection;
+            }
 
-        public static IServiceCollection AddViewModels(this IServiceCollection collection)
-        {
-            collection.AddSingleton<MainViewModel>();
-            collection.AddSingleton<HomeViewModel>();
-            collection.AddSingleton<LoadViewModel>();
-            collection.AddSingleton<SettingsViewModel>();
-            collection.AddSingleton<LogViewModel>();
+            public IServiceCollection AddViewModels()
+            {
+                collection.AddSingleton<MainViewModel>();
+                collection.AddSingleton<HomeViewModel>();
+                collection.AddSingleton<LoadViewModel>();
+                collection.AddSingleton<SettingsViewModel>();
+                collection.AddSingleton<LogViewModel>();
 
-            return collection;
-        }
+                return collection;
+            }
 
-        public static IServiceCollection AddViews(this IServiceCollection collection)
-        {
-            collection.AddSingleton<MainView>();
-            collection.AddSingleton<HomeView>();
-            collection.AddSingleton<LoadView>();
-            collection.AddSingleton<SettingsView>();
-            collection.AddSingleton<LogView>();
+            public IServiceCollection AddViews()
+            {
+                collection.AddSingleton<MainView>();
+                collection.AddSingleton<HomeView>();
+                collection.AddSingleton<LoadView>();
+                collection.AddSingleton<SettingsView>();
+                collection.AddSingleton<LogView>();
 
-            return collection;
+                return collection;
+            }
         }
     }
 }

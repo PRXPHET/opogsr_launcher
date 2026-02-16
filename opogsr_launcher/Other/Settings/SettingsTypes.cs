@@ -1,6 +1,7 @@
 ﻿global using Token = System.Collections.ObjectModel.ObservableCollection<string>;
 
 using Avalonia.Media;
+using opogsr_common.Log;
 using opogsr_launcher.Other.RuntimeResource;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;

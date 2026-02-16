@@ -1,15 +1,10 @@
-using DynamicData;
-using System;
 using System.Buffers;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace opogsr_launcher.Extensions.StreamExtensions
+namespace opogsr_common.Extensions.StreamExtensions
 {
-    internal class ChunkMappedFileWriter : IDisposable
+    public class ChunkMappedFileWriter : IDisposable
     {
         private struct MappedMemory
         {
@@ -22,7 +17,7 @@ namespace opogsr_launcher.Extensions.StreamExtensions
 
         private readonly long _size;
 
-        private Task WriteTask;
+        private Task? WriteTask;
 
         private bool IsWorking = false;
 
@@ -30,8 +25,6 @@ namespace opogsr_launcher.Extensions.StreamExtensions
 
         public bool FileCreated { get; private set; } = false;
         public bool FileUpdated { get; private set; } = false;
-
-        public bool DateChanged { get; private set; } = false;
 
         private readonly BlockingCollection<MappedMemory> Data = [];
 
@@ -62,13 +55,6 @@ namespace opogsr_launcher.Extensions.StreamExtensions
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
         }
 
-        public FileStream GetStream()
-        {
-            return IsDisposed
-                   ? throw new ObjectDisposedException(nameof(ChunkMappedFileWriter))
-                   : _fileStream ?? throw new InvalidOperationException("Internal stream is null.");
-        }
-
         public void Start()
         {
             if (IsWorking)
@@ -97,33 +83,12 @@ namespace opogsr_launcher.Extensions.StreamExtensions
         {
             foreach (var item in Data.GetConsumingEnumerable(_ct))
             {
-                try
-                {
-                    _fileStream.Position = item.position;
-                    await _fileStream.WriteAsync(item.memory, 0, item.count);
-                }
-                catch
-                {
-                    throw;
-                }
-                finally
-                {
-                    ArrayPool<byte>.Shared.Return(item.memory, true);
-                }
+                _fileStream.Position = item.position;
+                await _fileStream.WriteAsync(item.memory, 0, item.count);
+                ArrayPool<byte>.Shared.Return(item.memory, true);
             }
 
             IsWorking = false;
-        }
-
-        public void UpdateDate(DateTime dt)
-        {
-            if (DateChanged)
-                return;
-
-            DateChanged = true;
-
-            File.SetCreationTimeUtc(_fileStream.SafeFileHandle, dt);
-            File.SetLastAccessTimeUtc(_fileStream.SafeFileHandle, dt);
         }
 
         public void Dispose()

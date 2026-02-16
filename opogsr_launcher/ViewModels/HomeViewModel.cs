@@ -1,30 +1,27 @@
 ﻿using Avalonia.Controls;
 using MsBox.Avalonia;
-using MsBox.Avalonia.Models;
-using MsBox.Avalonia.Enums;
+using opogsr_common;
+using opogsr_common.Managers;
+using opogsr_common.Extensions;
 using opogsr_launcher.Helpers;
 using opogsr_launcher.Managers;
-using opogsr_launcher.Managers.Github;
-using opogsr_launcher.Other.Converters;
 using opogsr_launcher.Other.RuntimeResource;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Media;
 using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Threading;
-using opogsr_launcher.Extensions;
 
 namespace opogsr_launcher.ViewModels
 {
     public partial class HomeViewModel : ViewModelBase
     {
         private static DiscordRPCManager _discordRPCManager;
-        private static GithubDownloadManager _githubDownloadManager;
+        private static LauncherGithubManager _launcherGithubManager;
 
         [Reactive] public partial bool IsDownloading { get; set; }
 
@@ -44,7 +41,7 @@ namespace opogsr_launcher.ViewModels
 
         public HomeViewModel(DiscordRPCManager discordRPCManager)
         {
-            _githubDownloadManager = new(Other.Secrets.Secrets.GithubToken, Other.Secrets.Secrets.GithubRepo, Other.Secrets.Secrets.IsGithubPublicRepo);
+            _launcherGithubManager = new(Secrets.GithubToken, Secrets.GithubRepo, Secrets.IsGithubPublicRepo);
 
             _discordRPCManager = discordRPCManager;
 
@@ -75,14 +72,14 @@ namespace opogsr_launcher.ViewModels
                 if (FileProgress.IsEmpty)
                     continue;
 
-                if (_githubDownloadManager.IsRateLimited)
+                if (_launcherGithubManager.IsRateLimited)
                 {
                     if (StateStr.Key != "RateLimited")
                         StateStr.Key = "RateLimited";
 
                     continue;
                 }
-                else if (!_githubDownloadManager.IsRateLimited && !string.IsNullOrEmpty(StateStr.Key) && StateStr.Key != "Downloading")
+                else if (!_launcherGithubManager.IsRateLimited && !string.IsNullOrEmpty(StateStr.Key) && StateStr.Key != "Downloading")
                 {
                     StateStr.Key = "Downloading";
                 }
@@ -112,7 +109,7 @@ namespace opogsr_launcher.ViewModels
 
             StateStr.Key = "Connecting";
 
-            if (!await _githubDownloadManager.TryInitialize())
+            if (!await _launcherGithubManager.TryInitialize())
             {
                 StateStr.Key = "ConnectionFailed";
                 ButtonMainStr.Key = "TryConnectAgain";
@@ -120,7 +117,7 @@ namespace opogsr_launcher.ViewModels
                 return;
             }
 
-            if (!await _githubDownloadManager.ValidateLauncher())
+            if (!await _launcherGithubManager.ValidateLauncher())
             {
                 bool updated = await Dispatcher.UIThread.InvokeAsync(async () =>
                 {
@@ -156,7 +153,7 @@ namespace opogsr_launcher.ViewModels
 
             StateStr.Key = "ValidatingFiles";
 
-            FileStates state = await _githubDownloadManager.Validate();
+            FileStates state = await _launcherGithubManager.Validate();
 
             if (state == FileStates.NoFiles)
                 ButtonMainStr.Key = "StartDownload";
@@ -182,9 +179,9 @@ namespace opogsr_launcher.ViewModels
 
             var progress = new Progress<(string Name, ulong Total)>();
 
-            UpdateProgressBar(progress, _githubDownloadManager.Size(StaticGlobals.Names.Executable));
+            UpdateProgressBar(progress, _launcherGithubManager.Size(StaticGlobals.Names.Executable));
 
-            await _githubDownloadManager.UpdateLauncher(progress);
+            await _launcherGithubManager.UpdateLauncher(progress);
 
             StateStr.Key = "";
 
@@ -200,9 +197,9 @@ namespace opogsr_launcher.ViewModels
 
             var progress = new Progress<(string Name, ulong Total)>();
 
-            UpdateProgressBar(progress, _githubDownloadManager.Size());
+            UpdateProgressBar(progress, _launcherGithubManager.Size());
 
-            StaticGlobals.Stats.CanPlay = await _githubDownloadManager.DownloadInvalid(progress);
+            StaticGlobals.Stats.CanPlay = await _launcherGithubManager.DownloadInvalid(progress);
 
             if (StaticGlobals.Stats.CanPlay)
             {
