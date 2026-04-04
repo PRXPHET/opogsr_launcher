@@ -94,7 +94,7 @@ namespace opogsr_launcher.Managers
                 return true;
 #endif
 
-            IndexData ld = data.Find(x => !x.game_file && x.name.Equals(StaticGlobals.Names.Executable, StringComparison.InvariantCulture));
+            IndexData ld = data.Find(x => !x.game_file && x.name.Equals(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + ".exe", StringComparison.InvariantCulture));
 
             using FileStream stream = new(Path.Combine(StaticGlobals.Locations.Start, StaticGlobals.Names.Executable), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
