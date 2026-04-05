@@ -22,7 +22,7 @@ namespace opogsr_launcher.Other.Settings
                 LangSelectionCommand = ReactiveCommand.Create<string>(RuntimeResource.RuntimeResource.Instance.SetLanguage);
 
                 this.WhenAnyValue(x => x.CurrentValue.Value)
-                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .ObserveOn(RxSchedulers.MainThreadScheduler)
                     .InvokeCommand(LangSelectionCommand);
             }
         }

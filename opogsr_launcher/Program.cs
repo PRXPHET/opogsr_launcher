@@ -13,7 +13,6 @@ namespace opogsr_launcher
         public static void Main(string[] args)
         {
             GlobalExceptionHandler.Initialize();
-            RxApp.DefaultExceptionHandler = Observer.Create<Exception>(GlobalExceptionHandler.LogException);
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
         }
 
@@ -23,7 +22,9 @@ namespace opogsr_launcher
                 .WithInterFont()
                 .ConfigureFonts(fontManager => { fontManager.AddFontCollection(new AppFontCollection()); })
                 .LogToTrace()
-                .UseReactiveUI();
-                
+                .UseReactiveUI(rxui =>
+                {
+                    rxui.WithExceptionHandler(Observer.Create<Exception>(GlobalExceptionHandler.LogException));
+                });
     }
 }

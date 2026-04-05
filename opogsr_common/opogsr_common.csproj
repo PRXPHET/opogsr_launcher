@@ -8,10 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.IO.Hashing" Version="10.0.3" />
-    <PackageReference Include="System.Management" Version="10.0.3" />
-    <PackageReference Include="System.Text.Json" Version="10.0.3" />
-    <PackageReference Include="System.Windows.Extensions" Version="10.0.3" />
+    <PackageReference Include="System.IO.Hashing" Version="10.0.5" />
+    <PackageReference Include="System.Management" Version="10.0.5" />
+    <PackageReference Include="System.Text.Json" Version="10.0.5" />
+    <PackageReference Include="System.Windows.Extensions" Version="10.0.5" />
   </ItemGroup>
 
 </Project>
