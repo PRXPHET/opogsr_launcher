@@ -9,6 +9,7 @@ namespace opogsr_launcher.Other.Settings
         private static readonly SettingsControls LauncherSettings = new()
         {
             { new SettingsCommands.SettingsControlLanguage("launcher_language", SettingsCommands.Langs, SettingsCommands.Langs.Contains(RuntimeResource.RuntimeResource.Instance.Language) ? RuntimeResource.RuntimeResource.Instance.Language : SettingsCommands.Langs[0]) },
+            { new SettingsBool("move_to_system_tray_on_close", true, SettingType.Launcher) },
             { new SettingsSeparator("sep_launcher_warn") },
             { new SettingsRange<int>("max_download_threads", 1, 16, 1, 8, SettingType.Launcher) },
             { new SettingsRange<int>("max_amount_of_tries", 1, 20, 1, 5, SettingType.Launcher) },

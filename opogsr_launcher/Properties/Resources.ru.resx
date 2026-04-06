@@ -429,4 +429,10 @@
   <data name="MsgBoxNo" xml:space="preserve">
     <value>Нет</value>
   </data>
+  <data name="move_to_system_tray_on_close" xml:space="preserve">
+    <value>Сворачивать в трей при закрытии окна</value>
+  </data>
+  <data name="TrayExit" xml:space="preserve">
+    <value>Выход</value>
+  </data>
 </root>

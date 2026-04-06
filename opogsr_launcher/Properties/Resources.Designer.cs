@@ -19,7 +19,7 @@ namespace opogsr_launcher.Properties {
     // с помощью такого средства, как ResGen или Visual Studio.
     // Чтобы добавить или удалить член, измените файл .ResX и снова запустите ResGen
     // с параметром /str или перестройте свой проект VS.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -419,7 +419,16 @@ namespace opogsr_launcher.Properties {
                 return ResourceManager.GetString("max_download_threads_desc", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Collapse into tray when closing window.
+        /// </summary>
+        public static string move_to_system_tray_on_close {
+            get {
+                return ResourceManager.GetString("move_to_system_tray_on_close", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Ищет локализованную строку, похожую на No.
         /// </summary>
@@ -948,6 +957,15 @@ namespace opogsr_launcher.Properties {
         public static string tab_video {
             get {
                 return ResourceManager.GetString("tab_video", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Exit.
+        /// </summary>
+        public static string TrayExit {
+            get {
+                return ResourceManager.GetString("TrayExit", resourceCulture);
             }
         }
         

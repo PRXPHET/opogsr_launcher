@@ -101,7 +101,7 @@ namespace opogsr_launcher.ViewModels
 
             MinimizeCommand = ReactiveCommand.Create(ApplicationHelper.Minimize);
             MaximizeCommand = ReactiveCommand.Create(ApplicationHelper.Maximize);
-            CloseCommand = ReactiveCommand.Create(ApplicationHelper.Close);
+            CloseCommand = ReactiveCommand.Create(ApplicationHelper.CloseOrMoveToTray);
         }
     }
 }

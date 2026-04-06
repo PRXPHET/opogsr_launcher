@@ -429,4 +429,10 @@
   <data name="MsgBoxNo" xml:space="preserve">
     <value>No</value>
   </data>
+  <data name="move_to_system_tray_on_close" xml:space="preserve">
+    <value>Collapse into tray when closing window</value>
+  </data>
+  <data name="TrayExit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
 </root>
