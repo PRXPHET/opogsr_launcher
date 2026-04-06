@@ -161,7 +161,9 @@ namespace opogsr_launcher.Managers
 
             var bat_name = Guid.NewGuid().ToString() + ".bat";
 
-            using (var SW = new StreamWriter(bat_name))
+            var encoding = System.Text.Encoding.GetEncoding(System.Globalization.CultureInfo.CurrentCulture.TextInfo.OEMCodePage);
+
+            using (var SW = new StreamWriter(bat_name, false, encoding))
             {
                 SW.WriteLine(
                     $"ren \"{cur_path}\" \"{temp_name}\"  \r\n " + // rename current executable to old
