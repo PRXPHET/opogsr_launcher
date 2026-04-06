@@ -77,8 +77,8 @@
 								<SolidColorBrush Opacity="0.5" Color="Black"/>
 							</Border.Background>
 							<Grid ColumnDefinitions="* *">
-								<Label FontFamily="Bender" Grid.Column="0" FontWeight="Black" Foreground="White">30.04.2025:</Label>
-								<Label FontFamily="Bender" Grid.Column="1" Foreground="White">Произошло что-то интересное...</Label>
+								<Label FontFamily="fonts:AppFonts#Bender" Grid.Column="0" FontWeight="Black" Foreground="White">30.04.2025:</Label>
+								<Label FontFamily="fonts:AppFonts#Bender" Grid.Column="1" Foreground="White">Произошло что-то интересное...</Label>
 							</Grid>
 						</Border>
 						<Border Grid.Column="1">

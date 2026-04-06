@@ -3,15 +3,7 @@
   <Design.PreviewWith>
     <Border Padding="20" Background="Black">
 		<Grid ColumnDefinitions="* * *">
-			<Button Grid.Column="0" Classes="IconButton">
-				<Image Source="/Assets/Images/discord.png"/>
-			</Button>
-			<Button Grid.Column="1" Classes="IconButton">
-				<Image Source="/Assets/Images/appro.png"/>
-			</Button>
-			<Button Grid.Column="2" Classes="IconButton">
-				<Image Source="/Assets/Images/amk.png"/>
-			</Button>
+			<TextBlock FontFamily="fonts:AppFonts#Bender" FontStyle="Normal" Foreground="White" FontSize="36" Text="Test text"></TextBlock>
 		</Grid>
     </Border>
   </Design.PreviewWith>
@@ -21,7 +13,7 @@
 	</Style>
 
 	<Style Selector="Label">
-		<Setter Property="FontFamily" Value="Bender"/>
+		<Setter Property="FontFamily" Value="fonts:AppFonts#Bender"/>
 		<Setter Property="Foreground" Value="White"/>
 	</Style>
 
@@ -61,13 +53,13 @@
 
 
 	<Style Selector="Button">
-		<Setter Property="FontFamily" Value="Bender"/>
+		<Setter Property="FontFamily" Value="fonts:AppFonts#Bender"/>
 		<Setter Property="Foreground" Value="White"/>
 		<Setter Property="Background" Value="{DynamicResource ResourceKey=ButtonSidebarBackground}"/>
 	</Style>
 
 	<Style Selector="Button:pointerover /template/ ContentPresenter">
-		<Setter Property="FontFamily" Value="Bender"/>
+		<Setter Property="FontFamily" Value="fonts:AppFonts#Bender"/>
 		<Setter Property="Foreground" Value="White"/>
 		<Setter Property="Background" Value="{DynamicResource ResourceKey=ButtonSidebarHoverBackground}"/>
 	</Style>

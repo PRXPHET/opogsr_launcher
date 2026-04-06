@@ -32,7 +32,7 @@ public partial class SettingsView : UserControl
 
         var text = new TextBlock()
         {
-            FontFamily = "Bender",
+            FontFamily = "fonts:AppFonts#Bender",
             HorizontalAlignment = HorizontalAlignment.Center,
             Text = "null",
         };
@@ -91,7 +91,7 @@ public partial class SettingsView : UserControl
                     TextAlignment = TextAlignment.Center,
                     TextWrapping = TextWrapping.Wrap,
                     Margin = new Thickness(10),
-                    FontFamily = "Bender",
+                    FontFamily = "fonts:AppFonts#Bender",
                     FontSize = 20,
                     Foreground = separator.Brush
                 };
@@ -156,7 +156,7 @@ public partial class SettingsView : UserControl
 
             var leftText = new TextBlock() 
             {
-                FontFamily = "Bender",
+                FontFamily = "fonts:AppFonts#Bender",
                 FontSize = 16,
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center
@@ -235,7 +235,7 @@ public partial class SettingsView : UserControl
 
         SettingsTabs.Items.Add(new TabItem
         {
-            FontFamily = "Bender",
+            FontFamily = "fonts:AppFonts#Bender",
             FontSize = 20,
             Header = headerText,
             Content = stack
