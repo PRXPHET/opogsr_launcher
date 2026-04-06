@@ -18,88 +18,79 @@
 		x:DataType="vm:MainViewModel"
         Title="OP OGSR Launcher">
 
-	<Window.Styles>
-		<StyleInclude Source="/Styles/DefaultStyles.axaml"/>
-	</Window.Styles>
-	
-	<Grid ColumnDefinitions="1*, 3*" PointerPressed="OnPointerPressed">
+	<Grid RowDefinitions="40 *" PointerPressed="OnPointerPressed">
 		<Grid.Background>
 			<ImageBrush Source="/Assets/Images/menu.jpg" Stretch="Fill"/>
 		</Grid.Background>
-		<Border Grid.Column="0" Padding="15">
+		<Border Grid.Row="0" BorderBrush="Black" BorderThickness="0, 0, 0, 1">
 			<Border.Background>
 				<SolidColorBrush Color="Black" Opacity="0.5"/>
 			</Border.Background>
-			<Grid RowDefinitions="0.55* * 0.3*">
-				<Border Grid.Row="0">
-					<Image VerticalAlignment="Top" Source="/Assets/Images/logo.png"/>
-				</Border>
-				<Border Grid.Row="1">
-					<StackPanel Spacing="15">
-						<Button Content="{Binding Source={x:Static rs:RuntimeResource.Instance}, Path=[ButtonHome]}" Classes="SidebarButton" Classes.Active="{Binding HomeActive}" Command="{Binding GoToHomeCommand}"/>
-						<Button Content="{Binding Source={x:Static rs:RuntimeResource.Instance}, Path=[ButtonLoad]}" Classes="SidebarButton" Classes.Active="{Binding LoadActive}" Command="{Binding GoToLoadCommand}" />
-						<Button Content="{Binding Source={x:Static rs:RuntimeResource.Instance}, Path=[ButtonSettings]}" Classes="SidebarButton" Classes.Active="{Binding SettingsActive}" Command="{Binding GoToSettingsCommand}"/>
-						<Button Content="{Binding Source={x:Static rs:RuntimeResource.Instance}, Path=[ButtonLog]}" Classes="SidebarButton" Classes.Active="{Binding LogActive}" Command="{Binding GoToLogCommand}"/>
-					</StackPanel>
-				</Border>
-				<Border Grid.Row="2">
-					<Viewbox Stretch="Uniform">
-						<Grid RowDefinitions="* *" ColumnDefinitions="* * *">
-							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.Youtube}" Grid.Row="0" Grid.Column="0" Classes="IconButton">
-								<Image Source="/Assets/Images/youtube.png"/>
-							</Button>
-							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.Steam}" Grid.Row="0" Grid.Column="1" Classes="IconButton">
-								<Image Source="/Assets/Images/steam.png"/>
-							</Button>
-							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.Discord}" Grid.Row="0" Grid.Column="2" Classes="IconButton">
-								<Image Source="/Assets/Images/discord.png"/>
-							</Button>
-							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.Yoomoney}" Grid.Row="1" Grid.Column="0" Classes="IconButton">
-								<Image Source="/Assets/Images/yoomoney.png"/>
-							</Button>
-							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.Boosty}" Grid.Row="1" Grid.Column="1" Classes="IconButton">
-								<Image Source="/Assets/Images/boosty.png"/>
-							</Button>
-							<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.DonationAlerts}" Grid.Row="1" Grid.Column="2" Classes="IconButton">
-								<Image Source="/Assets/Images/donationalerts.png"/>
-							</Button>
-						</Grid>
-					</Viewbox>
-				</Border>
+			<Grid ColumnDefinitions="* 120" Margin="10,0">
+				<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10">
+					<TextBlock Text="OP OGSR Launcher | by prxphet" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+				</StackPanel>
+				<Grid Grid.Column="1" ColumnDefinitions="* * *" HorizontalAlignment="Right">
+					<Button Classes="ToolbarButton" Command="{Binding MinimizeCommand}" Grid.Column="0">
+						<Image Source="/Assets/Images/minimize.png"/>
+					</Button>
+					<Button Classes="ToolbarButton" Command="{Binding MaximizeCommand}" Grid.Column="1">
+						<Image Source="/Assets/Images/maximize.png"/>
+					</Button>
+					<Button Classes="ToolbarButton" Command="{Binding CloseCommand}" Grid.Column="2">
+						<Image Source="/Assets/Images/close.png"/>
+					</Button>
+				</Grid>
 			</Grid>
 		</Border>
-		<Border Grid.Column="1">
-			<Grid HorizontalAlignment="Stretch" RowDefinitions="0 *">
-				<Border ZIndex="1" Grid.Row="0" VerticalAlignment="Top">
-					<Grid Margin="10" Height="30" VerticalAlignment="Top" ColumnDefinitions="* 100">
-						<Border IsVisible="{Binding HomeActive}" CornerRadius="6" Margin="0 0 10 0" Padding="0 3" HorizontalAlignment="Left" Grid.Column="0">
-							<Border.Background>
-								<SolidColorBrush Opacity="0.5" Color="Black"/>
-							</Border.Background>
-							<Grid ColumnDefinitions="* *">
-								<Label FontFamily="fonts:AppFonts#Bender" Grid.Column="0" FontWeight="Black" Foreground="White">30.04.2025:</Label>
-								<Label FontFamily="fonts:AppFonts#Bender" Grid.Column="1" Foreground="White">Произошло что-то интересное...</Label>
+		<Grid Grid.Row="1" ColumnDefinitions="1*, 3*">
+			<Border BorderBrush="Black" BorderThickness="0, 0, 1, 0"  Grid.Column="0" Padding="15">
+				<Border.Background>
+					<SolidColorBrush Color="Black" Opacity="0.5"/>
+				</Border.Background>
+				<Grid RowDefinitions="0.55* * 0.3*">
+					<Border Grid.Row="0">
+						<Image VerticalAlignment="Top" Source="/Assets/Images/logo.png"/>
+					</Border>
+					<Border Grid.Row="1">
+						<StackPanel Spacing="15">
+							<Button Content="{Binding Source={x:Static rs:RuntimeResource.Instance}, Path=[ButtonHome]}" Classes="SidebarButton" Classes.Active="{Binding HomeActive}" Command="{Binding GoToHomeCommand}"/>
+							<Button Content="{Binding Source={x:Static rs:RuntimeResource.Instance}, Path=[ButtonLoad]}" Classes="SidebarButton" Classes.Active="{Binding LoadActive}" Command="{Binding GoToLoadCommand}" />
+							<Button Content="{Binding Source={x:Static rs:RuntimeResource.Instance}, Path=[ButtonSettings]}" Classes="SidebarButton" Classes.Active="{Binding SettingsActive}" Command="{Binding GoToSettingsCommand}"/>
+							<Button Content="{Binding Source={x:Static rs:RuntimeResource.Instance}, Path=[ButtonLog]}" Classes="SidebarButton" Classes.Active="{Binding LogActive}" Command="{Binding GoToLogCommand}"/>
+						</StackPanel>
+					</Border>
+					<Border Grid.Row="2">
+						<Viewbox Stretch="Uniform">
+							<Grid RowDefinitions="* *" ColumnDefinitions="* * *">
+								<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.Youtube}" Grid.Row="0" Grid.Column="0" Classes="IconButton">
+									<Image Source="/Assets/Images/youtube.png"/>
+								</Button>
+								<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.Steam}" Grid.Row="0" Grid.Column="1" Classes="IconButton">
+									<Image Source="/Assets/Images/steam.png"/>
+								</Button>
+								<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.Discord}" Grid.Row="0" Grid.Column="2" Classes="IconButton">
+									<Image Source="/Assets/Images/discord.png"/>
+								</Button>
+								<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.Yoomoney}" Grid.Row="1" Grid.Column="0" Classes="IconButton">
+									<Image Source="/Assets/Images/yoomoney.png"/>
+								</Button>
+								<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.Boosty}" Grid.Row="1" Grid.Column="1" Classes="IconButton">
+									<Image Source="/Assets/Images/boosty.png"/>
+								</Button>
+								<Button Command="{Binding OpenLinkCommand}" CommandParameter="{x:Static common:StaticGlobals+Links.DonationAlerts}" Grid.Row="1" Grid.Column="2" Classes="IconButton">
+									<Image Source="/Assets/Images/donationalerts.png"/>
+								</Button>
 							</Grid>
-						</Border>
-						<Border Grid.Column="1">
-							<Grid ColumnDefinitions="* * *">
-								<Button Classes="ToolbarButton" Command="{Binding MinimizeCommand}" Grid.Column="0">
-									<Image Source="/Assets/Images/minimize.png"/>
-								</Button>
-								<Button Classes="ToolbarButton" Command="{Binding MaximizeCommand}" Grid.Column="1">
-									<Image Source="/Assets/Images/maximize.png"/>
-								</Button>
-								<Button Classes="ToolbarButton" Command="{Binding CloseCommand}" Grid.Column="2">
-									<Image Source="/Assets/Images/close.png"/>
-								</Button>
-							</Grid>
-						</Border>
-					</Grid>
-				</Border>
+						</Viewbox>
+					</Border>
+				</Grid>
+			</Border>
+			<Border Grid.Column="1">
 				<Border ZIndex="0" Grid.Row="1">
 					<TransitioningContentControl Content="{Binding CurrentPage}"/>
 				</Border>
-			</Grid>
-		</Border>
+			</Border>
+		</Grid>
 	</Grid>
 </Window>
