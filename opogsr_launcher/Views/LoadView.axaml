@@ -21,18 +21,18 @@
 						</ListBox.Background>
 						<ListBox.ItemTemplate>
 							<DataTemplate>
-								<Grid ColumnDefinitions="0.5* 0.5*">
-									<TextBlock Foreground="White" Grid.Column="0" FontFamily="fonts:AppFonts#Bender" Text="{Binding Text}" />
-									<TextBlock Foreground="White" HorizontalAlignment="Right" Grid.Column="1" FontFamily="fonts:AppFonts#Bender" Text="{Binding WriteTime}" />
+								<Grid ColumnDefinitions="* Auto">
+    								<TextBlock Foreground="White" Grid.Column="0" FontFamily="fonts:AppFonts#Bender" Text="{Binding Text}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Text}" Margin="0,0,16,0" />
+    								<TextBlock Foreground="White" HorizontalAlignment="Right" Grid.Column="1" FontFamily="fonts:AppFonts#Bender" Text="{Binding WriteTime}" />
 								</Grid>
 							</DataTemplate>
 						</ListBox.ItemTemplate>
 					</ListBox>
 					<Border Grid.Column="1">
 						<Grid RowDefinitions="0.7* 0.3*">
-							<Border Grid.Row="0" Margin="10">
-								<Image Name="SaveImage" Stretch="Fill"/>
-							</Border>
+							<Viewbox Grid.Row="0" Margin="10" StretchDirection="DownOnly">
+    							<Image Name="SaveImage" Width="448" Height="252" Stretch="Fill" RenderOptions.BitmapInterpolationMode="HighQuality"/>
+							</Viewbox>
 							<Border Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
 								<StackPanel>
 									<Button FontSize="24" Command="{Binding LoadSaveCommand}" Content="{Binding LoadSaveStr.Text}">
